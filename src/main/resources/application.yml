@@ -1,3 +1,16 @@
+kakao:
+  userApiUrl: https://kapi.kakao.com/v2/user/me
+  authUrl: https://kauth.kakao.com/oauth/token
+  logoutUrl: https://kapi.kakao.com/v1/user/logout
+  restapiKey: 7592433975f9828ad850a19a2de302cd
+  redirectUrl: http://222.102.175.141:8080/kakao/callback
+
+naver:
+  authUrl: https://nid.naver.com/oauth2.0/token
+  userApiUrl: https://openapi.naver.com/v1/nid/me
+  clientID: D4xwyrZRMr_YjycSFka_
+  clientSecret: JJWOPrShdj
+
 spring:
   config:
     activate:
@@ -9,3 +22,4 @@ spring:
   h2:
     console:
       enabled: true
+
