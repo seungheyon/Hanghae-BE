@@ -1,3 +1,7 @@
+jwt:
+  secret:
+    key: eyJzdWIiOiIyMDIzMDUwMzIzMDAiLCJuYW1lIjoiZG9u
+
 kakao:
   userApiUrl: https://kapi.kakao.com/v2/user/me
   authUrl: https://kauth.kakao.com/oauth/token
@@ -11,15 +15,19 @@ naver:
   clientID: D4xwyrZRMr_YjycSFka_
   clientSecret: JJWOPrShdj
 
+
 spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:h2:mem:db;MODE=MYSQL
-    username: sa
-    password: ''
   h2:
     console:
       enabled: true
-
+  datasource:
+    url: jdbc:h2:mem:db;MODE=MYSQL;
+    username: sa
+    password: ''
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  thymeleaf:
+    cache: 'false'
