@@ -2,6 +2,7 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.dto;
 
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoAccount;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -16,18 +17,17 @@ import lombok.ToString;
 @ToString
 public class NaverResponseDto {
 
-	private Response response;
-	private String naverAccessToken;
+	private String memberEmailId;
 
-	/**
-	 *
-	 * @param response FE에 주기위한 유저정보
-	 * @param accessToken  FE 주기위한 accessToken
-	 */
-	public NaverResponseDto(Response response, String accessToken) {
+	private String memberName;
 
-		this.response = response;
-		this.naverAccessToken = accessToken;
+	private String profileImage;
+
+	@Builder
+	public NaverResponseDto(String memberEmailId, String memberName, String profileImage) {
+		this.memberEmailId = memberEmailId;
+		this.memberName = memberName;
+		this.profileImage = profileImage;
 	}
 
 }

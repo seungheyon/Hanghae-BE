@@ -18,5 +18,6 @@ public class Response {
 	private String email;
 	private String gender;
 	private String birthyear;
+	private String age;
 	private String profile_image;
 }

@@ -2,12 +2,20 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.client.KakaoClient;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoAccount;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoResponseDto;
@@ -33,6 +41,8 @@ import lombok.extern.slf4j.Slf4j;
 public class NaverService {
 
 	private final NaverClient naverClient;
+	private final MemberRepository memberRepository;
+	private final JwtUtil jwtUtil;
 
 	/**
 	 * token을 받기위한 url
@@ -58,12 +68,45 @@ public class NaverService {
 	@Value("${naver.clientSecret}")
 	private String naverClientSecret;
 
-	public ResponseEntity<NaverResponseDto> getNaverInfo(final String code, final String state) {
+	/**
+	 * 첫 번째 로그인일시에 회원가입진행
+	 * @param code 프론트에서 전달한 코드값
+	 * @param state 확인을 위한 state
+	 * @return 프론트에 정보전달
+	 */
+	public ResponseEntity<NaverResponseDto> getNaverInfo(final String code, final String state, final HttpServletResponse response) {
 
 		final NaverToken token = getNavertoken(code, state);
 		try {
 			Response naverResponse = naverClient.getNaverInfo(new URI(naverUserApiUrl), token.getTokenType() + " " + token.getAccessToken()).getResponse();
-			NaverResponseDto responseDto = new NaverResponseDto(naverResponse, token.getAccessToken());
+			Optional<Member> member = memberRepository.findByMemberEmailId(naverResponse.getEmail());
+			//로그인했는데 첫 로그인일시 회원가입
+			if(member.isEmpty()){
+				int currentYear = LocalDate.now().getYear();
+				if(naverResponse.getBirthyear() != null && (currentYear - Integer.parseInt(naverResponse.getBirthyear()) + 1) >= 20) {
+					MemberSignupRequest signupRequest = MemberSignupRequest.builder()
+						.memberEmailId(naverResponse.getEmail())
+						.gender(naverResponse.getGender())
+						.memberName(naverResponse.getNickname())
+						.profileImage(naverResponse.getProfile_image())
+						.build();
+						Member newMember = Member.create(signupRequest);
+						memberRepository.save(newMember);
+						// 새로운 멤버를 `member` 변수에 할당
+						member = Optional.of(newMember);
+				}
+				else{
+					System.out.println("에러 예외처리 넣기");
+				}
+			}
+			String accessToken = jwtUtil.createToken(member.get().getMemberEmailId(), "Access");
+			response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+			NaverResponseDto responseDto = NaverResponseDto.builder()
+				.memberEmailId(naverResponse.getEmail())
+				.memberName(naverResponse.getNickname())
+				.profileImage(naverResponse.getProfile_image())
+				.build();
+
 			log.debug("token = {}", token);
 			return ResponseEntity.ok(responseDto);
 		} catch (URISyntaxException e) {
