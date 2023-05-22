@@ -4,7 +4,6 @@ import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 import javax.persistence.*;
 
 @Getter
@@ -12,28 +11,27 @@ import javax.persistence.*;
 @Entity(name="member")
 public class Member extends Timestamp {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long memberId;
 
-    @Column(nullable = false, unique = true)
-    private String memberEmailId;
-    
-    @Column(nullable = false)
-    private String gender;
+	@Column(nullable = false, unique = true)
+	private String memberEmailId;
 
-    @Column(nullable = false)
-    private String memberName;
+	@Column(nullable = false)
+	private String gender;
 
-    private String introduce;
+	@Column(nullable = false)
+	private String memberName;
 
-    private int point;
+	private String introduce;
 
-    private double latitude;
+	private int point;
 
-    private double longitude;
-    
-    private String profileImage;
+	private double latitude;
 
+	private double longitude;
+
+	private String profileImage;
 
 }
