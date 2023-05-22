@@ -14,18 +14,16 @@ public class Member extends Timestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long member_id;
+    private Long memberId;
 
     @Column(nullable = false, unique = true)
     private String memberEmailId;
-
+    
     @Column(nullable = false)
-    private String password;
-
     private String gender;
 
     @Column(nullable = false)
-    private String userName;
+    private String memberName;
 
     private String introduce;
 
@@ -34,6 +32,8 @@ public class Member extends Timestamp {
     private double latitude;
 
     private double longitude;
+    
+    private String profileImage;
 
 
 }
