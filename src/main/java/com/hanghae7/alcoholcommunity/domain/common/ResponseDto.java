@@ -1,4 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.common;
 
-public class ResponseDto {
+public class ResponseDto<T> {
+
 }
