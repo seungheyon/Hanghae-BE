@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
 
+import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -58,5 +59,8 @@ public class Member extends Timestamped {
 			memberSignupRequest.getProfileImage()
 		);
 	}
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	List<PartyParticipate> partyParticipates = new ArrayList<>();
 
 }
