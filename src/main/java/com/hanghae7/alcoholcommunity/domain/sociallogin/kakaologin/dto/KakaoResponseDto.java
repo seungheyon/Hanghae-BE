@@ -13,6 +13,8 @@ import lombok.ToString;
 @Getter
 @ToString
 public class KakaoResponseDto {
+
+	private Long memberId;
 	private String memberEmailId;
 
 	private String memberName;
@@ -20,7 +22,8 @@ public class KakaoResponseDto {
 	private String profileImage;
 
 	@Builder
-	public KakaoResponseDto(String memberEmailId, String memberName, String profileImage) {
+	public KakaoResponseDto(Long memberId, String memberEmailId, String memberName, String profileImage) {
+		this.memberId = memberId;
 		this.memberEmailId = memberEmailId;
 		this.memberName = memberName;
 		this.profileImage = profileImage;

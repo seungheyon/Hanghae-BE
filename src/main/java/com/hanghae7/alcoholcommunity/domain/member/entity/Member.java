@@ -1,6 +1,7 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 @Getter
 @NoArgsConstructor

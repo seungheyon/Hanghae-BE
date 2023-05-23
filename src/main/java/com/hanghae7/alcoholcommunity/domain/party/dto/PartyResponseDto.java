@@ -43,7 +43,7 @@ public class PartyResponseDto {
 	private LocalDateTime modifiedAt;
 
 	public PartyResponseDto(Party party) {
-		this.partyId = party.getId();
+		this.partyId = party.getPartyId();
 		this.title = party.getTitle();
 		this.content = party.getContent();
 		this.profileImage = party.getMember().getProfileImage();

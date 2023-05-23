@@ -17,6 +17,8 @@ import lombok.ToString;
 @ToString
 public class NaverResponseDto {
 
+	private Long memberId;
+
 	private String memberEmailId;
 
 	private String memberName;
@@ -24,7 +26,8 @@ public class NaverResponseDto {
 	private String profileImage;
 
 	@Builder
-	public NaverResponseDto(String memberEmailId, String memberName, String profileImage) {
+	public NaverResponseDto(Long memberId, String memberEmailId, String memberName, String profileImage) {
+		this.memberId = memberId;
 		this.memberEmailId = memberEmailId;
 		this.memberName = memberName;
 		this.profileImage = profileImage;

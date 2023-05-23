@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
@@ -92,12 +93,14 @@ public class KakaoService {
                         System.out.println("에러 예외처리 넣기");
                 }
             }
-            String accessToken = jwtUtil.createToken(member.get().getMemberEmailId(), "Access");
-            response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+            TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberEmailId());
+            response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
+            response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
-                .memberEmailId(kakaoAccount.getEmail())
-                .memberName(kakaoAccount.getProfile().getNickname())
-                .profileImage(kakaoAccount.getProfile().getProfile_image_url())
+                .memberId(member.get().getMemberId())
+                .memberEmailId(member.get().getMemberEmailId())
+                .memberName(member.get().getMemberName())
+                .profileImage(member.get().getProfileImage())
                 .build();
 
             log.debug("token = {}", token);
