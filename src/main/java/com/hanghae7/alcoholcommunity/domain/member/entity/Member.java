@@ -1,6 +1,11 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
 
-import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity(name="member")
-public class Member extends Timestamp {
+public class Member extends Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +38,8 @@ public class Member extends Timestamp {
 	private double longitude;
 
 	private String profileImage;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	List<PartyParticipate> partyParticipates = new ArrayList<>();
 
 }
