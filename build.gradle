@@ -46,6 +46,7 @@ dependencies {
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.6' // 선택한 Feign Client 버전으로 수정
 
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {
