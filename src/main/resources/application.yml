@@ -7,7 +7,8 @@ kakao:
   authUrl: https://kauth.kakao.com/oauth/token
   logoutUrl: https://kapi.kakao.com/v1/user/logout
   restapiKey: 7592433975f9828ad850a19a2de302cd
-  redirectUrl: http://222.102.175.141:8080/kakao/callback
+  #redirectUrl: http://222.102.175.141:8080/kakao/callback
+  redirectUrl: http://localhost:3000/kakao/callback
 
 naver:
   authUrl: https://nid.naver.com/oauth2.0/token

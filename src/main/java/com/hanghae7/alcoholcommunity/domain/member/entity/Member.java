@@ -1,19 +1,19 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
-import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
+
 @Getter
 @NoArgsConstructor
-@Entity(name="member")
+@Entity(name="Member")
 public class Member extends Timestamped {
 
 	@Id
@@ -38,6 +38,29 @@ public class Member extends Timestamped {
 	private double longitude;
 
 	private String profileImage;
+
+	private String authority;
+
+	private Member(String memberEmailId, String gender, String memberName, String profileImage) {
+		this.memberEmailId = memberEmailId;
+		this.gender = gender;
+		this.memberName = memberName;
+		this.profileImage = profileImage;
+	}
+
+	/**
+	 * Member Entity의 무결성을 위해 생성자 주입
+	 * @param memberSignupRequest 필수적인 정보만 주입
+	 * @return 신규 회원 생성
+	 */
+	public static Member create(MemberSignupRequest memberSignupRequest) {
+		return new Member(
+			memberSignupRequest.getMemberEmailId(),
+			memberSignupRequest.getGender(),
+			memberSignupRequest.getMemberName(),
+			memberSignupRequest.getProfileImage()
+		);
+	}
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	List<PartyParticipate> partyParticipates = new ArrayList<>();

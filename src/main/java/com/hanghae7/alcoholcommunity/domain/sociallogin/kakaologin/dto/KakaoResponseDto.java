@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,18 +13,20 @@ import lombok.ToString;
 @Getter
 @ToString
 public class KakaoResponseDto {
-	private KakaoAccount kakaoAccount;
-	private String kakaoaccessToken;
 
-	/**
-	 *
-	 * @param kakaoAccount FE에 주기위한 유저정보
-	 * @param accessToken  FE 주기위한 accessToken
-	 */
-	public KakaoResponseDto(KakaoAccount kakaoAccount, String accessToken) {
+	private Long memberId;
+	private String memberEmailId;
 
-		this.kakaoAccount = kakaoAccount;
-		this.kakaoaccessToken = accessToken;
+	private String memberName;
+
+	private String profileImage;
+
+	@Builder
+	public KakaoResponseDto(Long memberId, String memberEmailId, String memberName, String profileImage) {
+		this.memberId = memberId;
+		this.memberEmailId = memberEmailId;
+		this.memberName = memberName;
+		this.profileImage = profileImage;
 	}
 
 }

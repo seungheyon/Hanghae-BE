@@ -1,7 +1,13 @@
 package com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.controller;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,11 +26,10 @@ public class KakaoController {
     /**
      * callback을 통해 받은 code를 이용하여 token발급과, UserInfo를 받음
      */
-    @GetMapping("/kakao/callback")
-    public ResponseEntity<KakaoResponseDto> getKakaoAccount(@RequestParam("code") String code) {
-
+    @PostMapping("/kakao/callback")
+    public ResponseEntity<KakaoResponseDto> getKakaoAccount(@RequestParam("code") String code, final HttpServletResponse response) {
         log.debug("code = {}", code);
-        return kakaoService.getKakaoInfo(code);
+        return kakaoService.getKakaoInfo(code, response);
     }
 
 }
