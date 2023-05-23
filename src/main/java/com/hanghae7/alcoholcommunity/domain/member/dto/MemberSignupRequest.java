@@ -20,18 +20,24 @@ public class MemberSignupRequest {
 
 	private String memberEmailId;
 
+	private String memberUniqueId;
+
 	private String gender;
 
 	private String memberName;
 
 	private String profileImage;
 
+	private String social;
+
 	// 무결성을위해서 Builder 사용
 	@Builder
-	public MemberSignupRequest(String memberEmailId, String gender, String memberName, String profileImage) {
+	public MemberSignupRequest(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social) {
 		this.memberEmailId = memberEmailId;
+		this.memberUniqueId = memberUniqueId;
 		this.gender = gender;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
+		this.social = social;
 	}
 }

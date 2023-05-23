@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -80,16 +81,20 @@ public class NaverService {
 		final NaverToken token = getNavertoken(code, state);
 		try {
 			Response naverResponse = naverClient.getNaverInfo(new URI(naverUserApiUrl), token.getTokenType() + " " + token.getAccessToken()).getResponse();
-			Optional<Member> member = memberRepository.findByMemberEmailId(naverResponse.getEmail());
+			Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(naverResponse.getEmail(), "NAVER");
 			//로그인했는데 첫 로그인일시 회원가입
 			if(member.isEmpty()){
+				String gender;
+				if(naverResponse.getGender().equals("m") || naverResponse.getGender().equals("M")){gender = "male";} else{gender="female";}
 				int currentYear = LocalDate.now().getYear();
 				if(naverResponse.getBirthyear() != null && (currentYear - Integer.parseInt(naverResponse.getBirthyear()) + 1) >= 20) {
 					MemberSignupRequest signupRequest = MemberSignupRequest.builder()
 						.memberEmailId(naverResponse.getEmail())
-						.gender(naverResponse.getGender())
+						.memberUniqueId(UUID.randomUUID().toString())
+						.gender(gender)
 						.memberName(naverResponse.getNickname())
 						.profileImage(naverResponse.getProfile_image())
+						.social("NAVER")
 						.build();
 						Member newMember = Member.create(signupRequest);
 						memberRepository.save(newMember);
@@ -100,12 +105,12 @@ public class NaverService {
 					System.out.println("에러 예외처리 넣기");
 				}
 			}
-			TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberEmailId());
+			TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
 			response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
 			response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
 			NaverResponseDto responseDto = NaverResponseDto.builder()
 				.memberId(member.get().getMemberId())
-				.memberEmailId(member.get().getMemberEmailId())
+				.memberUniqueId(member.get().getMemberUniqueId())
 				.memberName(member.get().getMemberName())
 				.profileImage(member.get().getProfileImage())
 				.build();
