@@ -46,17 +46,32 @@ public class PartyService {
 		partyRepository.save(party);
 
 		// 모임 참가인원 자기자신은 +1
-		PartyParticipate partyParticipate = PartyParticipate.builder()
-			.party(party)
-			.member(member)
-			.build();
+		PartyParticipate partyParticipate = new PartyParticipate(party, member);
 
 		partyParticipateRepository.save(partyParticipate);
 
 		return ResponseEntity.ok(null);
 	}
 
-	// 모임 전체조회
+	// 모임 전체조회(전체)
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<PartyResponseDto>> findAll(Member member) {
+		List<Party> parties = partyRepository.findAll();
+		List<PartyResponseDto> partyResponseDtos = new ArrayList<>();
+		for (Party party:parties) {
+			partyResponseDtos.add(new PartyResponseDto(party));
+		}
+		return ResponseEntity.ok(partyResponseDtos);
+	}
+
+	// 모임 전체조회(모집중)
+
+
+
+
+	// 모임 전체조회(모집마감)
+
+
 
 
 
@@ -64,7 +79,6 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<PartyDetailResponseDto> getParty(Long partyId, Member member) {
 
-		// User  유효성 검사
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
@@ -80,10 +94,19 @@ public class PartyService {
 	}
 
 	// 모임 게시글 수정
+	@Transactional
+	public ResponseEntity<Void> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
+		Party party = partyRepository.findById(partyId).orElseThrow(
+			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+		);
 
-
-
-
+		if(!party.getMember().getMemberId().equals(member.getMemberId())) {
+			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
+		} else {
+			party.updateParty(partyRequestDto);
+			return ResponseEntity.ok(null);
+		}
+	}
 
 	// 모임 게시글 삭제
 	@Transactional

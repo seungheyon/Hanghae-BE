@@ -19,7 +19,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
-import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.PartyRequestDto;
 
@@ -27,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Please explain the class!!
@@ -39,6 +39,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -61,41 +62,61 @@ public class Party extends Timestamped {
 	@ColumnDefault(value = "0")
 	private int currentCount;
 
+	@Column(nullable = false)
+	// processing을 통해 모집 중 / 모집 마감 파티 리스트 활용
+	private boolean processing = true;
+
 	private String concept;
 
 	private Double latitude;
-	private Double longtitude;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
-	private LocalDateTime startDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
-	private LocalDateTime endDate;
+	private Double longitude;
+	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
+	// private LocalDateTime startDate;
+	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
+	// private LocalDateTime endDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 
 	@OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
 	List<PartyParticipate> partyParticipates = new ArrayList<>();
 
+	// 모임 신청자목록 리스트 작성
+
 
 
 	@Builder
 	public Party(PartyRequestDto partyRequestDto, Member member) {
-		// PartyValidator.isValidParty(member, title, content, latitude, longtitude, startDate, endDate, partyDate, totalCount, currentCount);
 			this.member = member;
 			this.title = partyRequestDto.getTitle();
 			this.content = partyRequestDto.getContent();
 			this.concept = partyRequestDto.getConcept();
 			this.latitude = partyRequestDto.getLatitude();
-			this.longtitude = partyRequestDto.getLongtitude();
-			this.startDate = partyRequestDto.getStartDate();
-			this.endDate = partyRequestDto.getEndDate();
+			this.longitude = partyRequestDto.getLongitude();
+			// this.startDate = partyRequestDto.getStartDate();
+			// this.endDate = partyRequestDto.getEndDate();
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
-			// this.currentCount = partyRequestDto.getCurrentCount();
 	}
 
+	// 모임 생성 시 자기자신 인원수 자동 +1
 	public void addCurrentCount() {
 		this.currentCount = currentCount +1;
 	}
 
+	// 모임 취소 시 -1
+	public void subCurrentCount(){ this.currentCount = currentCount -1;	}
 
+
+	// 모임 게시글 수정
+	public void updateParty(PartyRequestDto partyRequestDto) {
+			this.title = partyRequestDto.getTitle();
+			this.content = partyRequestDto.getContent();
+			this.concept = partyRequestDto.getConcept();
+			this.latitude = partyRequestDto.getLatitude();
+			this.longitude = partyRequestDto.getLongitude();
+			// this.startDate = partyRequestDto.getStartDate();
+			// this.endDate = partyRequestDto.getEndDate();
+			this.partyDate = partyRequestDto.getPartyDate();
+			this.totalCount = partyRequestDto.getTotalCount();
+		}
 }

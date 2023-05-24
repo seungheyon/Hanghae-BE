@@ -26,20 +26,20 @@ public class PartyResponseDto {
 	private String title;
 	private String content;
 	private String profileImage;
-	private Long memberId;
 	private String memberName;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
-	private LocalDateTime startDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
-	private LocalDateTime endDate;
+	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
+	// private LocalDateTime startDate;
+	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
+	// private LocalDateTime endDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 	private Double latitude;
-	private Double longtitude;
+	private Double longitude;
 	private Boolean processing;
 	private int totalCount;
 	private int currentCount;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,timezone= "Asia/Seoul")
+
+	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 
 	public PartyResponseDto(Party party) {
@@ -47,15 +47,16 @@ public class PartyResponseDto {
 		this.title = party.getTitle();
 		this.content = party.getContent();
 		this.profileImage = party.getMember().getProfileImage();
-		this.memberId = party.getMember().getMemberId();
+		// this.memberId = party.getMember().getMemberId();
 		this.memberName = party.getMember().getMemberName();
-		this.startDate = party.getStartDate();
-		this.endDate = party.getEndDate();
+		// this.startDate = party.getStartDate();
+		// this.endDate = party.getEndDate();
 		this.partyDate = party.getPartyDate();
 		this.latitude = party.getLatitude();
-		this.longtitude = party.getLongtitude();
+		this.longitude = party.getLongitude();
 		this.totalCount = party.getTotalCount();
 		this.currentCount = party.getCurrentCount();
+		this.createdAt = party.getCreatedAt();
 		this.modifiedAt = party.getModifiedAt();
 	}
 }

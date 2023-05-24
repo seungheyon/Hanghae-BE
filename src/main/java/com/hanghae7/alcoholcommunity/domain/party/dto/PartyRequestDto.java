@@ -22,7 +22,7 @@ public class PartyRequestDto {
 	private LocalDateTime partyDate;
 	private String concept;
 	private Double latitude;
-	private Double longtitude;
+	private Double longitude;
 	private int totalCount;
 	// private int currentCount;
 	private String content;
@@ -31,12 +31,12 @@ public class PartyRequestDto {
 		return Party.builder()
 			.member(member)
 			.title(title)
-			.startDate(startDate)
-			.endDate(endDate)
+			// .startDate(startDate)
+			// .endDate(endDate)
 			.partyDate(partyDate)
 			.concept(concept)
 			.latitude(latitude)
-			.longtitude(longtitude)
+			.longitude(longitude)
 			.totalCount(totalCount)
 			// .currentCount(currentCount)
 			.content(content)
