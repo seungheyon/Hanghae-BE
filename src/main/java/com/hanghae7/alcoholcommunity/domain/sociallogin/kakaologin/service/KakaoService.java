@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
@@ -72,7 +73,7 @@ public class KakaoService {
      * @see KakaoResponseDto
      * @return KakaoResponseDto값 리턴
      */
-    public ResponseEntity<KakaoResponseDto> getKakaoInfo(final String code, final HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> getKakaoInfo(final String code, final HttpServletResponse response) {
 
         final KakaoToken token = getKakaoToken(code);
         try {
@@ -95,7 +96,7 @@ public class KakaoService {
                         // 새로운 멤버를 `member` 변수에 할당
                         member = Optional.of(newMember);
                     } else{
-                        System.out.println("에러 예외처리 넣기");
+                    return new ResponseEntity<>(new ResponseDto(401, "성인만 저희 서비스를 이용할 수 있습니다."), HttpStatus.BAD_REQUEST);
                 }
             }
             TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
@@ -109,10 +110,10 @@ public class KakaoService {
                 .build();
 
             log.debug("token = {}", token);
-            return ResponseEntity.ok(responseDto);
+            return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", responseDto), HttpStatus.OK);
         } catch (URISyntaxException e) {
             log.error("Invalid URI syntax", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseEntity<>(new ResponseDto(401, "KAKAO API 에러"), HttpStatus.BAD_REQUEST);
         }
     }
 

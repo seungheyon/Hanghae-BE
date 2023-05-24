@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.party.dto.ParticipateResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.service.PartyParticipateService;
@@ -22,18 +23,18 @@ public class PartyParticipateController {
 	// 모임 참가
 	// 참여자만 접근 가능
 	@PostMapping("/party/join/{partyId}")
-	public ParticipateResponseDto participateParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
+	public ResponseEntity<ResponseDto> participateParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyParticipateService.participateParty(partyId, userDetails.getMember());
 	}
 
 	// 주최자만 접근 가능
 	@PostMapping("/party/accept/{participateId}")
-	public ResponseEntity<String> acceptParty(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
+	public ResponseEntity<ResponseDto> acceptParty(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
 		return partyParticipateService.acceptParty(participateId);
 	}
 
 	@DeleteMapping("/party/accept/{participateId}")
-	public ResponseEntity<Void> removeWaiting(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
+	public ResponseEntity<ResponseDto> removeWaiting(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
 		return partyParticipateService.removeWaiting(participateId);
 	}
 
