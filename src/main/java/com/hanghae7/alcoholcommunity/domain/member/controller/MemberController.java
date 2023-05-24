@@ -8,6 +8,7 @@ import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,34 +22,34 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/member/info")
-    public ResponseDto<MemberResponseDto> memberPage(@AuthenticationPrincipal UserDetailsImplement userDetails){
+    public ResponseEntity<ResponseDto> memberPage(@AuthenticationPrincipal UserDetailsImplement userDetails){
 
         try{
             return memberService.memberPage(userDetails.getMember().getMemberUniqueId());
         }
         catch (IllegalArgumentException e){
-            return new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/member/update")
-    public ResponseDto<?> memberPageUpdate(@RequestBody MemberPageUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImplement userDetails){
+    public ResponseEntity<ResponseDto> memberPageUpdate(@RequestBody MemberPageUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImplement userDetails){
         try{
             return memberService.memberPageUpdate(requestDto, userDetails.getMember().getMemberUniqueId());
         }
         catch (IllegalArgumentException e){
-            return new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
 
     @GetMapping("/member/{memberId}")
-    public ResponseDto<IndividualPageResponseDto> individualPage(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImplement userDetails){
+    public ResponseEntity<ResponseDto> individualPage(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImplement userDetails){
         try{
             return memberService.individualPage(memberId);
         }
         catch (IllegalArgumentException e){
-            return new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }

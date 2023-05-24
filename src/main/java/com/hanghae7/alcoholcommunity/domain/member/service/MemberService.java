@@ -13,6 +13,9 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,7 @@ public class MemberService {
     private final PartyParticipateRepository partyParticipateRepository;
 
     @Transactional
-    public ResponseDto<MemberResponseDto> memberPage(String memberUniqueId){
+    public ResponseEntity<ResponseDto> memberPage(String memberUniqueId){
 
         Member member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
@@ -81,11 +84,11 @@ public class MemberService {
                 .partyList(myPartyList)
                 .build();
 
-        return new ResponseDto<>(200, "성공", memberResponseDto);
+        return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseDto<?> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, String memberUniqueId){
+    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, String memberUniqueId){
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
         String newProfileImage = memberPageUpdateRequestDto.getImage();
         String newCharacteristic = memberPageUpdateRequestDto.getCharacteristic();
@@ -94,11 +97,11 @@ public class MemberService {
             () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
         member.update(newMemberName, newProfileImage, newCharacteristic);
-        return new ResponseDto<>(200, "성공");
+        return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseDto<IndividualPageResponseDto> individualPage(Long memberId){
+    public ResponseEntity<ResponseDto> individualPage(Long memberId){
 
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new IllegalArgumentException("존재하지 않는 유저 입니다.")
@@ -117,7 +120,6 @@ public class MemberService {
                 .profileImage(profileImage)
                 .build();
 
-        return new ResponseDto<>(200, "성공", individualPageResponseDto);
+        return new ResponseEntity<>(new ResponseDto(200, "상대방 프로필 조회 성공.", individualPageResponseDto), HttpStatus.OK);
     }
-
 }

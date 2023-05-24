@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoResponseDto;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.service.KakaoService;
 
@@ -27,7 +28,7 @@ public class KakaoController {
      * callback을 통해 받은 code를 이용하여 token발급과, UserInfo를 받음
      */
     @PostMapping("/kakao/callback")
-    public ResponseEntity<KakaoResponseDto> getKakaoAccount(@RequestParam("code") String code, final HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> getKakaoAccount(@RequestParam("code") String code, final HttpServletResponse response) {
         log.debug("code = {}", code);
         return kakaoService.getKakaoInfo(code, response);
     }

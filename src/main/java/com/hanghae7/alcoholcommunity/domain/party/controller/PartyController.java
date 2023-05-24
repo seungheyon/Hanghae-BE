@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.party.dto.PartyDetailResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.PartyRequestDto;
@@ -39,32 +40,32 @@ public class PartyController {
 
 	// 모임 게시글 등록
 	@PostMapping("/party/new-party")
-	public ResponseEntity<Void> createParty(@RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
+	public ResponseEntity<ResponseDto> createParty(@RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.creatParty(partyRequestDto, userDetails.getMember());
 	}
 
 	// 모임 게시글 전체 조회
 	@GetMapping("/parties")
-	public ResponseEntity<Page<Party>> findAll(@RequestParam int recruitmentStatus, @RequestParam int page) {
+	public ResponseEntity<ResponseDto> findAll(@RequestParam int recruitmentStatus, @RequestParam int page) {
 
 		return partyService.findAll(recruitmentStatus, page);
 	}
 
 	// 모임 게시글 상세 조회
 	@GetMapping("/party/{partyId}")
-	public ResponseEntity<PartyDetailResponseDto> getParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
+	public ResponseEntity<ResponseDto> getParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.getParty(partyId);
 	}
 
 	// 모임 게시글 수정
 	@PutMapping("/party/{partyId}")
-	public ResponseEntity<Void> updateParty(@PathVariable Long partyId, @RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
+	public ResponseEntity<ResponseDto> updateParty(@PathVariable Long partyId, @RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.updateParty(partyId, partyRequestDto, userDetails.getMember());
 	}
 
 	// 모임 게시글 삭제
 	@DeleteMapping("/party/{partyId}")
-	public ResponseEntity<Void> deleteParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
+	public ResponseEntity<ResponseDto> deleteParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.deleteParty(partyId, userDetails.getMember());
 	}
 

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import com.hanghae7.alcoholcommunity.domain.party.dto.ParticipateInfoDto;
@@ -43,7 +44,7 @@ public class PartyService {
 
 	// 모임 게시글 등록
 	@Transactional
-	public ResponseEntity<Void> creatParty(PartyRequestDto partyRequestDto, Member member) {
+	public ResponseEntity<ResponseDto> creatParty(PartyRequestDto partyRequestDto, Member member) {
 
 		Party party = new Party(partyRequestDto, member.getMemberName());
 		PartyParticipate partyParticipate = new PartyParticipate(party, member);
@@ -51,12 +52,12 @@ public class PartyService {
 		party.addCurrentCount();
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
-		return ResponseEntity.ok(null);
+		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
 	}
 
 	// 모임 전체조회(전체/모집중/모집마감)
 	@Transactional(readOnly = true)
-	public ResponseEntity<Page<Party>> findAll(int recruitmentStatus, int page) {
+	public ResponseEntity<ResponseDto> findAll(int recruitmentStatus, int page) {
 
 		Page<Party> parties;
 		Pageable pageable = PageRequest.of(page, 10);
@@ -67,25 +68,25 @@ public class PartyService {
 		}else{
 			parties = partyRepository.findAllPartyRecruitmentStatus(false, pageable);
 		}
-		return ResponseEntity.ok(parties);
+		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", parties), HttpStatus.OK);
 	}
 
 	// 모임 상세조회
 	@Transactional
-	public ResponseEntity<PartyDetailResponseDto> getParty(Long partyId) {
+	public ResponseEntity<ResponseDto> getParty(Long partyId) {
 
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
 		List<PartyParticipate> participates = partyParticipateRepository.findByPartyId(partyId);
 		PartyResponseDto partyResponseDto = new PartyResponseDto(party, participates.get(0).getMember().getProfileImage(), participates.get(0).getMember().getMemberName());
-		return ResponseEntity.ok(new PartyDetailResponseDto(participates, partyResponseDto));
+		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", new PartyDetailResponseDto(participates, partyResponseDto)), HttpStatus.OK);
 	}
 
 
 	// 모임 게시글 수정
 	@Transactional
-	public ResponseEntity<Void> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
+	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
 		);
@@ -95,23 +96,23 @@ public class PartyService {
 			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
 		} else {
 			party.updateParty(partyRequestDto);
-			return ResponseEntity.ok(null);
+			return new ResponseEntity<>(new ResponseDto(200, "모임을 수정하였습니다."), HttpStatus.OK);
 		}
 	}
 
 	// 모임 게시글 삭제
 	@Transactional
-	public ResponseEntity<Void> deleteParty(Long partyId, Member member) {
+	public ResponseEntity<ResponseDto> deleteParty(Long partyId, Member member) {
 
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 		Optional<PartyParticipate> hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId);
 
 		if(!hostMember.equals(member)) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
 		} else {
 			partyRepository.delete(party);
-			return ResponseEntity.ok(null);
+			return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
 		}
 	}
 

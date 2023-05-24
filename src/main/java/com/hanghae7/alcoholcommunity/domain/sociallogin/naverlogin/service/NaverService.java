@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
@@ -77,7 +78,7 @@ public class NaverService {
 	 * @param state 확인을 위한 state
 	 * @return 프론트에 정보전달
 	 */
-	public ResponseEntity<NaverResponseDto> getNaverInfo(final String code, final String state, final HttpServletResponse response) {
+	public ResponseEntity<ResponseDto> getNaverInfo(final String code, final String state, final HttpServletResponse response) {
 
 		final NaverToken token = getNavertoken(code, state);
 		try {
@@ -104,7 +105,7 @@ public class NaverService {
 						member = Optional.of(newMember);
 				}
 				else{
-					System.out.println("에러 예외처리 넣기");
+					return new ResponseEntity<>(new ResponseDto(401, "성인만 저희 서비스를 이용할 수 있습니다."), HttpStatus.BAD_REQUEST);
 				}
 			}
 			TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
@@ -118,10 +119,10 @@ public class NaverService {
 				.build();
 
 			log.debug("token = {}", token);
-			return ResponseEntity.ok(responseDto);
+			return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", responseDto), HttpStatus.OK);
 		} catch (URISyntaxException e) {
 			log.error("Invalid URI syntax", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			return new ResponseEntity<>(new ResponseDto(401, "NAVER API 요청 에러"), HttpStatus.BAD_REQUEST);
 		}
 	}
 

@@ -9,6 +9,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.ParticipateResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
@@ -32,7 +33,7 @@ public class PartyParticipateService {
 	 * @return PartyID와 신청한 Member값 반환
 	 */
 	@Transactional
-	public ParticipateResponseDto participateParty(Long partyId, Member member) {
+	public ResponseEntity<ResponseDto> participateParty(Long partyId, Member member) {
 
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("존재하지않는 게시글입니다.")
@@ -41,13 +42,14 @@ public class PartyParticipateService {
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
 		if(participate.isEmpty()){
 			partyParticipateRepository.save(new PartyParticipate(party, member));
+			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 		}
 		else if(participate.get().isRejected()){
-			return null; // 거절된 사람이라는 리턴값 필요
+			return new ResponseEntity<>(new ResponseDto(200, "이미 신챙했던 사람입니다."), HttpStatus.OK);
 		}else{
 			partyParticipateRepository.delete(participate.get());
+			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 		}
-		return new ParticipateResponseDto(member.getMemberId(), partyId);
 	}
 
 	/**
@@ -57,7 +59,7 @@ public class PartyParticipateService {
 	 */
 	// 주최자가 참여 여부 판단하기
 	@Transactional
-	public ResponseEntity<String> acceptParty(Long participateId){
+	public ResponseEntity<ResponseDto> acceptParty(Long participateId){
 		PartyParticipate participate = partyParticipateRepository.findById(participateId).orElseThrow(
 			() -> new IllegalArgumentException("존재하지않는 참여자입니다.")
 		);
@@ -75,21 +77,21 @@ public class PartyParticipateService {
 			}
 		}
 		else{
-			return new ResponseEntity<>("참여 인원이 가득 찼습니다.",HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new ResponseDto(200, "이미 꽉찬 모임방 입니다."), HttpStatus.OK);
 		}
-		return ResponseEntity.ok(null);
+		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인하였습니다."), HttpStatus.OK);
 	}
 
 	// 주최자가 대기 인원 중에 삭제하고 싶은 대기 인원 삭제 메서드(승인거부)
 	@Transactional
-	public ResponseEntity<Void> removeWaiting(Long participateId){
+	public ResponseEntity<ResponseDto> removeWaiting(Long participateId){
 		PartyParticipate participate = partyParticipateRepository.findById(participateId).orElseThrow(
 			() -> new IllegalArgumentException("존재하지않는 참여글입니다.")
 		);
 
 		participate.setRejected(true);
 
-		return ResponseEntity.ok(null);
+		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
 
 	// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요

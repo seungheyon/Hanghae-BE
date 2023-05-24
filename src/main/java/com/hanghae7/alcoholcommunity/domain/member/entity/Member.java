@@ -46,7 +46,7 @@ public class Member extends Timestamped {
 
 	private String profileImage;
 
-	private String authority;
+	private String authority = "user";
 
 	private String social;
 
