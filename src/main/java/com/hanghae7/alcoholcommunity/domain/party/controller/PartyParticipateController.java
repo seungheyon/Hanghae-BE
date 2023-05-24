@@ -29,7 +29,7 @@ public class PartyParticipateController {
 	// 주최자만 접근 가능
 	@PostMapping("/party/accept/{participateId}")
 	public ResponseEntity<String> acceptParty(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
-		return partyParticipateService.acceptParty(participateId, userDetails.getMember());
+		return partyParticipateService.acceptParty(participateId);
 	}
 
 	@DeleteMapping("/party/accept/{participateId}")

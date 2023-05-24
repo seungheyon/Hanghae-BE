@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +82,7 @@ public class PartyParticipateService {
 
 	// 주최자가 대기 인원 중에 삭제하고 싶은 대기 인원 삭제 메서드(승인거부)
 	@Transactional
-	public ResponseEntity<Void> removeWaiting(Long participateId, Member member){
+	public ResponseEntity<Void> removeWaiting(Long participateId){
 		PartyParticipate participate = partyParticipateRepository.findById(participateId).orElseThrow(
 			() -> new IllegalArgumentException("존재하지않는 참여글입니다.")
 		);

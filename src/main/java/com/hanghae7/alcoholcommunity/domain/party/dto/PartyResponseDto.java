@@ -47,11 +47,8 @@ public class PartyResponseDto {
 		this.partyId = party.getPartyId();
 		this.title = party.getTitle();
 		this.content = party.getContent();
-		this.profileImage = party.getMember().getProfileImage();
-		// this.memberId = party.getMember().getMemberId();
-		this.memberName = party.getMember().getMemberName();
-		// this.startDate = party.getStartDate();
-		// this.endDate = party.getEndDate();
+		this.hostImage = hostImage;
+		this.hostName = hostname;
 		this.partyDate = party.getPartyDate();
 		this.latitude = party.getLatitude();
 		this.longitude = party.getLongitude();

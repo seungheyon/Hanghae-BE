@@ -22,6 +22,7 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
  * @author        : mycom
  * @since         : 2023-05-19
  */
+@Repository
 public interface PartyRepository extends JpaRepository<Party, Long> {
 
 	@Query("select p from Party p ORDER BY p.createdAt desc")

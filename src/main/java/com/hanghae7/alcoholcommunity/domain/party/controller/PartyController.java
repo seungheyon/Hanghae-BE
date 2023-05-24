@@ -45,8 +45,9 @@ public class PartyController {
 
 	// 모임 게시글 전체 조회
 	@GetMapping("/parties")
-	public ResponseEntity<List<PartyResponseDto>> findAll(@AuthenticationPrincipal UserDetailsImplement userDetails) {
-		return partyService.findAll(userDetails.getMember());
+	public ResponseEntity<Page<Party>> findAll(@RequestParam int recruitmentStatus, @RequestParam int page) {
+
+		return partyService.findAll(recruitmentStatus, page);
 	}
 
 	// 모임 게시글 상세 조회

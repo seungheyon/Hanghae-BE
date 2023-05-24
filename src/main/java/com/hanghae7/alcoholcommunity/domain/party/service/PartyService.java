@@ -54,7 +54,7 @@ public class PartyService {
 		return ResponseEntity.ok(null);
 	}
 
-	// 모임 전체조회(전체)
+	// 모임 전체조회(전체/모집중/모집마감)
 	@Transactional(readOnly = true)
 	public ResponseEntity<Page<Party>> findAll(int recruitmentStatus, int page) {
 
@@ -70,17 +70,6 @@ public class PartyService {
 		return ResponseEntity.ok(parties);
 	}
 
-	// 모임 전체조회(모집중)
-
-
-
-
-	// 모임 전체조회(모집마감)
-
-
-
-
-
 	// 모임 상세조회
 	@Transactional
 	public ResponseEntity<PartyDetailResponseDto> getParty(Long partyId) {
@@ -92,6 +81,7 @@ public class PartyService {
 		PartyResponseDto partyResponseDto = new PartyResponseDto(party, participates.get(0).getMember().getProfileImage(), participates.get(0).getMember().getMemberName());
 		return ResponseEntity.ok(new PartyDetailResponseDto(participates, partyResponseDto));
 	}
+
 
 	// 모임 게시글 수정
 	@Transactional
@@ -124,6 +114,7 @@ public class PartyService {
 			return ResponseEntity.ok(null);
 		}
 	}
+
 
 
 }

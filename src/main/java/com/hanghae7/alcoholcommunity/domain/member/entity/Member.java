@@ -59,4 +59,22 @@ public class Member extends Timestamped {
 		this.social = social;
 		this.createdAt = createdAt;
 	}
+
+	/**
+	 * Member Entity의 무결성을 위해 생성자 주입
+	 * @param memberSignupRequest 필수적인 정보만 주입
+	 * @return 신규 회원 생성
+	 */
+	public static Member create(MemberSignupRequest memberSignupRequest) {
+		return new Member(
+			memberSignupRequest.getMemberEmailId(),
+			memberSignupRequest.getMemberUniqueId(),
+			memberSignupRequest.getGender(),
+			memberSignupRequest.getMemberName(),
+			memberSignupRequest.getProfileImage(),
+			memberSignupRequest.getSocial(),
+			memberSignupRequest.getCreatedAt()
+		);
+	}
+
 }

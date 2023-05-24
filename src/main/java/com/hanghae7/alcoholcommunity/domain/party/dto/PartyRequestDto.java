@@ -28,20 +28,5 @@ public class PartyRequestDto {
 	private int totalCount;
 	// private int currentCount;
 
-	public Party toEntity(Member member) {
-		return Party.builder()
-			.member(member)
-			.title(title)
-			// .startDate(startDate)
-			// .endDate(endDate)
-			.partyDate(partyDate)
-			.concept(concept)
-			.latitude(latitude)
-			.longitude(longitude)
-			.totalCount(totalCount)
-			// .currentCount(currentCount)
-			.content(content)
-			.build();
-	}
 
 }
