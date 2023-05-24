@@ -29,13 +29,6 @@ public class WebSecurityConfig {
 	private final JwtAuthFilter jwtAuthFilter;
 
 	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer() {
-		// h2-console 사용 및 resources 접근 허용 설정
-		return (web) -> web.ignoring()
-			.requestMatchers(PathRequest.toH2Console())
-			.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-	}
-	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		// CSRF 설정
 		http.csrf().ignoringAntMatchers("/ws-stomp/**").disable(); // 웹소켓 경로에 대한 CSRF 비활성화

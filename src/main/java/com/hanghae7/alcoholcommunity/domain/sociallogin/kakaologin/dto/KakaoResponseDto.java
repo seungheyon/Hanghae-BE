@@ -15,16 +15,17 @@ import lombok.ToString;
 public class KakaoResponseDto {
 
 	private Long memberId;
-	private String memberEmailId;
+
+	private String memberUniqueId;
 
 	private String memberName;
 
 	private String profileImage;
 
 	@Builder
-	public KakaoResponseDto(Long memberId, String memberEmailId, String memberName, String profileImage) {
+	public KakaoResponseDto(Long memberId, String memberUniqueId, String memberName, String profileImage) {
 		this.memberId = memberId;
-		this.memberEmailId = memberEmailId;
+		this.memberUniqueId = memberUniqueId;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
 	}

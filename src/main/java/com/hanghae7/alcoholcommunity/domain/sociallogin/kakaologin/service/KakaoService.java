@@ -2,7 +2,9 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -75,15 +77,18 @@ public class KakaoService {
         final KakaoToken token = getKakaoToken(code);
         try {
             KakaoAccount kakaoAccount = client.getKakaoInfo(new URI(kakaoUserApiUrl), token.getTokenType() + " " + token.getAccessToken()).getKakaoAccount();
-            Optional<Member> member = memberRepository.findByMemberEmailId(kakaoAccount.getEmail());
+            Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(kakaoAccount.getEmail(), "KAKAO");
             //로그인했는데 첫 로그인일시 회원가입
             if(member.isEmpty()){
                 if(kakaoAccount.getAge_range() != null && Integer.parseInt(kakaoAccount.getAge_range().substring(0, 2)) >= 20) {
                     MemberSignupRequest signupRequest = MemberSignupRequest.builder()
                         .memberEmailId(kakaoAccount.getEmail())
+                        .memberUniqueId(UUID.randomUUID().toString())
                         .gender(kakaoAccount.getGender())
                         .memberName(kakaoAccount.getProfile().getNickname())
                         .profileImage(kakaoAccount.getProfile().getProfile_image_url())
+                        .social("KAKAO")
+                        .createdAt(LocalDateTime.now())
                         .build();
                         Member newMember = Member.create(signupRequest);
                         memberRepository.save(newMember);
@@ -93,12 +98,12 @@ public class KakaoService {
                         System.out.println("에러 예외처리 넣기");
                 }
             }
-            TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberEmailId());
+            TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
             response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
             response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
                 .memberId(member.get().getMemberId())
-                .memberEmailId(member.get().getMemberEmailId())
+                .memberUniqueId(member.get().getMemberUniqueId())
                 .memberName(member.get().getMemberName())
                 .profileImage(member.get().getProfileImage())
                 .build();

@@ -41,13 +41,4 @@ public interface KakaoClient {
      */
     @PostMapping
     KakaoInfo getKakaoInfo(URI baseUrl, @RequestHeader("Authorization") String accessToken);
-
-    /**
-     *
-     * @param baseUrl 카카오 api로 로그아웃을 하기위하 Url주소
-     * @param accessToken 로그아웃을 하기위한 accessToken
-     */
-    @PostMapping
-    void logout(URI baseUrl, @RequestHeader("Authorization") String accessToken);
-
 }
