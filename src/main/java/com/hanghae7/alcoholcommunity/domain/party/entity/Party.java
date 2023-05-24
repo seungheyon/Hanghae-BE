@@ -64,6 +64,7 @@ public class Party extends Timestamped {
 	private boolean recruitmentStatus = true;
 
 	private String concept;
+	private String hostName;
 
 	private Double latitude;
 	private Double longitude;
@@ -80,12 +81,13 @@ public class Party extends Timestamped {
 	// 모임 신청자목록 리스트 작성?
 
 
-	public Party(PartyRequestDto partyRequestDto) {
+	public Party(PartyRequestDto partyRequestDto, String hostName) {
 			this.title = partyRequestDto.getTitle();
 			this.content = partyRequestDto.getContent();
 			this.concept = partyRequestDto.getConcept();
 			this.latitude = partyRequestDto.getLatitude();
 			this.longitude = partyRequestDto.getLongitude();
+			this.hostName = hostName;
 			// this.startDate = partyRequestDto.getStartDate();
 			// this.endDate = partyRequestDto.getEndDate();
 			this.partyDate = partyRequestDto.getPartyDate();

@@ -45,7 +45,7 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<Void> creatParty(PartyRequestDto partyRequestDto, Member member) {
 
-		Party party = new Party(partyRequestDto);
+		Party party = new Party(partyRequestDto, member.getMemberName());
 		PartyParticipate partyParticipate = new PartyParticipate(party, member);
 		partyParticipate.setHost(true);
 		party.addCurrentCount();

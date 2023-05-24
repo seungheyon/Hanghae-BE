@@ -10,34 +10,27 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
-import io.jsonwebtoken.Claims;
+import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.transform.sax.SAXResult;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
-    private final Member member;
+    private final PartyParticipateRepository partyParticipateRepository;
 
     @Transactional
-    public ResponseDto<MemberResponseDto> memberPage(HttpServletRequest httpServletRequest){
+    public ResponseDto<MemberResponseDto> memberPage(String memberUniqueId){
 
-        String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
-        String memberId = jwtUtil.getMemberInfoFromToken(accessToken);  // 사용자의 UniqueId 가져옴 -> 머지 후 수정
-
-        Member member = memberRepository.findByMemberEmailId(memberId).orElseThrow(
+        Member member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
 
@@ -46,15 +39,15 @@ public class MemberService {
         String profileImage = member.getProfileImage();
         String characteristic = "characteristic";
 
-        List<MemberPagePartyResponseDto> list = new ArrayList<>();
-        List<PartyParticipate> partyParticipateList = member.getPartyParticipates();
+        List<MemberPagePartyResponseDto> myPartyList = new ArrayList<>();
+        List<PartyParticipate> partyParticipateList = partyParticipateRepository.findByMemberUniqueId(memberUniqueId);
 
         for (PartyParticipate partyParticipate : partyParticipateList) {
             Party party = partyParticipate.getParty();
             Long partyId = party.getPartyId();
             String title = party.getTitle();
             String content = party.getContent();
-            String masterName = party.getMember().getMemberName();
+            String hostName = party.getHostName();
             String address = "address";
             LocalDateTime date = party.getPartyDate();
             int totalCount = party.getTotalCount();
@@ -67,7 +60,7 @@ public class MemberService {
                     .partyId(partyId)
                     .title(title)
                     .content(content)
-                    .memberName(masterName)
+                    .memberName(hostName)
                     .address(address)
                     .date(date)
                     .totalCount(totalCount)
@@ -77,7 +70,7 @@ public class MemberService {
                     .createdAt(createdAt)
                     .build();
 
-            list.add(memberPagePartyResponseDto);
+            myPartyList.add(memberPagePartyResponseDto);
         }
 
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
@@ -85,35 +78,34 @@ public class MemberService {
                 .memberName(memberName)
                 .profileImage(profileImage)
                 .characteristic(characteristic)
-                .partyList(list)
+                .partyList(myPartyList)
                 .build();
 
         return new ResponseDto<>(200, "성공", memberResponseDto);
     }
 
     @Transactional
-    public ResponseDto<?> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto){
+    public ResponseDto<?> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, String memberUniqueId){
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
         String newProfileImage = memberPageUpdateRequestDto.getImage();
         String newCharacteristic = memberPageUpdateRequestDto.getCharacteristic();
 
+        Member member= memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
+            () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+        );
         member.update(newMemberName, newProfileImage, newCharacteristic);
-
         return new ResponseDto<>(200, "성공");
     }
 
     @Transactional
-    public ResponseDto<IndividualPageResponseDto> individualPage(HttpServletRequest httpServletRequest){
-        String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
-        String memberId = jwtUtil.getMemberInfoFromToken(accessToken);  // 사용자의 UniqueId 가져옴 -> 머지 후 수정
+    public ResponseDto<IndividualPageResponseDto> individualPage(Long memberId){
 
-        Member member = memberRepository.findByMemberEmailId(memberId).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new IllegalArgumentException("존재하지 않는 유저 입니다.")
         );
-
         String emailId = member.getMemberEmailId();
         String name = member.getMemberName();
-        int age = 96;
+        int age = member.getAge();
         String gender = member.getGender();
         String profileImage = member.getProfileImage();
 

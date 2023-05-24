@@ -39,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			}
 			else if (refresh_token != null && jwtUtil.refreshTokenValidation(refresh_token)) {
 				String memberUniqueId = jwtUtil.getMemberInfoFromToken(refresh_token);
-				Member member = memberRepository.findByMemberEmailId(memberUniqueId).get();
+				Member member = memberRepository.findByMemberUniqueId(memberUniqueId).get();
 				String newAccessToken = jwtUtil.createToken(memberUniqueId, "Access");
 				jwtUtil.setHeaderAccessToken(response, newAccessToken);
 				setAuthentication(memberUniqueId);

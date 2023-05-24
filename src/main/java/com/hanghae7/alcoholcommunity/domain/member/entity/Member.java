@@ -27,6 +27,8 @@ public class Member extends Timestamped {
 	@Column(nullable = false, unique = true)
 	private String memberUniqueId;
 
+	@Column(nullable = true)
+	private int age;
 
 	@Column(nullable = false)
 	private String gender;
@@ -49,6 +51,7 @@ public class Member extends Timestamped {
 	private String social;
 
 	private LocalDateTime createdAt;
+
 
 	private Member(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
@@ -75,6 +78,11 @@ public class Member extends Timestamped {
 			memberSignupRequest.getSocial(),
 			memberSignupRequest.getCreatedAt()
 		);
+	}
+
+	public void update( String newMemberName, String newProfileImage, String newCharacteristic){
+		this.memberName = newMemberName;
+		this.profileImage = newProfileImage;
 	}
 
 }
