@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-	@Query("SELECT r FROM RefreshToken  r WHERE r.memberEmailId = :memberEmailId")
-	Optional<RefreshToken> findByMemberEmailId(@Param("memberEmailId") String memberEmailId);
+	@Query("SELECT r FROM RefreshToken  r WHERE r.memberUniqueId = :memberUniqueId")
+	Optional<RefreshToken> findByMemberEmailId(@Param("memberUniqueId") String memberUniqueId);
 }

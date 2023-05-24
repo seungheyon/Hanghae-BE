@@ -38,11 +38,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 				setAuthentication(jwtUtil.getMemberInfoFromToken(access_token));
 			}
 			else if (refresh_token != null && jwtUtil.refreshTokenValidation(refresh_token)) {
-				String memberEmailId = jwtUtil.getMemberInfoFromToken(refresh_token);
-				Member member = memberRepository.findByMemberEmailId(memberEmailId).get();
-				String newAccessToken = jwtUtil.createToken(memberEmailId, "Access");
+				String memberUniqueId = jwtUtil.getMemberInfoFromToken(refresh_token);
+				Member member = memberRepository.findByMemberEmailId(memberUniqueId).get();
+				String newAccessToken = jwtUtil.createToken(memberUniqueId, "Access");
 				jwtUtil.setHeaderAccessToken(response, newAccessToken);
-				setAuthentication(memberEmailId);
+				setAuthentication(memberUniqueId);
 			} else if (refresh_token == null) {
 				jwtExceptionHandler(response, "AccessToken has Expired. Please send your RefreshToken together.", HttpStatus.BAD_REQUEST.value());
 			} else {

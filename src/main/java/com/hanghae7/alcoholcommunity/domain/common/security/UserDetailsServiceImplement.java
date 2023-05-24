@@ -16,11 +16,11 @@ public class UserDetailsServiceImplement implements UserDetailsService {
 	private final MemberRepository memberRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String memberEmailId) throws UsernameNotFoundException {
-		Member member = memberRepository.findByMemberEmailId(memberEmailId).orElseThrow(
+	public UserDetails loadUserByUsername(String memberUniqueId) throws UsernameNotFoundException {
+		Member member = memberRepository.findByMemberEmailId(memberUniqueId).orElseThrow(
 			()-> new UsernameNotFoundException("존재하지 않는 유저 네임입니다.")
 		);
-		return new UserDetailsImplement(member, member.getMemberEmailId());
+		return new UserDetailsImplement(member, member.getMemberUniqueId());
 	}
 
 

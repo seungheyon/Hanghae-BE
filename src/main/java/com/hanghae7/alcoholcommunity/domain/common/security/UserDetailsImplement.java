@@ -12,10 +12,10 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 public class UserDetailsImplement implements UserDetails {
 
 	private final Member member;
-	private final String memberEmailId;
-	public UserDetailsImplement(Member member, String memberEmailId) {
+	private final String memberUniqueId;
+	public UserDetailsImplement(Member member, String memberUniqueId) {
 		this.member = member;
-		this.memberEmailId = memberEmailId;
+		this.memberUniqueId = memberUniqueId;
 	}
 	public Member getMember(){
 		return member;
@@ -37,7 +37,7 @@ public class UserDetailsImplement implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return this.memberEmailId;
+		return this.memberUniqueId;
 	}
 
 	@Override

@@ -54,21 +54,21 @@ public class JwtUtil {
 		key = Keys.hmacShaKeyFor(bytes);
 	}
 
-	public String createToken(String userId, String type) {
+	public String createToken(String memberUniqueId, String type) {
 		Date date = new Date();
 		long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
 		return BEARER_PREFIX
 			+ Jwts.builder()
-			.setSubject(userId)
+			.setSubject(memberUniqueId)
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.setIssuedAt(date)
 			.setExpiration(new Date(date.getTime() + time))
 			.compact();
 	}
 
-	public TokenDto createAllToken(String memberEmailId) {
-		return new TokenDto(createToken(memberEmailId, "Access"), createToken(memberEmailId, "Refresh"));
+	public TokenDto createAllToken(String memberUniqueId) {
+		return new TokenDto(createToken(memberUniqueId, "Access"), createToken(memberUniqueId, "Refresh"));
 	}
 
 	public String resolveToken(HttpServletRequest httpServletRequest, String token) {
@@ -100,8 +100,8 @@ public class JwtUtil {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 	}
 
-	public Authentication createAuthentication(String memberEmailId) {
-		UserDetails userDetails = userDetailsServiceImplement.loadUserByUsername(memberEmailId);
+	public Authentication createAuthentication(String memberUniqueId) {
+		UserDetails userDetails = userDetailsServiceImplement.loadUserByUsername(memberUniqueId);
 		return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 	}
 
