@@ -1,15 +1,13 @@
 spring:
   profiles:
-    include: aws
-
+      include: aws
   jpa:
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        hbm2ddl:
-          auto: create
-    open-in-view: false
-
+      properties:
+        hibernate:
+          show_sql: true
+          format_sql: true
+          hbm2ddl:
+            auto: create
+      open-in-view: false
   thymeleaf:
-    cache: 'false'
+      cache: 'false'
