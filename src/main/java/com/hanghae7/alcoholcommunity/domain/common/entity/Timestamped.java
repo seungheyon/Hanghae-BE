@@ -25,13 +25,13 @@ import lombok.Getter;
 public abstract class Timestamped {
 
     @CreatedDate // 최초 생성 시점 기록
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @JsonSerialize(using = LongStreamSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDateTime createdAt;
 
     @LastModifiedDate // 마지막 변경 시점 기록
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDateTime modifiedAt;
