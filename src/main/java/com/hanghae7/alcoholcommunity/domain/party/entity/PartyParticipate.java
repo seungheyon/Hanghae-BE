@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,8 +15,10 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 public class PartyParticipate {
@@ -34,11 +37,11 @@ public class PartyParticipate {
 	@JoinColumn(nullable = false)
 	private Party party;
 
-	@Builder
+	@Column(nullable = false)
+	private boolean awaiting;
+
 	public PartyParticipate(Party party, Member member) {
 		this.party=party;
 		this.member=member;
 	}
-
-
 }
