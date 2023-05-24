@@ -22,8 +22,8 @@ public class PartyParticipateController {
 	// 모임 참가
 	// 참여자만 접근 가능
 	@PostMapping("/party/join/{partyId}")
-	public ParticipateResponseDto participateParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails, String title) {
-		return partyParticipateService.participateParty(partyId, userDetails.getMember(), title);
+	public ParticipateResponseDto participateParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
+		return partyParticipateService.participateParty(partyId, userDetails.getMember());
 	}
 
 	// 주최자만 접근 가능
@@ -34,7 +34,7 @@ public class PartyParticipateController {
 
 	@DeleteMapping("/party/accept/{participateId}")
 	public ResponseEntity<Void> removeWaiting(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
-		return partyParticipateService.removeWaiting(participateId, userDetails.getMember());
+		return partyParticipateService.removeWaiting(participateId);
 	}
 
 	// 참여중인 party 리스트 불러오기

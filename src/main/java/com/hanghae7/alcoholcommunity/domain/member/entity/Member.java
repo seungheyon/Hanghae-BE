@@ -1,26 +1,32 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
-import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 @Getter
 @NoArgsConstructor
-@Entity(name="member")
+@Entity(name="Member")
 public class Member extends Timestamped {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long memberId;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String memberEmailId;
+
+	@Column(nullable = false, unique = true)
+	private String memberUniqueId;
+
 
 	@Column(nullable = false)
 	private String gender;
@@ -38,11 +44,19 @@ public class Member extends Timestamped {
 
 	private String profileImage;
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	List<PartyParticipate> partyParticipates = new ArrayList<>();
+	private String authority;
 
-	public void update(String memberName, String profileImage, String characteristic){
+	private String social;
+
+	private LocalDateTime createdAt;
+
+	private Member(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
+		this.memberEmailId = memberEmailId;
+		this.memberUniqueId = memberUniqueId;
+		this.gender = gender;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
+		this.social = social;
+		this.createdAt = createdAt;
 	}
 }

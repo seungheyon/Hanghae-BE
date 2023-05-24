@@ -2,7 +2,11 @@ package com.hanghae7.alcoholcommunity.domain.party.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,27 +45,29 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<Void> creatParty(PartyRequestDto partyRequestDto, Member member) {
 
-		Party party = partyRequestDto.toEntity(member);
+		Party party = new Party(partyRequestDto);
+		PartyParticipate partyParticipate = new PartyParticipate(party, member);
+		partyParticipate.setHost(true);
 		party.addCurrentCount();
 		partyRepository.save(party);
-
-		// 모임 참가인원 자기자신은 +1
-		PartyParticipate partyParticipate = new PartyParticipate(party, member);
-
 		partyParticipateRepository.save(partyParticipate);
-
 		return ResponseEntity.ok(null);
 	}
 
 	// 모임 전체조회(전체)
 	@Transactional(readOnly = true)
-	public ResponseEntity<List<PartyResponseDto>> findAll(Member member) {
-		List<Party> parties = partyRepository.findAll();
-		List<PartyResponseDto> partyResponseDtos = new ArrayList<>();
-		for (Party party:parties) {
-			partyResponseDtos.add(new PartyResponseDto(party));
+	public ResponseEntity<Page<Party>> findAll(int recruitmentStatus, int page) {
+
+		Page<Party> parties;
+		Pageable pageable = PageRequest.of(page, 10);
+		if(recruitmentStatus == 0){
+			parties = partyRepository.findAllParty(pageable);
+		}else if(recruitmentStatus == 1){
+			parties = partyRepository.findAllPartyRecruitmentStatus(true, pageable);
+		}else{
+			parties = partyRepository.findAllPartyRecruitmentStatus(false, pageable);
 		}
-		return ResponseEntity.ok(partyResponseDtos);
+		return ResponseEntity.ok(parties);
 	}
 
 	// 모임 전체조회(모집중)
@@ -77,20 +83,14 @@ public class PartyService {
 
 	// 모임 상세조회
 	@Transactional
-	public ResponseEntity<PartyDetailResponseDto> getParty(Long partyId, Member member) {
+	public ResponseEntity<PartyDetailResponseDto> getParty(Long partyId) {
 
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
-		List<PartyParticipate> participates = party.getPartyParticipates();
-		List<ParticipateInfoDto> participateInfoDtoList = new ArrayList<>();
-
-		for(PartyParticipate participate: participates) {
-			participateInfoDtoList.add(new ParticipateInfoDto(participate.getMember().getMemberId()));
-		}
-
-		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
-		return ResponseEntity.ok(new PartyDetailResponseDto(participateInfoDtoList, partyResponseDto));
+		List<PartyParticipate> participates = partyParticipateRepository.findByPartyId(partyId);
+		PartyResponseDto partyResponseDto = new PartyResponseDto(party, participates.get(0).getMember().getProfileImage(), participates.get(0).getMember().getMemberName());
+		return ResponseEntity.ok(new PartyDetailResponseDto(participates, partyResponseDto));
 	}
 
 	// 모임 게시글 수정
@@ -99,8 +99,9 @@ public class PartyService {
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
 		);
+		Optional<PartyParticipate> hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId);
 
-		if(!party.getMember().getMemberId().equals(member.getMemberId())) {
+		if(!hostMember.equals(member)) {
 			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
 		} else {
 			party.updateParty(partyRequestDto);
@@ -114,8 +115,9 @@ public class PartyService {
 
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+		Optional<PartyParticipate> hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId);
 
-		if (!party.getMember().getMemberName().equals(member.getMemberName())) {
+		if(!hostMember.equals(member)) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
 			partyRepository.delete(party);
