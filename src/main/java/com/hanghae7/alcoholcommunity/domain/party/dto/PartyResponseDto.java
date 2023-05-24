@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,8 +26,8 @@ public class PartyResponseDto {
 	private Long partyId;
 	private String title;
 	private String content;
-	private String profileImage;
-	private String memberName;
+	private String hostImage;
+	private String hostName;
 	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
 	// private LocalDateTime startDate;
 	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
@@ -42,15 +43,12 @@ public class PartyResponseDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 
-	public PartyResponseDto(Party party) {
+	public PartyResponseDto(Party party, String hostImage, String hostname) {
 		this.partyId = party.getPartyId();
 		this.title = party.getTitle();
 		this.content = party.getContent();
-		this.profileImage = party.getMember().getProfileImage();
-		// this.memberId = party.getMember().getMemberId();
-		this.memberName = party.getMember().getMemberName();
-		// this.startDate = party.getStartDate();
-		// this.endDate = party.getEndDate();
+		this.hostImage = hostImage;
+		this.hostName = hostname;
 		this.partyDate = party.getPartyDate();
 		this.latitude = party.getLatitude();
 		this.longitude = party.getLongitude();

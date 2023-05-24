@@ -13,6 +13,5 @@ public class ParticipateResponseDto {
 
 	private Long memberId;
 	private Long partyId;
-	private Party title;
 
 }

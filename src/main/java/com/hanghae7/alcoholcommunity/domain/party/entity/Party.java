@@ -31,7 +31,7 @@ import lombok.Setter;
 /**
  * Please explain the class!!
  *
- * @fileName      : example
+ * @fileName      : Party
  * @author        : mycom
  * @since         : 2023-05-19
  */
@@ -53,18 +53,15 @@ public class Party extends Timestamped {
 	@Column(nullable = false)
 	private String content;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = false)
-	private Member member;
-
 	@Column
 	private int totalCount;
+
 	@ColumnDefault(value = "0")
 	private int currentCount;
 
 	@Column(nullable = false)
-	// processing을 통해 모집 중 / 모집 마감 파티 리스트 활용
-	private boolean processing = true;
+	// processing을 통해 모집 중 / 모집 마감 파티 리스트 활용  recruitmentStatus
+	private boolean recruitmentStatus = true;
 
 	private String concept;
 
@@ -80,13 +77,10 @@ public class Party extends Timestamped {
 	@OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
 	List<PartyParticipate> partyParticipates = new ArrayList<>();
 
-	// 모임 신청자목록 리스트 작성
+	// 모임 신청자목록 리스트 작성?
 
 
-
-	@Builder
-	public Party(PartyRequestDto partyRequestDto, Member member) {
-			this.member = member;
+	public Party(PartyRequestDto partyRequestDto) {
 			this.title = partyRequestDto.getTitle();
 			this.content = partyRequestDto.getContent();
 			this.concept = partyRequestDto.getConcept();

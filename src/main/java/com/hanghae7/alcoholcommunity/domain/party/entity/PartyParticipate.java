@@ -38,7 +38,13 @@ public class PartyParticipate {
 	private Party party;
 
 	@Column(nullable = false)
-	private boolean awaiting;
+	private boolean awaiting = true;
+
+	@Column(nullable = false)
+	private boolean rejected = false;
+
+	@Column(nullable = false)
+	private boolean host = false;
 
 	public PartyParticipate(Party party, Member member) {
 		this.party=party;
