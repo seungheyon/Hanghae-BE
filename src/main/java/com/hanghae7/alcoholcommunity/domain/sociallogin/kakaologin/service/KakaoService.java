@@ -2,6 +2,7 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,6 +88,7 @@ public class KakaoService {
                         .memberName(kakaoAccount.getProfile().getNickname())
                         .profileImage(kakaoAccount.getProfile().getProfile_image_url())
                         .social("KAKAO")
+                        .createdAt(LocalDateTime.now())
                         .build();
                         Member newMember = Member.create(signupRequest);
                         memberRepository.save(newMember);

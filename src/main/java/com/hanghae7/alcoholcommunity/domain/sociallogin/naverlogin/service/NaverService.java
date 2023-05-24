@@ -3,6 +3,7 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -95,6 +96,7 @@ public class NaverService {
 						.memberName(naverResponse.getNickname())
 						.profileImage(naverResponse.getProfile_image())
 						.social("NAVER")
+						.createdAt(LocalDateTime.now())
 						.build();
 						Member newMember = Member.create(signupRequest);
 						memberRepository.save(newMember);

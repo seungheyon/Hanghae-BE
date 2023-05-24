@@ -1,4 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,13 +47,16 @@ public class Member extends Timestamped {
 
 	private String social;
 
-	private Member(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social) {
+	private LocalDateTime createdAt;
+
+	private Member(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
 		this.memberUniqueId = memberUniqueId;
 		this.gender = gender;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
 		this.social = social;
+		this.createdAt = createdAt;
 	}
 
 	/**
@@ -67,7 +71,8 @@ public class Member extends Timestamped {
 			memberSignupRequest.getGender(),
 			memberSignupRequest.getMemberName(),
 			memberSignupRequest.getProfileImage(),
-			memberSignupRequest.getSocial()
+			memberSignupRequest.getSocial(),
+			memberSignupRequest.getCreatedAt()
 		);
 	}
 

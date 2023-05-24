@@ -1,7 +1,10 @@
 package com.hanghae7.alcoholcommunity.domain.member.dto;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 
+import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import lombok.Builder;
@@ -16,7 +19,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-public class MemberSignupRequest {
+public class MemberSignupRequest extends Timestamped {
 
 	private String memberEmailId;
 
@@ -30,14 +33,18 @@ public class MemberSignupRequest {
 
 	private String social;
 
+	private LocalDateTime createdAt;
+
+
 	// 무결성을위해서 Builder 사용
 	@Builder
-	public MemberSignupRequest(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social) {
+	public MemberSignupRequest(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
 		this.memberUniqueId = memberUniqueId;
 		this.gender = gender;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
 		this.social = social;
+		this.createdAt = createdAt;
 	}
 }
