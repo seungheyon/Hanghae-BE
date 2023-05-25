@@ -32,10 +32,14 @@ public class MemberService {
 
     @Transactional
     public ResponseEntity<ResponseDto> memberPage(String memberUniqueId){
-
-        Member member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
-        );
+        Member member = new Member();
+        try {
+            member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
+        }
+        catch(IllegalArgumentException e){
+            return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
+        }
 
         String memberEmailId = member.getMemberEmailId();
         String memberName = member.getMemberName();
@@ -93,9 +97,14 @@ public class MemberService {
         String newProfileImage = memberPageUpdateRequestDto.getImage();
         String newCharacteristic = memberPageUpdateRequestDto.getCharacteristic();
 
-        Member member= memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
-            () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
-        );
+        Member member = new Member();
+        try {
+            member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
+        }
+        catch(IllegalArgumentException e){
+            return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
+        }
         member.update(newMemberName, newProfileImage, newCharacteristic);
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
     }
@@ -103,9 +112,14 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> individualPage(Long memberId){
 
-        Member member = memberRepository.findById(memberId).orElseThrow(
-            () -> new IllegalArgumentException("존재하지 않는 유저 입니다.")
-        );
+        Member member = new Member();
+        try {
+            member = memberRepository.findById(memberId).orElseThrow(
+                () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
+        }
+        catch(IllegalArgumentException e){
+            return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
+        }
         String emailId = member.getMemberEmailId();
         String name = member.getMemberName();
         int age = member.getAge();
