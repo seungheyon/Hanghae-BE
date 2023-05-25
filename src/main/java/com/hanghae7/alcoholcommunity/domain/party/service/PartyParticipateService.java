@@ -1,17 +1,14 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.party.dto.ParticipateResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
@@ -69,7 +66,7 @@ public class PartyParticipateService {
 		);
 
 		if(party.isRecruitmentStatus()){
-			participate.setAwaiting(false);
+			participate.setAwaite(false);
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
 			if(party.getCurrentCount() == party.getTotalCount()){
@@ -89,7 +86,7 @@ public class PartyParticipateService {
 			() -> new IllegalArgumentException("존재하지않는 참여글입니다.")
 		);
 
-		participate.setRejected(true);
+		participate.setRejection(true);
 
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}

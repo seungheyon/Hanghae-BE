@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.metamodel.model.convert.spi.JpaAttributeConverter;
@@ -26,10 +27,10 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 public interface PartyRepository extends JpaRepository<Party, Long> {
 
 	@Query("select p from Party p ORDER BY p.createdAt desc")
-	Page<Party> findAll(Pageable pageable);
+	List<Party> findAllParty(Pageable pageable);
 
-	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.createdAt desc ")
-	Page<Party> findAllPartyRecruitmentStatus(@Param("status") boolean status, Pageable pageable);
+	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.createdAt desc")
+	List<Party> findAllPartyRecruitmentStatus(@Param("status") boolean status, Pageable pageable);
 
 
 

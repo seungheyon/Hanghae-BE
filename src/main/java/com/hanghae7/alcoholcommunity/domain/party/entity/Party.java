@@ -11,16 +11,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.ColumnDefault;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.party.dto.PartyRequestDto;
+import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,7 +36,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -115,4 +111,7 @@ public class Party extends Timestamped {
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
 		}
+	public void setRecruitmentStatus(boolean recruitmentStatus){
+		this.recruitmentStatus = recruitmentStatus;
+	}
 }
