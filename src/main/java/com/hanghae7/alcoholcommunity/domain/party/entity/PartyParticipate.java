@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,14 +25,13 @@ public class PartyParticipate {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	// @JsonIgnore // 순환참조 막아줌
-	@JoinColumn(nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(nullable = true)
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	// @JsonIgnore // 순환참조 막아줌
-	@JoinColumn(nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(nullable = true)
+
 	private Party party;
 
 	@Column(nullable = false)
@@ -61,5 +61,9 @@ public class PartyParticipate {
 
 	public void setRejection(boolean rejected){
 		this.rejected = rejected;
+	}
+
+	public void setParty(Party party) {
+		this.party = party;
 	}
 }

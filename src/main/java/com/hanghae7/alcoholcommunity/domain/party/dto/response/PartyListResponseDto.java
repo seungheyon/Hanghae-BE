@@ -15,9 +15,4 @@ public class PartyListResponseDto {
 	private int page;
 	private int totalElements;
 
-/*	public PartyListResponseDto(List<PartyListResponse> partyList, int page){
-		this.partyList = partyList;
-		this.page = page;
-	}*/
-
 }

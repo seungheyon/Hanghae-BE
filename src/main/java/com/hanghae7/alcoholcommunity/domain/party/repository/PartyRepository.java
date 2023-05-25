@@ -22,9 +22,9 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 @Repository
 public interface PartyRepository extends JpaRepository<Party, Long> {
 
+
+	@Query("select p from Party p  ORDER BY p.createdAt desc")
 	Optional<Party> findByPartyId(Long partyId);
-
-
 
 	@Query("select p from Party p ORDER BY p.createdAt desc")
 	List<Party> findAllParty(Pageable pageable);
@@ -39,5 +39,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 		"where p.recruitmentStatus = true " +
 		"and pp.host = true")
 	List<RecruitingPartyResponseDto> getAllJoinParty();
+
 
 }

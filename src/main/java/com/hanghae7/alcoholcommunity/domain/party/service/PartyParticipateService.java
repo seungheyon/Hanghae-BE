@@ -42,9 +42,11 @@ public class PartyParticipateService {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
-
+		System.out.println("************************1");
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
+		System.out.println("************************2");
 		if(participate.isEmpty()){
+			System.out.println("************************3");
 			partyParticipateRepository.save(new PartyParticipate(party, member));
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 		}

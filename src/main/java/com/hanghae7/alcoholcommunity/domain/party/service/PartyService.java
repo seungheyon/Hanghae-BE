@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
+import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponseDto;
@@ -70,9 +71,11 @@ public class PartyService {
 		}
 
 		List<PartyListResponse> partyList = new ArrayList<>();
+
 		for (Party party : parties) {
 			PartyListResponse partyResponse = new PartyListResponse(party);
-			partyResponse.getparticipateMembers(party.getPartyParticipates().stream()
+			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByParty(party);
+			partyResponse.getparticipateMembers(partyParticipates.stream()
 				.map(PartyParticipate::getMember)
 				.collect(Collectors.toList()));
 			partyList.add(partyResponse);
@@ -80,6 +83,7 @@ public class PartyService {
 
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
 	}
+
 
 	// 모임 상세조회
 	@Transactional
@@ -92,8 +96,8 @@ public class PartyService {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 모임이 존재하지 않습니다."), HttpStatus.OK);
 		}
-    
-		List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);
+		List<PartyParticipate> partyMember = partyParticipateRepository.findByPartyId(partyId);
+
 		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
 		partyResponseDto.getparticipateMembers(partyMember);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", partyResponseDto), HttpStatus.OK);

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,9 +55,10 @@ public class PartyResponseDto {
 		this.modifiedAt = party.getModifiedAt();
 	}
 
-	public List<MemberInfoDto> getparticipateMembers(List<Member> participateMembers) {
+	public List<MemberInfoDto> getparticipateMembers(List<PartyParticipate> participateMembers) {
 		List<MemberInfoDto> memberInfos  = new ArrayList<>();
-		for (Member member : participateMembers) {
+		for (PartyParticipate participate  : participateMembers) {
+			Member member = participate.getMember();
 			MemberInfoDto memberInfo = new MemberInfoDto();
 			memberInfo.setMemberName(member.getMemberName());
 			memberInfo.setProfileImage(member.getProfileImage());

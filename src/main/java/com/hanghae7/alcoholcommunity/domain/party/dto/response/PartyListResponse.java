@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,4 +58,5 @@ public class PartyListResponse {
 		this.memberInfo = memberInfos;
 		return memberInfos;
 	}
+
 }
