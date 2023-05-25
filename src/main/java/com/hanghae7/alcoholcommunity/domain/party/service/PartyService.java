@@ -49,6 +49,7 @@ public class PartyService {
 		Party party = new Party(partyRequestDto, member.getMemberName());
 		PartyParticipate partyParticipate = new PartyParticipate(party, member);
 		partyParticipate.setHost(true);
+		partyParticipate.setAwaiting(false);
 		party.addCurrentCount();
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
@@ -62,7 +63,7 @@ public class PartyService {
 		Page<Party> parties;
 		Pageable pageable = PageRequest.of(page, 10);
 		if(recruitmentStatus == 0){
-			parties = partyRepository.findAllParty(pageable);
+			parties = partyRepository.findAll(pageable);
 		}else if(recruitmentStatus == 1){
 			parties = partyRepository.findAllPartyRecruitmentStatus(true, pageable);
 		}else{
@@ -78,9 +79,11 @@ public class PartyService {
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
-		List<PartyParticipate> participates = partyParticipateRepository.findByPartyId(partyId);
-		PartyResponseDto partyResponseDto = new PartyResponseDto(party, participates.get(0).getMember().getProfileImage(), participates.get(0).getMember().getMemberName());
-		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", new PartyDetailResponseDto(participates, partyResponseDto)), HttpStatus.OK);
+		List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);
+		//PartyResponseDto partyResponseDto = new PartyResponseDto(party, partyMember.get(0).getProfileImage(), partyMember.get(0).getMemberName());
+		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
+		partyResponseDto.getparticipateMembers(partyMember);
+		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", partyResponseDto), HttpStatus.OK);
 	}
 
 
@@ -94,7 +97,7 @@ public class PartyService {
 			()-> new IllegalArgumentException("없는파티임")
 		);
 
-		if(!hostMember.equals(member)) {
+		if(!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
 			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
 		} else {
 			party.updateParty(partyRequestDto);

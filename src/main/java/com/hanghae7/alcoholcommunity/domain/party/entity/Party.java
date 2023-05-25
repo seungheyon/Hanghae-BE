@@ -68,10 +68,10 @@ public class Party extends Timestamped {
 
 	private Double latitude;
 	private Double longitude;
-	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
-	// private LocalDateTime startDate;
-	// @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
-	// private LocalDateTime endDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
+	private LocalDateTime createdAt;
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
+	private LocalDateTime modifiedAt;
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 
@@ -89,8 +89,8 @@ public class Party extends Timestamped {
 			this.latitude = partyRequestDto.getLatitude();
 			this.longitude = partyRequestDto.getLongitude();
 			this.hostName = hostName;
-			// this.startDate = partyRequestDto.getStartDate();
-			// this.endDate = partyRequestDto.getEndDate();
+			this.createdAt = LocalDateTime.now();
+			this.modifiedAt = LocalDateTime.now();
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
 	}
@@ -111,8 +111,7 @@ public class Party extends Timestamped {
 			this.concept = partyRequestDto.getConcept();
 			this.latitude = partyRequestDto.getLatitude();
 			this.longitude = partyRequestDto.getLongitude();
-			// this.startDate = partyRequestDto.getStartDate();
-			// this.endDate = partyRequestDto.getEndDate();
+			this.modifiedAt = LocalDateTime.now();
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
 		}
