@@ -12,10 +12,8 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor

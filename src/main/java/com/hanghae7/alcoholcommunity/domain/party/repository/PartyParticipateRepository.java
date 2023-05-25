@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
@@ -23,4 +24,8 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 
 	@Query("select p from PartyParticipate p where p.member.memberUniqueId = :memberUniqueId")
 	List<PartyParticipate> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);
+
+	@Query("select new com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto(pp) from PartyParticipate pp where pp.member = :member and pp.awaiting = false")
+	List<JoinPartyResponseDto> getAllParticipateParty(@Param("member") Member member);
 }
+

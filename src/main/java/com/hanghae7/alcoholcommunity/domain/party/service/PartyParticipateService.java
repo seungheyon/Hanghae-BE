@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.RecruitingPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
@@ -103,6 +106,17 @@ public class PartyParticipateService {
 	}
 
 	// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요
+	// 모임 신청 대기 목록 (승인대기중)
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<RecruitingPartyResponseDto>> getJoinPartyList(){
+		List<RecruitingPartyResponseDto> joinPartyList = partyRepository.getAllJoinParty();
+		return new ResponseEntity<>(joinPartyList, HttpStatus.OK);
+	}
 
-
+	// 참여중인 party 리스트 (채팅방까지 들어간 모임) 참여자입장(주최자입장x)
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<JoinPartyResponseDto>> getParticipatePartyList(Member member){
+		List<JoinPartyResponseDto> participatePartyList = partyParticipateRepository.getAllParticipateParty(member);
+		return new ResponseEntity<>(participatePartyList, HttpStatus.OK);
+	}
 }
