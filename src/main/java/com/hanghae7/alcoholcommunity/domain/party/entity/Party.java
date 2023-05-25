@@ -68,13 +68,12 @@ public class Party extends Timestamped {
 	private LocalDateTime createdAt;
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
 	private LocalDateTime modifiedAt;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 
-
+	@OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
+	private List<PartyParticipate> partyParticipates = new ArrayList<>();
 	// 모임 신청자목록 리스트 작성?
-
-
 	public Party(PartyRequestDto partyRequestDto, String hostName) {
 			this.title = partyRequestDto.getTitle();
 			this.content = partyRequestDto.getContent();

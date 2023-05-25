@@ -46,46 +46,11 @@ public class MemberService {
         String profileImage = member.getProfileImage();
         String characteristic = "characteristic";
 
-        List<MemberPagePartyResponseDto> myPartyList = new ArrayList<>();
-        List<PartyParticipate> partyParticipateList = partyParticipateRepository.findByMemberUniqueId(memberUniqueId);
-
-        for (PartyParticipate partyParticipate : partyParticipateList) {
-            Party party = partyParticipate.getParty();
-            Long partyId = party.getPartyId();
-            String title = party.getTitle();
-            String content = party.getContent();
-            String hostName = party.getHostName();
-            String address = "address";
-            LocalDateTime date = party.getPartyDate();
-            int totalCount = party.getTotalCount();
-            int currentCount = party.getCurrentCount();
-            Boolean processing = false;
-            String partyProfileImage = "profileImage";
-            LocalDateTime createdAt = party.getCreatedAt();
-
-            MemberPagePartyResponseDto memberPagePartyResponseDto = MemberPagePartyResponseDto.builder()
-                    .partyId(partyId)
-                    .title(title)
-                    .content(content)
-                    .memberName(hostName)
-                    .address(address)
-                    .date(date)
-                    .totalCount(totalCount)
-                    .currentCount(currentCount)
-                    .processing(processing)
-                    .profileImage(partyProfileImage)
-                    .createdAt(createdAt)
-                    .build();
-
-            myPartyList.add(memberPagePartyResponseDto);
-        }
-
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .memberEmailId(memberEmailId)
                 .memberName(memberName)
                 .profileImage(profileImage)
                 .characteristic(characteristic)
-                .partyList(myPartyList)
                 .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);

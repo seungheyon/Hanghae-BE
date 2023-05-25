@@ -17,5 +17,4 @@ public class MemberResponseDto {
     private String memberName;
     private String profileImage;
     private String characteristic;
-    private List<MemberPagePartyResponseDto> partyList;
 }

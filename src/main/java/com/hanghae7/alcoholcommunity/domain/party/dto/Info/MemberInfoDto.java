@@ -17,6 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberInfoDto {
+	private Long memberId;
 	private String memberName;
 	private String profileImage;
 }

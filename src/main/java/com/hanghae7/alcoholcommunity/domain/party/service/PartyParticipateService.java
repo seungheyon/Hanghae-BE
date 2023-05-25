@@ -123,7 +123,7 @@ public class PartyParticipateService {
 	// 참여중인 party 리스트 (채팅방까지 들어간 모임) 참여자입장(주최자입장x)
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member){
-		List<Party> joinPartyList = partyParticipateRepository.findByJoinParty(member);
+		List<Party> joinPartyList = partyParticipateRepository.findByAcceptedParty(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
 		for (Party party : joinPartyList) {
 			PartyListResponse partyResponse = new PartyListResponse(party, 1);

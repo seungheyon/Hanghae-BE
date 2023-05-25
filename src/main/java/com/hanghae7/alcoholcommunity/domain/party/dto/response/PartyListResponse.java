@@ -64,6 +64,7 @@ public class PartyListResponse {
 		List<MemberInfoDto> memberInfos  = new ArrayList<>();
 		for (Member member : participateMembers) {
 			MemberInfoDto memberInfo = new MemberInfoDto();
+			memberInfo.setMemberId(member.getMemberId());
 			memberInfo.setMemberName(member.getMemberName());
 			memberInfo.setProfileImage(member.getProfileImage());
 			memberInfos.add(memberInfo);
