@@ -63,8 +63,9 @@ public class PartyService {
 		if(recruitmentStatus == 0){
 			parties = partyRepository.findAllParty(pageable);
 		}else if(recruitmentStatus == 1){
+
 			parties = partyRepository.findAllPartyRecruitmentStatus(true, pageable);
-		}else{
+		} else {
 			parties = partyRepository.findAllPartyRecruitmentStatus(false, pageable);
 		}
 
@@ -84,9 +85,14 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<ResponseDto> getParty(Long partyId) {
 
-		Party party = partyRepository.findByPartyId(partyId).orElseThrow(
-			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-
+		Party party = new Party();
+		try {
+			party = partyRepository.findById(partyId).orElseThrow(
+				() -> new IllegalArgumentException("해당 모임이 존재하지 않습니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "해당 모임이 존재하지 않습니다."), HttpStatus.OK);
+		}
+    
 		List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);
 		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
 		partyResponseDto.getparticipateMembers(partyMember);
@@ -97,41 +103,56 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
 
-		Party party = partyRepository.findByPartyId(partyId).orElseThrow(
-			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
-		);
-		Member hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
-			()-> new IllegalArgumentException("없는파티임")
-		);
+		Party party = new Party();
+		try {
+			party = partyRepository.findById(partyId).orElseThrow(
+				() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
+		}
+		Member hostMember = new Member();
+		try {
+			hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
+				() -> new IllegalArgumentException("호스트를 찾을 수 없습니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "호스트를 찾을 수 없습니다."), HttpStatus.OK);
 
-		if(!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
-			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
+		}
+		if (!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
+			return new ResponseEntity<>(new ResponseDto(400, "다른 회원이 개설한 모임입니다."), HttpStatus.OK);
 		} else {
 			party.updateParty(partyRequestDto);
-			return new ResponseEntity<>(new ResponseDto(200, "모임을 수정하였습니다."), HttpStatus.OK);
 		}
+		return new ResponseEntity<>(new ResponseDto(200, "모임을 수정하였습니다."), HttpStatus.OK);
 	}
 
 	// 모임 게시글 삭제
 	@Transactional
 	public ResponseEntity<ResponseDto> deleteParty(Long partyId, Member member) {
-
+		Party party = new Party();
 		try {
-			Party party = partyRepository.findById(partyId).orElseThrow(
-				() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-
-			Member hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
-				()-> new IllegalArgumentException("없는파티임")
-			);
-			if(!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
-				return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
-			} else {
-				partyRepository.delete(party);
-				return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
-			}
+			party = partyRepository.findById(partyId).orElseThrow(
+				() -> new IllegalArgumentException ("존재하지 않는 모임 입니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
-		catch (IllegalArgumentException e){
-			return new ResponseEntity<>(new ResponseDto(400, "해당 게시글이 존재하지 않거나, 없는 모임입니다."), HttpStatus.BAD_REQUEST);
+		Member hostMember = new Member();
+		try {
+			hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
+				() -> new IllegalArgumentException("호스트를 찾을 수 없습니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "호스트를 찾을 수 없습니다."), HttpStatus.OK);
 		}
+		if (!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
+			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
+		} else {
+			partyRepository.delete(party);
+		}
+		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
 	}
 }
+
+
+
+
+
