@@ -37,6 +37,8 @@ public class WebSecurityConfig {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeHttpRequests(authorize -> authorize
 				.shouldFilterAllDispatcherTypes(false)
+				.antMatchers("/swagger-ui/**").permitAll()
+				.antMatchers("/v3/api-docs/**").permitAll()
 				.antMatchers("/**").permitAll()
 				.anyRequest()
 				.authenticated());// 그외의 요청들은 모두 인가 받아야 한다.
