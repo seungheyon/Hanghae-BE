@@ -1,4 +1,4 @@
-package com.hanghae7.alcoholcommunity.domain.party.dto;
+package com.hanghae7.alcoholcommunity.domain.party.dto.response;
 
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 

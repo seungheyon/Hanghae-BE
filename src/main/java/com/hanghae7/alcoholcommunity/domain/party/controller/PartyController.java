@@ -1,8 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.party.controller;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
-import com.hanghae7.alcoholcommunity.domain.party.dto.PartyDetailResponseDto;
-import com.hanghae7.alcoholcommunity.domain.party.dto.PartyRequestDto;
-import com.hanghae7.alcoholcommunity.domain.party.dto.PartyResponseDto;
-import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
+import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.service.PartyService;
 
 import lombok.RequiredArgsConstructor;
