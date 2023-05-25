@@ -24,7 +24,7 @@ public class Swagger2Config {
 			.description("Api Description");
 
 
-		String token_header = JwtUtil.AUTHORIZATION_HEADER;
+		String token_header = JwtUtil.ACCESS_KEY;
 
 		SecurityRequirement securityRequirement = new SecurityRequirement().addList(token_header);
 
