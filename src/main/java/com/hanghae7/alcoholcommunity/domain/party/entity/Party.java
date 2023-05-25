@@ -36,7 +36,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -112,4 +111,7 @@ public class Party extends Timestamped {
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
 		}
+	public void setRecruitmentStatus(boolean recruitmentStatus){
+		this.recruitmentStatus = recruitmentStatus;
+	}
 }

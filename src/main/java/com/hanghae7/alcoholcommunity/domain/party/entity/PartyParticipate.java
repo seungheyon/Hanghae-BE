@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 public class PartyParticipate {
@@ -49,5 +48,20 @@ public class PartyParticipate {
 	public PartyParticipate(Party party, Member member) {
 		this.party=party;
 		this.member=member;
+	}
+
+	public PartyParticipate(Party party, Member member, boolean host, boolean awaiting) {
+		this.party=party;
+		this.member=member;
+		this.host = host;
+		this.awaiting = awaiting;
+	}
+
+	public void setAwaite(boolean awaiting){
+		this.awaiting = awaiting;
+	}
+
+	public void setRejection(boolean rejected){
+		this.rejected = rejected;
 	}
 }

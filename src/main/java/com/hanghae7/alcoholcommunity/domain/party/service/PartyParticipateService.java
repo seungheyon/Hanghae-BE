@@ -66,7 +66,7 @@ public class PartyParticipateService {
 		);
 
 		if(party.isRecruitmentStatus()){
-			participate.setAwaiting(false);
+			participate.setAwaite(false);
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
 			if(party.getCurrentCount() == party.getTotalCount()){
@@ -86,7 +86,7 @@ public class PartyParticipateService {
 			() -> new IllegalArgumentException("존재하지않는 참여글입니다.")
 		);
 
-		participate.setRejected(true);
+		participate.setRejection(true);
 
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}

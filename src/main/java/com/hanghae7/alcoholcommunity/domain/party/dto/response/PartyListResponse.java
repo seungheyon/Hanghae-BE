@@ -9,26 +9,23 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
  * Please explain the class!!
  *
- * @fileName      : example
+ * @fileName      : PartyListResponseDto
  * @author        : mycom
- * @since         : 2023-05-19
+ * @since         : 2023-05-25
  */
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
-public class PartyResponseDto {
+@NoArgsConstructor
+public class PartyListResponse {
 
 	private Long partyId;
 	private String title;
-	private String content;
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 	private Boolean recruitmentStatus;
@@ -36,22 +33,17 @@ public class PartyResponseDto {
 	private int currentCount;
 	private Double latitude;
 	private Double longitude;
-	private LocalDateTime createdAt;
-	private LocalDateTime modifiedAt;
 	private List<MemberInfoDto> memberInfo;
 
-	public PartyResponseDto(Party party) {
+	public PartyListResponse(Party party) {
 		this.partyId = party.getPartyId();
 		this.title = party.getTitle();
-		this.content = party.getContent();
 		this.partyDate = party.getPartyDate();
 		this.recruitmentStatus = party.isRecruitmentStatus();
 		this.latitude = party.getLatitude();
 		this.longitude = party.getLongitude();
 		this.totalCount = party.getTotalCount();
 		this.currentCount = party.getCurrentCount();
-		this.createdAt = party.getCreatedAt();
-		this.modifiedAt = party.getModifiedAt();
 	}
 
 	public List<MemberInfoDto> getparticipateMembers(List<Member> participateMembers) {
