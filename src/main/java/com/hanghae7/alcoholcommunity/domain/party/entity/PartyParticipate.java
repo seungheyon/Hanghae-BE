@@ -13,10 +13,8 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -33,6 +31,7 @@ public class PartyParticipate {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(nullable = true)
+
 	private Party party;
 
 	@Column(nullable = false)
@@ -56,7 +55,7 @@ public class PartyParticipate {
 		this.awaiting = awaiting;
 	}
 
-	public void setAwaite(boolean awaiting){
+	public void setAwaiting(boolean awaiting){
 		this.awaiting = awaiting;
 	}
 

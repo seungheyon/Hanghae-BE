@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.RecruitingPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
@@ -48,9 +51,20 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 		}
 		else if(participate.get().isRejected()){
-			return new ResponseEntity<>(new ResponseDto(200, "이미 신챙했던 사람입니다."), HttpStatus.OK);
-		}else{
+			return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
+		}
+		else if(participate.get().isAwaiting()){
+			System.out.println(participate.get());
+			System.out.println(participate.get().getId());
+
 			partyParticipateRepository.delete(participate.get());
+			System.out.println("여긴 지났니?");
+			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
+		}
+		else{
+			System.out.println("이리로 오니 ?");
+			partyParticipateRepository.delete(participate.get());
+			party.subCurrentCount();
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 		}
 	}
@@ -80,7 +94,7 @@ public class PartyParticipateService {
 		}
 
 		if(party.isRecruitmentStatus()){
-			participate.setAwaite(false);
+			participate.setAwaiting(false);
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
 			if(party.getCurrentCount() == party.getTotalCount()){
@@ -110,6 +124,17 @@ public class PartyParticipateService {
 	}
 
 	// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요
+	// 모임 신청 대기 목록 (승인대기중)
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<RecruitingPartyResponseDto>> getJoinPartyList(){
+		List<RecruitingPartyResponseDto> joinPartyList = partyRepository.getAllJoinParty();
+		return new ResponseEntity<>(joinPartyList, HttpStatus.OK);
+	}
 
-
+	// 참여중인 party 리스트 (채팅방까지 들어간 모임) 참여자입장(주최자입장x)
+	@Transactional(readOnly = true)
+	public ResponseEntity<List<JoinPartyResponseDto>> getParticipatePartyList(Member member){
+		List<JoinPartyResponseDto> participatePartyList = partyParticipateRepository.getAllParticipateParty(member);
+		return new ResponseEntity<>(participatePartyList, HttpStatus.OK);
+	}
 }
