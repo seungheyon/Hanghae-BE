@@ -62,6 +62,7 @@ public class PartyResponseDto {
 		for (PartyParticipate participate  : participateMembers) {
 			Member member = participate.getMember();
 			MemberInfoDto memberInfo = new MemberInfoDto();
+			memberInfo.setMemberId(member.getMemberId());
 			memberInfo.setMemberName(member.getMemberName());
 			memberInfo.setProfileImage(member.getProfileImage());
 			memberInfos.add(memberInfo);
