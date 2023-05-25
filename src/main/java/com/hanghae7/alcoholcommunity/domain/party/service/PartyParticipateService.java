@@ -32,9 +32,13 @@ public class PartyParticipateService {
 	@Transactional
 	public ResponseEntity<ResponseDto> participateParty(Long partyId, Member member) {
 
-		Party party = partyRepository.findById(partyId).orElseThrow(
-			() -> new IllegalArgumentException("존재하지않는 게시글입니다.")
-		);
+		Party party = new Party();
+		try {
+			party = partyRepository.findById(partyId).orElseThrow(
+				() -> new IllegalArgumentException ("존재하지 않는 모임 입니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
+		}
 
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
 		if(participate.isEmpty()){
@@ -57,13 +61,21 @@ public class PartyParticipateService {
 	// 주최자가 참여 여부 판단하기
 	@Transactional
 	public ResponseEntity<ResponseDto> acceptParty(Long participateId){
-		PartyParticipate participate = partyParticipateRepository.findById(participateId).orElseThrow(
-			() -> new IllegalArgumentException("존재하지않는 참여자입니다.")
-		);
 
-		Party party = partyRepository.findById(participate.getParty().getPartyId()).orElseThrow(
-			() -> new IllegalArgumentException("존재하지않는 게시글입니다.")
-		);
+		PartyParticipate participate = new PartyParticipate();
+		try {
+			participate = partyParticipateRepository.findById(participateId).orElseThrow(
+				() -> new IllegalArgumentException("존재하지않는 참여자입니다."));
+		}catch (IllegalArgumentException e){
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 참여자 입니다."), HttpStatus.OK);
+		}
+		Party party = new Party();
+		try {
+			party = partyRepository.findById(participate.getParty().getPartyId()).orElseThrow(
+				() -> new IllegalArgumentException ("존재하지 않는 모임 입니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
+		}
 
 		if(party.isRecruitmentStatus()){
 			participate.setAwaite(false);
@@ -82,9 +94,13 @@ public class PartyParticipateService {
 	// 주최자가 대기 인원 중에 삭제하고 싶은 대기 인원 삭제 메서드(승인거부)
 	@Transactional
 	public ResponseEntity<ResponseDto> removeWaiting(Long participateId){
-		PartyParticipate participate = partyParticipateRepository.findById(participateId).orElseThrow(
-			() -> new IllegalArgumentException("존재하지않는 참여글입니다.")
-		);
+		PartyParticipate participate = new PartyParticipate();
+		try {
+			participate = partyParticipateRepository.findById(participateId).orElseThrow(
+				() -> new IllegalArgumentException("존재하지않는 참여자입니다."));
+		}catch (IllegalArgumentException e){
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 참여자 입니다."), HttpStatus.OK);
+		}
 
 		participate.setRejection(true);
 
