@@ -18,9 +18,7 @@ public class PartyRequestDto {
 
 	private String title;
 	private String content;
-	// private LocalDateTime startDate;
-	// private LocalDateTime endDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm",timezone = "Asia/Seoul")
+	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 	private String concept;
 	private Double latitude;

@@ -49,6 +49,7 @@ public class PartyService {
 		Party party = new Party(partyRequestDto, member.getMemberName());
 		PartyParticipate partyParticipate = new PartyParticipate(party, member);
 		partyParticipate.setHost(true);
+		partyParticipate.setAwaiting(false);
 		party.addCurrentCount();
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
@@ -62,7 +63,7 @@ public class PartyService {
 		Page<Party> parties;
 		Pageable pageable = PageRequest.of(page, 10);
 		if(recruitmentStatus == 0){
-			parties = partyRepository.findAllParty(pageable);
+			parties = partyRepository.findAll(pageable);
 		}else if(recruitmentStatus == 1){
 			parties = partyRepository.findAllPartyRecruitmentStatus(true, pageable);
 		}else{
@@ -96,7 +97,7 @@ public class PartyService {
 			()-> new IllegalArgumentException("없는파티임")
 		);
 
-		if(!hostMember.equals(member)) {
+		if(!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
 			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
 		} else {
 			party.updateParty(partyRequestDto);

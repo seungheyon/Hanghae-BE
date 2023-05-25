@@ -26,9 +26,9 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 public interface PartyRepository extends JpaRepository<Party, Long> {
 
 	@Query("select p from Party p ORDER BY p.createdAt desc")
-	Page<Party> findAllParty(Pageable pageable);
+	Page<Party> findAll(Pageable pageable);
 
-	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.createdAt desc")
+	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.createdAt desc ")
 	Page<Party> findAllPartyRecruitmentStatus(@Param("status") boolean status, Pageable pageable);
 
 
