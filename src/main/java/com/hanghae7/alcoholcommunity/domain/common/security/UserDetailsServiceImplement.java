@@ -17,6 +17,7 @@ public class UserDetailsServiceImplement implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String memberUniqueId) throws UsernameNotFoundException {
+
 		Member member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
 			()-> new UsernameNotFoundException("존재하지 않는 유저 네임입니다.")
 		);
