@@ -84,7 +84,7 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<ResponseDto> getParty(Long partyId) {
 
-		Party party = partyRepository.findById(partyId).orElseThrow(
+		Party party = partyRepository.findByPartyId(partyId).orElseThrow(
 			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
 		List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);
@@ -97,7 +97,7 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
 
-		Party party = partyRepository.findById(partyId).orElseThrow(
+		Party party = partyRepository.findByPartyId(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
 		);
 		Member hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(

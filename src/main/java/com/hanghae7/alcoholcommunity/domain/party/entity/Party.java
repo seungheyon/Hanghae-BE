@@ -71,7 +71,7 @@ public class Party extends Timestamped {
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
 	private LocalDateTime partyDate;
 
-	@OneToMany(mappedBy = "party", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy ="party", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	List<PartyParticipate> partyParticipates = new ArrayList<>();
 
 

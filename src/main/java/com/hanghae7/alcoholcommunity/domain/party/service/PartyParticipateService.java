@@ -42,9 +42,20 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 		}
 		else if(participate.get().isRejected()){
-			return new ResponseEntity<>(new ResponseDto(200, "이미 신챙했던 사람입니다."), HttpStatus.OK);
-		}else{
+			return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
+		}
+		else if(participate.get().isAwaiting()){
+			System.out.println(participate.get());
+			System.out.println(participate.get().getId());
+
 			partyParticipateRepository.delete(participate.get());
+			System.out.println("여긴 지났니?");
+			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
+		}
+		else{
+			System.out.println("이리로 오니 ?");
+			partyParticipateRepository.delete(participate.get());
+			party.subCurrentCount();
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 		}
 	}
@@ -66,7 +77,7 @@ public class PartyParticipateService {
 		);
 
 		if(party.isRecruitmentStatus()){
-			participate.setAwaite(false);
+			participate.setAwaiting(false);
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
 			if(party.getCurrentCount() == party.getTotalCount()){

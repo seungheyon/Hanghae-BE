@@ -52,6 +52,10 @@ public class Member extends Timestamped {
 
 	private LocalDateTime createdAt;
 
+	@OneToMany(mappedBy ="member", fetch= FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	List<PartyParticipate> partyParticipates = new ArrayList<>();
+
+
 
 	private Member(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
