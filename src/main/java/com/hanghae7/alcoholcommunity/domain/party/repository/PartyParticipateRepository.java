@@ -15,12 +15,14 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 
 	Optional<PartyParticipate> findByPartyAndMember(Party party, Member member);
 
+
 	@Query("select p.member from PartyParticipate p where p.party.partyId = :partyId and p.host = true")
-	Optional<Member> findByPartyIdAndHost(@Param("partyId")Long partyId);
+	Optional<Member> findByPartyIdAndHost(@Param("partyId") Long partyId);
 
-	@Query("select p.member from PartyParticipate p where p.party.partyId = :partyId order by p.host")
-	List<Member> findByPartyId(@Param("partyId")Long partyId);
 
-	@Query("select p from PartyParticipate p where p.member.memberUniqueId = :memberUniqueId")
+	@Query("select p from PartyParticipate p join fetch p.member where p.party.partyId = :partyId order by p.host")
+	List<PartyParticipate> findByPartyId(@Param("partyId") Long partyId);
+
+	@Query("select p from PartyParticipate p join fetch p.party where p.member.memberUniqueId = :memberUniqueId")
 	List<PartyParticipate> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);
 }

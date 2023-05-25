@@ -26,12 +26,12 @@ public class PartyParticipate {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JsonIgnore // 순환참조 막아줌
 	@JoinColumn(nullable = false)
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JsonIgnore // 순환참조 막아줌
 	@JoinColumn(nullable = false)
 	private Party party;

@@ -92,7 +92,8 @@ public class PartyService {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 모임이 존재하지 않습니다."), HttpStatus.OK);
 		}
-		List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);
+		/*List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);*/
+		List<PartyParticipate> partyMember = partyParticipateRepository.findByPartyId(partyId);
 		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
 		partyResponseDto.getparticipateMembers(partyMember);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", partyResponseDto), HttpStatus.OK);
