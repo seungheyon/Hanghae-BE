@@ -26,7 +26,5 @@ public class PartyRequestDto {
 	private Double latitude;
 	private Double longitude;
 	private int totalCount;
-	// private int currentCount;
-
 
 }

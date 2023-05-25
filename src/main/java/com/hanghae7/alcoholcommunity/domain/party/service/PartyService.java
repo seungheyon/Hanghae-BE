@@ -78,9 +78,11 @@ public class PartyService {
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			()-> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
 
-		List<PartyParticipate> participates = partyParticipateRepository.findByPartyId(partyId);
-		PartyResponseDto partyResponseDto = new PartyResponseDto(party, participates.get(0).getMember().getProfileImage(), participates.get(0).getMember().getMemberName());
-		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", new PartyDetailResponseDto(participates, partyResponseDto)), HttpStatus.OK);
+		List<Member> partyMember = partyParticipateRepository.findByPartyId(partyId);
+		//PartyResponseDto partyResponseDto = new PartyResponseDto(party, partyMember.get(0).getProfileImage(), partyMember.get(0).getMemberName());
+		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
+		partyResponseDto.getparticipateMembers(partyMember);
+		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", partyResponseDto), HttpStatus.OK);
 	}
 
 
