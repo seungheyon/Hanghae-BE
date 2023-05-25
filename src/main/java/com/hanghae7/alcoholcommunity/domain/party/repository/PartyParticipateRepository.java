@@ -25,4 +25,6 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 
 	@Query("select p from PartyParticipate p join fetch p.party where p.member.memberUniqueId = :memberUniqueId")
 	List<PartyParticipate> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);
+
+	List<PartyParticipate> findByParty(Party party);
 }
