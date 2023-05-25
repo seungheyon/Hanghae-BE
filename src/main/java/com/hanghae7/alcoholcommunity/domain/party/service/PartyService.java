@@ -2,8 +2,13 @@ package com.hanghae7.alcoholcommunity.domain.party.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
+import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
@@ -42,6 +49,8 @@ public class PartyService {
 
 	private final PartyRepository partyRepository;
 	private final PartyParticipateRepository partyParticipateRepository;
+	private final MemberRepository memberRepository;
+	private final JwtUtil jwtUtil;
 
 	// 모임 게시글 등록
 	@Transactional
@@ -57,37 +66,56 @@ public class PartyService {
 
 	// 모임 전체조회(전체/모집중/모집마감)
 	@Transactional(readOnly = true)
-	public ResponseEntity<ResponseDto> findAll(int recruitmentStatus, int page) {
+	public ResponseEntity<ResponseDto> findAll(int recruitmentStatus, int page, HttpServletRequest request) {
 
+		String accessToken = request.getHeader("Access_key");
+		String memberUniqueId = null;
+		if (accessToken != null) {
+			memberUniqueId = jwtUtil.getMemberInfoFromToken(accessToken.substring(7));
+		}
 		List<Party> parties;
 		Pageable pageable = PageRequest.of(page, 10);
 		if(recruitmentStatus == 0){
 			parties = partyRepository.findAllParty(pageable);
 		}else if(recruitmentStatus == 1){
-
 			parties = partyRepository.findAllPartyRecruitmentStatus(true, pageable);
 		} else {
 			parties = partyRepository.findAllPartyRecruitmentStatus(false, pageable);
 		}
 
 		List<PartyListResponse> partyList = new ArrayList<>();
-
-		for (Party party : parties) {
-			PartyListResponse partyResponse = new PartyListResponse(party);
-			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByParty(party);
-			partyResponse.getparticipateMembers(partyParticipates.stream()
-				.map(PartyParticipate::getMember)
-				.collect(Collectors.toList()));
-			partyList.add(partyResponse);
+		if(memberUniqueId == null) {
+			for (Party party : parties) {
+				PartyListResponse partyResponse = new PartyListResponse(party);
+				List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+				partyResponse.getparticipateMembers(partyParticipates.stream()
+					.map(PartyParticipate::getMember)
+					.collect(Collectors.toList()));
+				partyList.add(partyResponse);
+			}
+		}else{
+			for (Party party : parties) {
+				Optional<Member> searchMember = memberRepository.findByMemberUniqueId(memberUniqueId);
+				if(searchMember.isPresent()){
+					int state = getState(party, searchMember.get());
+					PartyListResponse partyResponse = new PartyListResponse(party, state);
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+					partyResponse.getparticipateMembers(partyParticipates.stream()
+						.map(PartyParticipate::getMember)
+						.collect(Collectors.toList()));
+					partyList.add(partyResponse);
+				}
+			}
 		}
 
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
 	}
 
 
+
 	// 모임 상세조회
-	@Transactional
-	public ResponseEntity<ResponseDto> getParty(Long partyId) {
+	@Transactional(readOnly = true)
+	public ResponseEntity<ResponseDto> getParty(Long partyId, Member member) {
 
 		Party party = new Party();
 		try {
@@ -97,8 +125,8 @@ public class PartyService {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 모임이 존재하지 않습니다."), HttpStatus.OK);
 		}
 		List<PartyParticipate> partyMember = partyParticipateRepository.findByPartyId(partyId);
-
-		PartyResponseDto partyResponseDto = new PartyResponseDto(party);
+		int state = getState(party, member);
+		PartyResponseDto partyResponseDto = new PartyResponseDto(party,state);
 		partyResponseDto.getparticipateMembers(partyMember);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", partyResponseDto), HttpStatus.OK);
 	}
@@ -153,6 +181,21 @@ public class PartyService {
 			partyRepository.delete(party);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
+	}
+
+	public int getState(Party party, Member member) {
+		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
+		if (participate.isPresent()) {
+			if (participate.get().isRejected()) {
+				return 3;
+			} else if (participate.get().isAwaiting()) {
+				return 2;
+			} else {
+				return 1;
+			}
+		} else {
+			return 0;
+		}
 	}
 }
 

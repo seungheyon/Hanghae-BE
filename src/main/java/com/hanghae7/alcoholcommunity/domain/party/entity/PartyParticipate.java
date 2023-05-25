@@ -25,13 +25,12 @@ public class PartyParticipate {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(nullable = true)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(nullable = false)
 	private Member member;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(nullable = true)
-
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(nullable = false)
 	private Party party;
 
 	@Column(nullable = false)

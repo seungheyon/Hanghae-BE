@@ -40,8 +40,9 @@ public class PartyResponseDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
 	private List<MemberInfoDto> memberInfo;
+	private int state;
 
-	public PartyResponseDto(Party party) {
+	public PartyResponseDto(Party party, int state) {
 		this.partyId = party.getPartyId();
 		this.title = party.getTitle();
 		this.content = party.getContent();
@@ -53,6 +54,7 @@ public class PartyResponseDto {
 		this.currentCount = party.getCurrentCount();
 		this.createdAt = party.getCreatedAt();
 		this.modifiedAt = party.getModifiedAt();
+		this.state = state;
 	}
 
 	public List<MemberInfoDto> getparticipateMembers(List<PartyParticipate> participateMembers) {

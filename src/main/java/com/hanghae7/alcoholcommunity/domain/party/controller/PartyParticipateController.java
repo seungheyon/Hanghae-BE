@@ -42,15 +42,16 @@ public class PartyParticipateController {
 		return partyParticipateService.removeWaiting(participateId);
 	}
 
-	// 참여중인 party 리스트 (채팅방까지 들어간 모임)
-	@GetMapping("/party/my-party-list/accepted")
-	public ResponseEntity<List<RecruitingPartyResponseDto>> getJoinPartyList(){
-		return partyParticipateService.getJoinPartyList();
-	}
-
 	// 모임 신청 대기 목록 (승인대기중)
-	@GetMapping("party/my-party-list/await")
-	public ResponseEntity<List<JoinPartyResponseDto>> getParticipateList(@AuthenticationPrincipal UserDetailsImplement userDetails){
+	@GetMapping("party/my-party-list/accepted")
+	public ResponseEntity<ResponseDto> getParticipateList(@AuthenticationPrincipal UserDetailsImplement userDetails){
 		return partyParticipateService.getParticipatePartyList(userDetails.getMember());
 	}
+
+	// 참여중인 party 리스트 (채팅방까지 들어간 모임)
+	@GetMapping("/party/my-party-list/await")
+	public ResponseEntity<ResponseDto> getJoinPartyList(@AuthenticationPrincipal UserDetailsImplement userDetails){
+		return partyParticipateService.getJoinPartyList(userDetails.getMember());
+	}
+
 }
