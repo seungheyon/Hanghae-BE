@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ResponseDto {
     private int status;
     private String msg;
-    private Object object;
+    private Object data;
 
     public ResponseDto(int status, String msg){
         this.msg = msg;

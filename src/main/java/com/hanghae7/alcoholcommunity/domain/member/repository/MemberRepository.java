@@ -11,7 +11,7 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	@Query("SELECT m FROM Member m WHERE m.memberEmailId = :memberUniqueId")
+	@Query("SELECT m FROM Member m WHERE m.memberUniqueId = :memberUniqueId")
 	Optional<Member> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);
 
 	@Query("SELECT m FROM Member m WHERE m.memberEmailId = :memberEmailId and m.social = :social")

@@ -90,7 +90,9 @@ public class PartyService {
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
 		);
-		Optional<PartyParticipate> hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId);
+		Member hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
+			()-> new IllegalArgumentException("없는파티임")
+		);
 
 		if(!hostMember.equals(member)) {
 			throw new IllegalArgumentException("다른 회원이 작성한 게시물입니다.");
@@ -106,9 +108,13 @@ public class PartyService {
 
 		Party party = partyRepository.findById(partyId).orElseThrow(
 			() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-		Optional<PartyParticipate> hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId);
+		Member hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
+			()-> new IllegalArgumentException("없는파티임")
+		);
+		System.out.println("***넌누구냐!");
+		System.out.println(hostMember.getMemberUniqueId());
 
-		if(!hostMember.equals(member)) {
+		if(!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
 		} else {
 			partyRepository.delete(party);
