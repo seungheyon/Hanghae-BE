@@ -32,13 +32,4 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.createdAt desc")
 	List<Party> findAllPartyRecruitmentStatus(@Param("status") boolean status, Pageable pageable);
 
-	/*@Query("select new com.hanghae7.alcoholcommunity.domain.party.dto.response.RecruitingPartyResponseDto(p, m) " +
-		"from Party p " +
-		"join p.partyParticipates pp " +
-		"join pp.member m " +
-		"where p.recruitmentStatus = true " +
-		"and pp.host = true")
-	List<RecruitingPartyResponseDto> getAllJoinParty();*/
-
-
 }

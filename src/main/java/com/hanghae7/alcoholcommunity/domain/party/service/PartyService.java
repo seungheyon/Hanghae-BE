@@ -179,6 +179,7 @@ public class PartyService {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
 		} else {
 			partyRepository.delete(party);
+			partyParticipateRepository.deleteByParty(party);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
 	}

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponseDto;
@@ -42,23 +43,20 @@ public class PartyParticipateService {
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(
-				() -> new IllegalArgumentException ("존재하지 않는 모임 입니다."));
+				() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
-		if(participate.isEmpty()){
+		if (participate.isEmpty()) {
 			partyParticipateRepository.save(new PartyParticipate(party, member));
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
-		}
-		else if(participate.get().isRejected()){
+		} else if (participate.get().isRejected()) {
 			return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
-		}
-		else if(participate.get().isAwaiting()){
+		} else if (participate.get().isAwaiting()) {
 			partyParticipateRepository.delete(participate.get());
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
-		}
-		else{
+		} else {
 			System.out.println("이리로 오니 ?");
 			partyParticipateRepository.delete(participate.get());
 			party.subCurrentCount();
@@ -73,32 +71,31 @@ public class PartyParticipateService {
 	 */
 	// 주최자가 참여 여부 판단하기
 	@Transactional
-	public ResponseEntity<ResponseDto> acceptParty(Long participateId){
+	public ResponseEntity<ResponseDto> acceptParty(Long participateId) {
 
 		PartyParticipate participate = new PartyParticipate();
 		try {
 			participate = partyParticipateRepository.findById(participateId).orElseThrow(
 				() -> new IllegalArgumentException("존재하지않는 참여자입니다."));
-		}catch (IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 참여자 입니다."), HttpStatus.OK);
 		}
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(participate.getParty().getPartyId()).orElseThrow(
-				() -> new IllegalArgumentException ("존재하지 않는 모임 입니다."));
+				() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
 
-		if(party.isRecruitmentStatus()){
+		if (party.isRecruitmentStatus()) {
 			participate.setAwaiting(false);
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
-			if(party.getCurrentCount() == party.getTotalCount()){
+			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
 			}
-		}
-		else{
+		} else {
 			return new ResponseEntity<>(new ResponseDto(200, "이미 꽉찬 모임방 입니다."), HttpStatus.OK);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인하였습니다."), HttpStatus.OK);
@@ -106,12 +103,12 @@ public class PartyParticipateService {
 
 	// 주최자가 대기 인원 중에 삭제하고 싶은 대기 인원 삭제 메서드(승인거부)
 	@Transactional
-	public ResponseEntity<ResponseDto> removeWaiting(Long participateId){
+	public ResponseEntity<ResponseDto> removeWaiting(Long participateId) {
 		PartyParticipate participate = new PartyParticipate();
 		try {
 			participate = partyParticipateRepository.findById(participateId).orElseThrow(
 				() -> new IllegalArgumentException("존재하지않는 참여자입니다."));
-		}catch (IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 참여자 입니다."), HttpStatus.OK);
 		}
 
@@ -120,40 +117,46 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
 
-
-
 	// 참여중인 party 리스트 (채팅방까지 들어간 모임) 참여자입장(주최자입장x)
 	@Transactional(readOnly = true)
-	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member){
-		List<Party> joinPartyList = partyParticipateRepository.findByAcceptedParty(member);
+	public ResponseEntity<ResponseDto> getParticipatePartyList(int approveStatus, Member member) {
+		List<PartyParticipate> parties;
+		if (approveStatus == 0) {
+			parties = partyParticipateRepository.findByAllParty(member);
+		} else if (approveStatus == 1) {
+			parties = partyParticipateRepository.findByAcceptedParty(member);
+		} else {
+			parties = partyParticipateRepository.findByJoinParty(member);
+		}
 		List<PartyListResponse> partyList = new ArrayList<>();
-		for (Party party : joinPartyList) {
-			PartyListResponse partyResponse = new PartyListResponse(party, 1);
-			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+		for (PartyParticipate party : parties) {
+			int state;
+			if (party.isAwaiting()) {
+				state = 2;
+			} else {
+				state = 1;
+			}
+			PartyListResponse partyResponse = new PartyListResponse(party.getParty(), state);
+			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(
+				party.getParty().getPartyId());
 			partyResponse.getparticipateMembers(partyParticipates.stream()
 				.map(PartyParticipate::getMember)
 				.collect(Collectors.toList()));
 			partyList.add(partyResponse);
 		}
-		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", partyList ),HttpStatus.OK);
+		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", partyList), HttpStatus.OK);
 	}
 
-	// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요
-	// 모임 신청 대기 목록 (승인대기중)
-	@Transactional(readOnly = true)
-	public ResponseEntity<ResponseDto> getJoinPartyList(Member member){
+	public ResponseEntity<ResponseDto> getApproveList(Member member) {
 
-		List<Party> joinPartyList = partyParticipateRepository.findByJoinParty(member);
-		List<PartyListResponse> partyList = new ArrayList<>();
-		for (Party party : joinPartyList) {
-			PartyListResponse partyResponse = new PartyListResponse(party, 2);
-			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
-			partyResponse.getparticipateMembers(partyParticipates.stream()
-				.map(PartyParticipate::getMember)
-				.collect(Collectors.toList()));
-			partyList.add(partyResponse);
+		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
+		List<ApproveListDto> approveMemberList = new ArrayList<>();
+
+		for (PartyParticipate partyParticipate : parties) {
+			ApproveListDto approveListDto = new ApproveListDto(partyParticipate);
+			approveMemberList.add(approveListDto);
 		}
-		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", partyList ),HttpStatus.OK);
+		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveMemberList), HttpStatus.OK);
+		// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요// 모임 신청 대기 목록 (승인대기중
 	}
-
 }

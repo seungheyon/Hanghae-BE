@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
@@ -43,15 +44,16 @@ public class PartyParticipateController {
 	}
 
 	// 모임 신청 대기 목록 (승인대기중)
-	@GetMapping("party/my-party-list/accepted")
-	public ResponseEntity<ResponseDto> getParticipateList(@AuthenticationPrincipal UserDetailsImplement userDetails){
-		return partyParticipateService.getParticipatePartyList(userDetails.getMember());
+	@GetMapping("party/my-party-list")
+	public ResponseEntity<ResponseDto> getParticipateList(@RequestParam int approveStatus, @AuthenticationPrincipal UserDetailsImplement userDetails){
+		return partyParticipateService.getParticipatePartyList(approveStatus ,userDetails.getMember());
 	}
 
-	// 참여중인 party 리스트 (채팅방까지 들어간 모임)
-	@GetMapping("/party/my-party-list/await")
-	public ResponseEntity<ResponseDto> getJoinPartyList(@AuthenticationPrincipal UserDetailsImplement userDetails){
-		return partyParticipateService.getJoinPartyList(userDetails.getMember());
+	@GetMapping("/party/approve")
+	public ResponseEntity<ResponseDto> getApproveList(@AuthenticationPrincipal UserDetailsImplement userDetails){
+		return partyParticipateService.getApproveList(userDetails.getMember());
 	}
+
+
 
 }

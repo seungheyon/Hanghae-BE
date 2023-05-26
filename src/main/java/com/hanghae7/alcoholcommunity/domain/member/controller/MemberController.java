@@ -53,26 +53,6 @@ public class MemberController {
     }
 
 
-     /*   @PutMapping(value ="/member/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImplement userDetails){
-
-            System.out.println("update*****************");
-            System.out.println(requestDto.getMemberName());
-            System.out.println(requestDto.getImageProfile());
-            System.out.println(userDetails.getMember().getMemberUniqueId());
-            try{
-                return memberService.memberPageUpdate(requestDto, userDetails.getMember().getMemberUniqueId());
-            }
-            catch (IllegalArgumentException e){
-                return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
-            }
-            catch (IOException e) {
-                //e.printStackTrace();  // 예외처리 명확하게 해야 함
-                return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
-            }
-    */
-
 
     @GetMapping("/member/{memberId}")
     public ResponseEntity<ResponseDto> individualPage(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImplement userDetails){
