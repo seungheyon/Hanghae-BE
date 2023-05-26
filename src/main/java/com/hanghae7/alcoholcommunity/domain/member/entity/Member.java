@@ -85,5 +85,10 @@ public class Member extends Timestamped {
 		this.memberName = newMemberName;
 		this.profileImage = newProfileImage;
 	}
+	public void update( String newMemberName, String newCharacteristic){
+		this.memberName = newMemberName;
+	}
+
+
 
 }

@@ -11,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 
 @RestController
@@ -33,14 +35,21 @@ public class MemberController {
     }
 
     @PutMapping("/member/update")
-    public ResponseEntity<ResponseDto> memberPageUpdate(@RequestBody MemberPageUpdateRequestDto requestDto, @AuthenticationPrincipal UserDetailsImplement userDetails){
+    public ResponseEntity<ResponseDto> memberPageUpdate(@RequestBody MemberPageUpdateRequestDto requestDto,
+                                                        @RequestParam(value = "image", required = false) MultipartFile image,
+                                                        @AuthenticationPrincipal UserDetailsImplement userDetails){
         try{
-            return memberService.memberPageUpdate(requestDto, userDetails.getMember().getMemberUniqueId());
+            return memberService.memberPageUpdate(requestDto, userDetails.getMember().getMemberUniqueId(), image);
         }
         catch (IllegalArgumentException e){
             return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
+        catch (IOException e) {
+            //e.printStackTrace();  // 예외처리 명확하게 해야 함
+            return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
+
 
 
     @GetMapping("/member/{memberId}")
