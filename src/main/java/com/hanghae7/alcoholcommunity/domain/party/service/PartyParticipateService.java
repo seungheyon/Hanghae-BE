@@ -159,4 +159,18 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveMemberList), HttpStatus.OK);
 		// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요// 모임 신청 대기 목록 (승인대기중
 	}
+
+	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {
+		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipateByHost(member);
+		List<PartyListResponse> partyList = new ArrayList<>();
+		for (PartyParticipate party : parties) {
+			PartyListResponse partyResponse = new PartyListResponse(party.getParty(), 1);
+			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getParty().getPartyId());
+			partyResponse.getparticipateMembers(partyParticipates.stream()
+				.map(PartyParticipate::getMember)
+				.collect(Collectors.toList()));
+			partyList.add(partyResponse);
+		}
+		return new ResponseEntity<>(new ResponseDto(200, "회원이 호스트인 모임 조회에 성공했습니다.", partyList), HttpStatus.OK);
+	}
 }

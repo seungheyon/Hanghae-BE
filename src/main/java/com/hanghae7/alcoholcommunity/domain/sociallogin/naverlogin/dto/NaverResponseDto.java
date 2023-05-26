@@ -12,6 +12,7 @@ import lombok.ToString;
  * @fileName      : NaverResponseDto
  * @author        : mycom
  * @since         : 2023-05-22
+ * FE에 응답을 주기위한 Dto 생성
  */
 @Getter
 @ToString

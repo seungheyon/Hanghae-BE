@@ -161,6 +161,7 @@ public class PartyService {
 	// 모임 게시글 삭제
 	@Transactional
 	public ResponseEntity<ResponseDto> deleteParty(Long partyId, Member member) {
+
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(

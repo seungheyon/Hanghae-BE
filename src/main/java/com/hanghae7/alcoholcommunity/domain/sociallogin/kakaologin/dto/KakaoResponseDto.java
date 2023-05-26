@@ -7,7 +7,7 @@ import lombok.ToString;
 /**
  * @author        : mycom
  * @since         : 2023-05-22
- * 프론트엔드에 주는 유저정보에 kakao에 로그아웃하기위한 accesstoken을 전달하기 위함
+ * FE에 유저정보를 주기위한 Dto생성
  */
 
 @Getter
