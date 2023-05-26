@@ -1,5 +1,9 @@
 package com.hanghae7.alcoholcommunity.domain.member.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.member.dto.IndividualPageResponseDto;
@@ -14,14 +18,20 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRep
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +39,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PartyParticipateRepository partyParticipateRepository;
+
+    // image part
+    private static final String S3_BUCKET_PREFIX = "S3";
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+    private final AmazonS3 amazonS3;
 
     @Transactional
     public ResponseEntity<ResponseDto> memberPage(String memberUniqueId){
@@ -92,9 +109,9 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, String memberUniqueId){
+    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, String memberUniqueId, MultipartFile image) throws IOException {
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
-        String newProfileImage = memberPageUpdateRequestDto.getImage();
+        //String newProfileImage = memberPageUpdateRequestDto.getImage();
         String newCharacteristic = memberPageUpdateRequestDto.getCharacteristic();
 
         Member member = new Member();
@@ -105,7 +122,35 @@ public class MemberService {
         catch(IllegalArgumentException e){
             return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
         }
-        member.update(newMemberName, newProfileImage, newCharacteristic);
+
+        // image가 null 일 경우  -> 처리해야 함
+        // image 수정 =========================================================
+        if (image != null) {
+
+            String imageUrl;
+
+            // 새로 부여한 이미지명
+            String newFileName = UUID.randomUUID().toString();
+            String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.') + 1);
+            String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+
+            // 메타데이터 설정
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(image.getContentType());
+            objectMetadata.setContentLength(image.getSize());
+
+            InputStream inputStream = image.getInputStream();
+
+            amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
+            imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
+            member.update(newMemberName, imageUrl, newCharacteristic);
+        }
+        // image 수정 =========================================================
+        else{
+            member.update(newMemberName, newCharacteristic);
+        }
+
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
     }
 
