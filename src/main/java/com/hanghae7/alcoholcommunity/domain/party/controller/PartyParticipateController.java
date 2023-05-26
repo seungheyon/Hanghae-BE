@@ -54,6 +54,16 @@ public class PartyParticipateController {
 		return partyParticipateService.getApproveList(userDetails.getMember());
 	}
 
+	/**
+	 * 회원이 호스트인 파티리스트 출력
+	 * @param userDetails 로그인된 유저정보
+	 * @return 호스트인 파티리스트 출력
+	 */
+	@GetMapping("party/host-party-list")
+	public ResponseEntity<ResponseDto> getHostPartyList(@AuthenticationPrincipal UserDetailsImplement userDetails){
+		return partyParticipateService.getHostPartyList(userDetails.getMember());
+	}
+
 
 
 }
