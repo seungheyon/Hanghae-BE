@@ -1,14 +1,17 @@
 package com.hanghae7.alcoholcommunity.domain.member.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class MemberPageUpdateRequestDto {
+
     private String memberName;
-    private String image;
-    private String characteristic;
+    private int age;
+    private MultipartFile imageProfile;
 }
