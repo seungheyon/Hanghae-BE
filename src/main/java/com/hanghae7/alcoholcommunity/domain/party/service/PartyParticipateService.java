@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponseDto;
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.RecruitingPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
@@ -65,11 +62,10 @@ public class PartyParticipateService {
 	}
 
 	/**
-	 * 승인신청 여부, 꽉찬 모임이라면 승인안됨
+	 * 주최자가 승인신청 여부판단, 꽉찬 모임이라면 승인안됨
 	 * @param participateId 파티신청 정보의 ID
 	 * @return 승인여부 리턴
 	 */
-	// 주최자가 참여 여부 판단하기
 	@Transactional
 	public ResponseEntity<ResponseDto> acceptParty(Long participateId) {
 
@@ -91,7 +87,9 @@ public class PartyParticipateService {
 		if (party.isRecruitmentStatus()) {
 			participate.setAwaiting(false);
 			party.addCurrentCount();
+
 			//채팅방에 추가해주는 로직추가되야함
+
 			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
 			}
@@ -101,7 +99,11 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인하였습니다."), HttpStatus.OK);
 	}
 
-	// 주최자가 대기 인원 중에 삭제하고 싶은 대기 인원 삭제 메서드(승인거부)
+	/**
+	 * 주최자가 대기 인원 중에 승인거부하고 싶은 대기 인원 승인 거부
+	 * @param participateId 파티신청 정보의 ID
+	 * @return 승인거절 여부 리턴
+	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> removeWaiting(Long participateId) {
 		PartyParticipate participate = new PartyParticipate();
@@ -117,7 +119,12 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
 
-	// 참여중인 party 리스트 (채팅방까지 들어간 모임) 참여자입장(주최자입장x)
+	/**
+	 * 모임 리스트 (전체/승인완료된리스트/승인대기중인 리스트)
+	 * @param approveStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
+	 * @param member token을 통해 얻은 Member
+	 * @return approveStatus값에 따른 모임리스트 출력
+	 */
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParticipatePartyList(int approveStatus, Member member) {
 		List<PartyParticipate> parties;
@@ -147,6 +154,12 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", partyList), HttpStatus.OK);
 	}
 
+
+	/**
+	 * 내게 들어온 모임 승인 요청 목록
+	 * @param member token을 통해 얻은 Member
+	 * @return 승인 요청 된 멤버 리스트 출력
+	 */
 	public ResponseEntity<ResponseDto> getApproveList(Member member) {
 
 		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
@@ -157,6 +170,5 @@ public class PartyParticipateService {
 			approveMemberList.add(approveListDto);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveMemberList), HttpStatus.OK);
-		// 참여중인 party 리스트를 불러올 때 멤버의 partyParticipate 리스트를 불러와서 true인 경우만 따로 빼내서 응답할 수 있는 메서드 필요// 모임 신청 대기 목록 (승인대기중
 	}
 }
