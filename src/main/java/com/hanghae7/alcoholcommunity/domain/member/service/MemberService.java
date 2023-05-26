@@ -60,40 +60,30 @@ public class MemberService {
 
         String memberEmailId = member.getMemberEmailId();
         String memberName = member.getMemberName();
+        int age = member.getAge();
+        String gender = member.getGender();
         String profileImage = member.getProfileImage();
-        String characteristic = "characteristic";
 
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .memberEmailId(memberEmailId)
                 .memberName(memberName)
                 .profileImage(profileImage)
-                .characteristic(characteristic)
+                .age(age)
+                .gender(gender)
                 .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, String memberUniqueId, MultipartFile image) throws IOException {
+    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, Member member, MultipartFile image) throws IOException {
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
-        //String newProfileImage = memberPageUpdateRequestDto.getImage();
-        String newCharacteristic = memberPageUpdateRequestDto.getCharacteristic();
-
-        Member member = new Member();
-        try {
-            member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
-        }
-        catch(IllegalArgumentException e){
-            return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
-        }
-
+        int age = memberPageUpdateRequestDto.getAge();
         // image가 null 일 경우  -> 처리해야 함
         // image 수정 =========================================================
         if (image != null) {
 
             String imageUrl;
-
             // 새로 부여한 이미지명
             String newFileName = UUID.randomUUID().toString();
             String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.') + 1);
@@ -109,11 +99,11 @@ public class MemberService {
             amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
             imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
-            member.update(newMemberName, imageUrl, newCharacteristic);
+            member.update(newMemberName, age, imageUrl);
         }
         // image 수정 =========================================================
         else{
-            member.update(newMemberName, newCharacteristic);
+            member.update(newMemberName, age);
         }
 
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);

@@ -120,6 +120,8 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
 
+
+
 	// 참여중인 party 리스트 (채팅방까지 들어간 모임) 참여자입장(주최자입장x)
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member){
