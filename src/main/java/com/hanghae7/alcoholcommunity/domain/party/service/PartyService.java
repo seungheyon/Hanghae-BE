@@ -183,6 +183,7 @@ public class PartyService {
 	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> deleteParty(Long partyId, Member member) {
+
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(

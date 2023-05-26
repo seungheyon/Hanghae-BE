@@ -19,6 +19,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Timestamp를 나는 Soolo 서비스에서 사용하기위한 패턴으로 설정
+ */
 @Getter
 @Setter
 @MappedSuperclass // 멤버 변수가 컬럼이 되도록 설정

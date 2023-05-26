@@ -171,4 +171,18 @@ public class PartyParticipateService {
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveMemberList), HttpStatus.OK);
 	}
+
+	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {
+		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipateByHost(member);
+		List<PartyListResponse> partyList = new ArrayList<>();
+		for (PartyParticipate party : parties) {
+			PartyListResponse partyResponse = new PartyListResponse(party.getParty(), 1);
+			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getParty().getPartyId());
+			partyResponse.getparticipateMembers(partyParticipates.stream()
+				.map(PartyParticipate::getMember)
+				.collect(Collectors.toList()));
+			partyList.add(partyResponse);
+		}
+		return new ResponseEntity<>(new ResponseDto(200, "회원이 호스트인 모임 조회에 성공했습니다.", partyList), HttpStatus.OK);
+	}
 }

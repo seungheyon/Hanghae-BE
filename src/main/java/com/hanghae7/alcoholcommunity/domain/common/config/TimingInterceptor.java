@@ -6,6 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * API응답 시간을 측정하기위한 Timeing Interceptor 생성
+ */
 public class TimingInterceptor implements HandlerInterceptor {
 
 	@Override
