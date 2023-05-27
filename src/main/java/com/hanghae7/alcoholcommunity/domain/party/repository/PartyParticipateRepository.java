@@ -85,7 +85,7 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	 * @return member 사용자에게 승인요청이 들어온 리스트를 출력하기위한 PartyParticipate을 List로 출력
 	 */
 	@Query("SELECT pp FROM PartyParticipate pp join fetch pp.member join fetch pp.party " +
-		"WHERE pp.party.partyId IN " +
+		"WHERE pp.awaiting = true and pp.party.partyId IN " +
 		"(SELECT p.party.partyId FROM PartyParticipate p " +
 		"WHERE p.member = :member AND p.host = true) " +
 		"AND pp.host = false and pp.rejected = false")
