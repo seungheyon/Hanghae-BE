@@ -27,9 +27,8 @@ public class MemberController {
     private final MemberService memberService;
 
     /**
-     * Member page response entity.
-     *
-     * @param userDetails the user details
+     * 마이페이지 조회 (로그인 된 사람의 마이페이지)
+     * @param userDetails
      * @return the response entity
      */
     @GetMapping("/member/info")
@@ -45,7 +44,7 @@ public class MemberController {
 
     /**
      * Member page update response entity.
-     *
+     * 마이페이지 수정
      * @param requestDto  the request dto
      * @param image       the image
      * @param userDetails the user details
@@ -69,7 +68,7 @@ public class MemberController {
 
     /**
      * Individual page response entity.
-     *
+     * 상대 페이지 조회
      * @param memberId    the member id
      * @param userDetails the user details
      * @return the response entity

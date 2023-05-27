@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+/**
+ * The type Member response dto.
+ * 마이페이지 조회 시 제공하는 사용자 정보 Dto
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
