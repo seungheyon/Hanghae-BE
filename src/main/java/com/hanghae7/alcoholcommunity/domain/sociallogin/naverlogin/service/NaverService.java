@@ -74,6 +74,7 @@ public class NaverService {
 
 	/**
 	 * 첫 번째 로그인일시에 회원가입진행
+	 * 소스는 카카오와 다를바없으므로 주석은 카카오부분 참고
 	 * @param code 프론트에서 전달한 코드값
 	 * @param state 확인을 위한 state
 	 * @return 프론트에 정보전달
@@ -129,6 +130,7 @@ public class NaverService {
 	/**
 	 *
 	 * @param code getInfo메소드에서 입력된 code값을 그대로 받아옴
+	 * @param state naver는 state가 필수값으로 지정됨, FE에서 그대로 받아온 값 사용하면 문제없음
 	 * @return KakaoToken값에 accessToken, refreshToken값 리턴
 	 */
 	public NaverToken getNavertoken(final String code, final String state) {
