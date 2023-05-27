@@ -13,5 +13,4 @@ public class MemberPageUpdateRequestDto {
 
     private String memberName;
     private int age;
-    private MultipartFile imageProfile;
 }

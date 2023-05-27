@@ -48,7 +48,10 @@ public class PartyParticipateService {
 		if (participate.isEmpty()) {
 			partyParticipateRepository.save(new PartyParticipate(party, member));
 			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
-		} else if (participate.get().isRejected()) {
+		} else if (participate.get().isHost()){
+			return new ResponseEntity<>(new ResponseDto(200, "이미 호스트인 모임입니다."), HttpStatus.OK);
+		}
+		  else if (participate.get().isRejected()) {
 			return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
 		} else if (participate.get().isAwaiting()) {
 			partyParticipateRepository.delete(participate.get());
