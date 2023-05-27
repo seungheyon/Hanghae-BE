@@ -1,6 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.party.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import lombok.Getter;
