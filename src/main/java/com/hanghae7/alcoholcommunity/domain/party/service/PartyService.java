@@ -7,9 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,7 +19,6 @@ import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
-import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponseDto;
@@ -52,7 +48,12 @@ public class PartyService {
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
 
-	// 모임 게시글 등록
+	/**
+	 * 모임 게시글 등록
+	 * @param partyRequestDto 유저 입력값
+	 * @param member token을 통해 얻은 Member
+	 * @return 모임 생성 유무
+	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> creatParty(PartyRequestDto partyRequestDto, Member member) {
 
@@ -64,7 +65,13 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
 	}
 
-	// 모임 전체조회(전체/모집중/모집마감)
+	/**???????????????????????????
+	 * 모임 전체조회(전체/모집중/모집마감)
+	 * @param recruitmentStatus  0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
+	 * @param page 요청한 페이지 번호
+	 * @param request 토큰값을 확인하기 위한 정보
+	 * @return 각 리스트 출력
+	 */
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> findAll(int recruitmentStatus, int page, HttpServletRequest request) {
 
@@ -111,9 +118,13 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
 	}
 
+	/**
+	 * 모임 상세조회
+	 * @param partyId FE에서 매개변수로 전달한 Party의 Id
+	 * @param member token을 통해 얻은 Member
+	 * @return 모임 게시글에 속한 모든 내용
+	 */
 
-
-	// 모임 상세조회
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParty(Long partyId, Member member) {
 
@@ -131,7 +142,13 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 상세 조회에 성공하였습니다.", partyResponseDto), HttpStatus.OK);
 	}
 
-	// 모임 게시글 수정
+	/**
+	 * 모임 게시글 수정
+	 * @param partyId FE에서 매개변수로 전달한 Party의 Id
+	 * @param partyRequestDto 유저 입력값
+	 * @param member token을 통해 얻은 Member
+	 * @return 수정 성공 유무
+	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
 
@@ -158,7 +175,12 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 수정하였습니다."), HttpStatus.OK);
 	}
 
-	// 모임 게시글 삭제
+	/**
+	 * 모임 게시글 삭제
+	 * @param partyId FE에서 매개변수로 전달한 Party의 Id
+	 * @param member token을 통해 얻은 Member
+	 * @return 삭제 성공 유무
+	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> deleteParty(Long partyId, Member member) {
 
@@ -185,6 +207,12 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
 	}
 
+	/**
+	 *  ???????????????????????????
+	 * @param party partyId
+	 * @param member FE에서 매개변수로 전달한 Party의 Id
+	 * @return ??????????
+	 */
 	public int getState(Party party, Member member) {
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
 		if (participate.isPresent()) {

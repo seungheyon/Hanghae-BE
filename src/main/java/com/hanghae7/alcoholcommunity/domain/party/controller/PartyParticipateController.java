@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.RecruitingPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.service.PartyParticipateService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,29 +23,57 @@ public class PartyParticipateController {
 
 	private final PartyParticipateService partyParticipateService;
 
-	// 모임 참가
-	// 참여자만 접근 가능
+	/**
+	 * 모임신청 메소드, 신청 save시 기본 awating값은 True 설정
+	 * @param partyId FE에서 매개변수로 전달한 Party의 Id
+	 * @param userDetails 사용자 정보
+	 * @return PartyID와 신청한 Member값 반환
+	 */
 	@PostMapping("/party/join/{partyId}")
 	public ResponseEntity<ResponseDto> participateParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyParticipateService.participateParty(partyId, userDetails.getMember());
 	}
 
-	// 주최자만 접근 가능
+	/**
+	 * 주최자가 승인신청 여부판단, 꽉찬 모임이라면 승인안됨
+	 * @param participateId 파티신청 정보의 ID
+	 * @param userDetails 사용자 정보
+	 * @return 승인여부 리턴
+	 */
 	@PostMapping("/party/accept/{participateId}")
 	public ResponseEntity<ResponseDto> acceptParty(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
 		return partyParticipateService.acceptParty(participateId);
 	}
 
+	/**
+	 * 주최자가 대기 인원 중에 승인거부하고 싶은 대기 인원 승인 거부
+	 * @param participateId 파티신청 정보의 ID
+	 * @param userDetails 사용자 정보
+	 * @return 승인거절 여부 리턴
+	 */
 	@DeleteMapping("/party/accept/{participateId}")
 	public ResponseEntity<ResponseDto> removeWaiting(@PathVariable Long participateId, @AuthenticationPrincipal UserDetailsImplement userDetails){
 		return partyParticipateService.removeWaiting(participateId);
 	}
 
-	// 모임 신청 대기 목록 (승인대기중)
+	/**
+	 * 모임 리스트 (전체/승인완료된리스트/승인대기중인 리스트)
+	 * @param approveStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
+	 * @param userDetails 사용자 정보
+	 * @return approveStatus값에 따른 모임리스트 출력
+	 */
 	@GetMapping("party/my-party-list")
 	public ResponseEntity<ResponseDto> getParticipateList(@RequestParam int approveStatus, @AuthenticationPrincipal UserDetailsImplement userDetails){
 		return partyParticipateService.getParticipatePartyList(approveStatus ,userDetails.getMember());
 	}
+
+
+
+	/**
+	 * 내게 들어온 모임 승인 요청 목록
+	 * @param userDetails 사용자 정보
+	 * @return 승인 요청 된 멤버 리스트 출력
+	 */
 
 	@GetMapping("/party/approve")
 	public ResponseEntity<ResponseDto> getApproveList(@AuthenticationPrincipal UserDetailsImplement userDetails){
