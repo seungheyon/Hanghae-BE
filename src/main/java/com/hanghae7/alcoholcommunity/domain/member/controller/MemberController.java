@@ -19,13 +19,25 @@ import javax.validation.Valid;
 
 import java.io.IOException;
 
-
+/**
+ * Please explain the class!!
+ * MemberController Class
+ * @fileName      : MemberController
+ * @author        : 승현
+ * @since         : 2023-05-19
+ */
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * Member page response entity.
+     *
+     * @param userDetails the user details
+     * @return the response entity
+     */
     @GetMapping("/member/info")
     public ResponseEntity<ResponseDto> memberPage(@AuthenticationPrincipal UserDetailsImplement userDetails){
 
@@ -37,6 +49,14 @@ public class MemberController {
         }
     }
 
+    /**
+     * Member page update response entity.
+     *
+     * @param requestDto  the request dto
+     * @param image       the image
+     * @param userDetails the user details
+     * @return the response entity
+     */
     @PutMapping(value ="/member/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseDto> memberPageUpdate(@RequestPart(value = "data") MemberPageUpdateRequestDto requestDto,
                                                         @RequestPart(value = "image", required = false) MultipartFile image,
@@ -53,7 +73,13 @@ public class MemberController {
     }
 
 
-
+    /**
+     * Individual page response entity.
+     *
+     * @param memberId    the member id
+     * @param userDetails the user details
+     * @return the response entity
+     */
     @GetMapping("/member/{memberId}")
     public ResponseEntity<ResponseDto> individualPage(@PathVariable Long memberId, @AuthenticationPrincipal UserDetailsImplement userDetails){
         try{
