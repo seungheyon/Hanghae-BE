@@ -6,6 +6,10 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * The type Member page party response dto.
+ * 마이페이지 조회 시 제공하는 사용자 참여 모임 정보 Dto
+ */
 @Getter
 @AllArgsConstructor
 @Builder

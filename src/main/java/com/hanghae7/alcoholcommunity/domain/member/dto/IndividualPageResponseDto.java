@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * The type Individual page response dto.
+ * 상대 페이지 조회 시 제공하는 사용자 정보 Dto
+ */
 @Getter
 @AllArgsConstructor
 @Builder
