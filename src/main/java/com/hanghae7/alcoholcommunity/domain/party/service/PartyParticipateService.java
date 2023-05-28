@@ -45,22 +45,34 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
-		if (participate.isEmpty()) {
-			partyParticipateRepository.save(new PartyParticipate(party, member));
-			return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
-		} else if (participate.get().isHost()){
-			return new ResponseEntity<>(new ResponseDto(200, "이미 호스트인 모임입니다."), HttpStatus.OK);
+		if(party.isRecruitmentStatus() == true) {
+			if (participate.isEmpty()) {
+				partyParticipateRepository.save(new PartyParticipate(party, member));
+				return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
+			} else if (participate.get().isHost()) {
+				return new ResponseEntity<>(new ResponseDto(200, "이미 호스트인 모임입니다."), HttpStatus.OK);
+			} else if (participate.get().isRejected()) {
+				return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
+			} else if (participate.get().isAwaiting()) {
+				partyParticipateRepository.delete(participate.get());
+
+				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
+			} else {
+				partyParticipateRepository.delete(participate.get());
+				party.subCurrentCount();
+				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
+			}
 		}
-		  else if (participate.get().isRejected()) {
-			return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
-		} else if (participate.get().isAwaiting()) {
-			partyParticipateRepository.delete(participate.get());
-			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
-		} else {
-			System.out.println("이리로 오니 ?");
-			partyParticipateRepository.delete(participate.get());
-			party.subCurrentCount();
-			return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
+		else{
+			if(!participate.get().isAwaiting()){
+				partyParticipateRepository.delete(participate.get());
+				party.subCurrentCount();
+				party.setRecruitmentStatus(true);
+				return new ResponseEntity<>(new ResponseDto(200, "모임에서 탈퇴하였습니다."), HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
+			}
 		}
 	}
 
@@ -90,9 +102,7 @@ public class PartyParticipateService {
 		if (party.isRecruitmentStatus()) {
 			participate.setAwaiting(false);
 			party.addCurrentCount();
-
 			//채팅방에 추가해주는 로직추가되야함
-
 			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
 			}
