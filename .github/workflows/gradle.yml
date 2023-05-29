@@ -33,6 +33,10 @@ jobs:
       run: chmod +x ./gradlew
       shell: bash
       
+    - name: Set YML
+      run: |
+        echo "${{aws.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-aws.yml
+        find src
     # Build
     - name: Build with Gradle
       run: ./gradlew build
