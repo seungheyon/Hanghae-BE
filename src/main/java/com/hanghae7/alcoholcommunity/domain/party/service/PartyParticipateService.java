@@ -101,6 +101,8 @@ public class PartyParticipateService {
 
 		if (party.isRecruitmentStatus()) {
 			participate.setAwaiting(false);
+			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
+			participate.setChatRoom(partyParticipate.getChatRoom());
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
 			if (party.getCurrentCount() == party.getTotalCount()) {

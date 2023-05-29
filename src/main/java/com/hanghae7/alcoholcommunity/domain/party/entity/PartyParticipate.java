@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class PartyParticipate {
 	@JoinColumn(nullable = false)
 	private Party party;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	private ChatRoom chatRoom;
+
 	@Column(nullable = false)
 	private boolean awaiting = true;
 
@@ -45,11 +49,12 @@ public class PartyParticipate {
 		this.member=member;
 	}
 
-	public PartyParticipate(Party party, Member member, boolean host, boolean awaiting) {
+	public PartyParticipate(Party party, Member member, boolean host, boolean awaiting, ChatRoom chatRoom) {
 		this.party=party;
 		this.member=member;
 		this.host = host;
 		this.awaiting = awaiting;
+		this.chatRoom = chatRoom;
 	}
 
 	public void setAwaiting(boolean awaiting){
@@ -62,5 +67,12 @@ public class PartyParticipate {
 
 	public void setParty(Party party) {
 		this.party = party;
+	}
+
+	public void setChatRoom(ChatRoom chatRoom){
+		this.chatRoom = chatRoom;
+	}
+	public void deleteCahtRoom(){
+		this.chatRoom = null;
 	}
 }

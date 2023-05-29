@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
@@ -26,6 +27,7 @@ import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
+import com.hanghae7.alcoholcommunity.domain.party.repository.ChatRoomRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
@@ -46,6 +48,7 @@ public class PartyService {
 	private final PartyRepository partyRepository;
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final MemberRepository memberRepository;
+	private final ChatRoomRepository chatRoomRepository;
 	private final JwtUtil jwtUtil;
 
 	/**
@@ -58,7 +61,10 @@ public class PartyService {
 	public ResponseEntity<ResponseDto> creatParty(PartyRequestDto partyRequestDto, Member member) {
 
 		Party party = new Party(partyRequestDto, member.getMemberName());
-		PartyParticipate partyParticipate = new PartyParticipate(party, member, true, false);
+		//모임만들때 채팅룸 생성
+		ChatRoom chatRoom = ChatRoom.create(partyRequestDto.getTitle());
+		chatRoomRepository.save(chatRoom);
+		PartyParticipate partyParticipate = new PartyParticipate(party, member, true, false, chatRoom);
 		party.addCurrentCount();
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
@@ -202,6 +208,7 @@ public class PartyService {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
 		} else {
 			partyRepository.delete(party);
+			chatRoomRepository.delete(partyParticipateRepository.findByParty(party).getChatRoom());
 			partyParticipateRepository.deleteByParty(party);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
