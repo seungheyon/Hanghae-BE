@@ -12,6 +12,10 @@ import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
+/**
+ * The type Member.
+ * 멤버 엔티티
+ */
 @Getter
 @NoArgsConstructor
 @Entity(name="Member")
@@ -81,11 +85,30 @@ public class Member extends Timestamped {
 		);
 	}
 
+
+
+
+	/**
+	 * Update.
+	 * 멤버 업데이트 메서드(파라미터로 이미지가 있을 경우)
+	 * @param newMemberName   the new member name
+	 * @param age             the age
+	 * @param newProfileImage the new profile image
+	 */
 	public void update(String newMemberName ,String newProfileImage){
 		this.memberName = newMemberName;
 		this.profileImage = newProfileImage;
 	}
 
+
+
+
+	/**
+	 * Update.
+	 * 멤버 업데이트 메서드(파라미터로 이미지가 없을 경우)
+	 * @param newMemberName the new member name
+	 * @param age           the age
+	 */
 	public void update(String newMemberName){
 		this.memberName = newMemberName;
 	}
