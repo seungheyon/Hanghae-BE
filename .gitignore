@@ -37,4 +37,4 @@ out/
 .vscode/
 
 #### Intelli IDEA ###
-application-aws.yml
+application-secret.yml
