@@ -13,6 +13,10 @@ on:
   pull_request:
     branches: [ "develop" ]
 
+env:
+  PROJECT_NAME: alcoholcommunity
+  BUCKET_NAME: walkingpuppy7
+
 jobs:
   build:
     # 실행 환경 지정
