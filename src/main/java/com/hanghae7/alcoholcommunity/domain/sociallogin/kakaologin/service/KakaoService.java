@@ -89,6 +89,7 @@ public class KakaoService {
                     MemberSignupRequest signupRequest = MemberSignupRequest.builder()
                         .memberEmailId(kakaoAccount.getEmail())
                         .memberUniqueId(UUID.randomUUID().toString())
+                        .age(Integer.parseInt(kakaoAccount.getAge_range().substring(0, 2)))
                         .gender(kakaoAccount.getGender())
                         .memberName(kakaoAccount.getProfile().getNickname())
                         .profileImage(kakaoAccount.getProfile().getProfile_image_url())
