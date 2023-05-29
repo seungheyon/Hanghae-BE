@@ -24,7 +24,6 @@ public class ApproveListDto {
 	private String title;
 	private LocalDateTime partyDate;
 	private String memberName;
-	private boolean awaiting;
 	private String memberProfileImage;
 
 	public ApproveListDto(PartyParticipate partyParticipate){
@@ -34,7 +33,6 @@ public class ApproveListDto {
 		this.title = partyParticipate.getParty().getTitle();
 		this.partyDate = partyParticipate.getParty().getPartyDate();
 		this.memberName = partyParticipate.getMember().getMemberName();
-		this.awaiting = partyParticipate.isAwaiting();
 		this.memberProfileImage = partyParticipate.getMember().getProfileImage();
 	}
 
