@@ -79,7 +79,6 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, Member member, MultipartFile image) throws IOException {
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
-        int age = memberPageUpdateRequestDto.getAge();
         Optional<Member> updateMember = memberRepository.findByMemberUniqueId(member.getMemberUniqueId());
         // image가 null 일 경우  -> 처리해야 함
         // image 수정 =========================================================
@@ -101,11 +100,11 @@ public class MemberService {
             amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
             imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
-            updateMember.get().update(newMemberName, age, imageUrl);
+            updateMember.get().update(newMemberName, imageUrl);
         }
         // image 수정 =========================================================
         else{
-            updateMember.get().update(newMemberName, age);
+            updateMember.get().update(newMemberName);
         }
 
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);

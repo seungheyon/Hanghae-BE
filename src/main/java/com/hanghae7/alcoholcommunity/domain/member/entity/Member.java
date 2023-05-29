@@ -81,14 +81,13 @@ public class Member extends Timestamped {
 		);
 	}
 
-	public void update(String newMemberName, int age ,String newProfileImage){
+	public void update(String newMemberName ,String newProfileImage){
 		this.memberName = newMemberName;
-		this.age = age;
 		this.profileImage = newProfileImage;
 	}
-	public void update(String newMemberName, int age){
+
+	public void update(String newMemberName){
 		this.memberName = newMemberName;
-		this.age = age;
 	}
 
 

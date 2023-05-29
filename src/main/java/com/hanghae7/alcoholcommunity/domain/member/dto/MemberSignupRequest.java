@@ -27,6 +27,8 @@ public class MemberSignupRequest extends Timestamped {
 
 	private String gender;
 
+	private int age;
+
 	private String memberName;
 
 	private String profileImage;
@@ -38,9 +40,10 @@ public class MemberSignupRequest extends Timestamped {
 
 	// 무결성을위해서 Builder 사용
 	@Builder
-	public MemberSignupRequest(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
+	public MemberSignupRequest(String memberEmailId, String memberUniqueId, int age ,String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
 		this.memberUniqueId = memberUniqueId;
+		this.age = age;
 		this.gender = gender;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
