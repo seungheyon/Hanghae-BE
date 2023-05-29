@@ -58,9 +58,10 @@ public class Member extends Timestamped {
 
 
 
-	private Member(String memberEmailId, String memberUniqueId, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
+	private Member(String memberEmailId, String memberUniqueId, int age, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
 		this.memberUniqueId = memberUniqueId;
+		this.age = age;
 		this.gender = gender;
 		this.memberName = memberName;
 		this.profileImage = profileImage;
@@ -77,6 +78,7 @@ public class Member extends Timestamped {
 		return new Member(
 			memberSignupRequest.getMemberEmailId(),
 			memberSignupRequest.getMemberUniqueId(),
+			memberSignupRequest.getAge(),
 			memberSignupRequest.getGender(),
 			memberSignupRequest.getMemberName(),
 			memberSignupRequest.getProfileImage(),

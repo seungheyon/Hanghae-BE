@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
@@ -27,6 +31,7 @@ import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
+import com.hanghae7.alcoholcommunity.domain.party.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.ChatRoomRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
@@ -42,6 +47,7 @@ import lombok.RequiredArgsConstructor;
  */
 
 @RequiredArgsConstructor
+@EnableScheduling
 @Service
 public class PartyService {
 
@@ -49,6 +55,7 @@ public class PartyService {
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final MemberRepository memberRepository;
 	private final ChatRoomRepository chatRoomRepository;
+	private final ChatMessageRepository chatMessageRepository;
 	private final JwtUtil jwtUtil;
 
 	/**
@@ -64,6 +71,8 @@ public class PartyService {
 		//모임만들때 채팅룸 생성
 		ChatRoom chatRoom = ChatRoom.create(partyRequestDto.getTitle());
 		chatRoomRepository.save(chatRoom);
+		ChatMessage chatMessage = new ChatMessage(ChatMessage.MessageType.ENTER, chatRoom.getChatRoomUniqueId(), member.getMemberName(), "채팅방이 생성되었습니다", LocalDateTime.now(), chatRoom);
+		chatMessageRepository.save(chatMessage);
 		PartyParticipate partyParticipate = new PartyParticipate(party, member, true, false, chatRoom);
 		party.addCurrentCount();
 		partyRepository.save(party);
@@ -207,8 +216,9 @@ public class PartyService {
 		if (!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
 		} else {
+			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
 			partyRepository.delete(party);
-			chatRoomRepository.delete(partyParticipateRepository.findByParty(party).getChatRoom());
+			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
 			partyParticipateRepository.deleteByParty(party);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
@@ -234,6 +244,21 @@ public class PartyService {
 			return 0;
 		}
 	}
+
+	@Scheduled(fixedRate  = 600000)
+	@Transactional
+	public void deleteTimeoverParty(){
+		LocalDateTime timenow = LocalDateTime.now();
+		LocalDateTime result = timenow.plusHours(4);
+		List<Party> partyList = partyRepository.findTimeoverParty(result);
+		for (Party party : partyList) {
+			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
+			partyRepository.delete(party);
+			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
+			partyParticipateRepository.deleteByParty(party);
+		}
+	}
+
 }
 
 
