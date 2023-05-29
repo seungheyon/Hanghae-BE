@@ -42,13 +42,13 @@ public class ChatMessage extends Timestamped implements Serializable {
         ENTER, EXIT
     }
 
- /*   public ChatMessage(MessageType type, String chatRoomUniqueId, String sender, String message, Date createdAt, ChatRoom chatRoom) {
+    public ChatMessage(MessageType type, String chatRoomUniqueId, String sender, String message, LocalDateTime createdAt, ChatRoom chatRoom) {
         this.type = type;
         this.chatRoomUniqueId = chatRoomUniqueId;
         this.sender = sender;
         this.message = message;
         this.createdAt = createdAt;
         this.chatRoom = chatRoom;
-    }*/
+    }
 
 }
