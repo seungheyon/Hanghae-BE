@@ -35,7 +35,7 @@ jobs:
       
     - name: Set YML
       run: |
-        echo "${{aws.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-aws.yml
+        echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-secret.yml
         find src
         
     # Build
@@ -50,8 +50,8 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ aws.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ aws.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
     - name: Upload to S3
