@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
@@ -48,7 +49,8 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	@Query("select p from PartyParticipate p join fetch p.party where p.member.memberUniqueId = :memberUniqueId")
 	List<PartyParticipate> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);
 
-	List<PartyParticipate> findByParty(Party party);
+	@Query("select p from PartyParticipate p where p.party = :party and p.host = true")
+	PartyParticipate findByParty(@Param("party") Party party);
 
 	/**
 	 * 해당 모임정보를 가진 참여정보를 지우기위한 쿼리
@@ -85,7 +87,7 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	 * @return member 사용자에게 승인요청이 들어온 리스트를 출력하기위한 PartyParticipate을 List로 출력
 	 */
 	@Query("SELECT pp FROM PartyParticipate pp join fetch pp.member join fetch pp.party " +
-		"WHERE pp.party.partyId IN " +
+		"WHERE pp.awaiting = true and pp.party.partyId IN " +
 		"(SELECT p.party.partyId FROM PartyParticipate p " +
 		"WHERE p.member = :member AND p.host = true) " +
 		"AND pp.host = false and pp.rejected = false")
@@ -98,5 +100,7 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	 */
 	@Query("select p from PartyParticipate p join fetch p.member join fetch p.party where p.member = :member and p.host = true order by p.party.partyDate")
 	List<PartyParticipate> findPartyParticipateByHost(@Param("member") Member member);
+
+
 }
 

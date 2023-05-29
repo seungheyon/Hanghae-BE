@@ -34,6 +34,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Please explain the class!!
+ * MemberService Class
+ * @author : 승현
+ * @fileName : MemberService
+ * @since : 2023-05-19
+ */
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -48,6 +55,11 @@ public class MemberService {
     private String bucketName;
     private final AmazonS3 amazonS3;
 
+    /**
+     * 마이페이지 조회
+     * @param memberUniqueId the member unique id
+     * @return the response entity
+     */
     @Transactional
     public ResponseEntity<ResponseDto> memberPage(String memberUniqueId){
         Member member = new Member();
@@ -76,10 +88,18 @@ public class MemberService {
         return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);
     }
 
+    /**
+     * Member page update response entity.
+     * 마이페이지 수정
+     * @param memberPageUpdateRequestDto the member page update request dto
+     * @param member                     the member
+     * @param image                      the image
+     * @return the response entity
+     * @throws IOException the io exception
+     */
     @Transactional
     public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, Member member, MultipartFile image) throws IOException {
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
-        int age = memberPageUpdateRequestDto.getAge();
         Optional<Member> updateMember = memberRepository.findByMemberUniqueId(member.getMemberUniqueId());
         // image가 null 일 경우  -> 처리해야 함
         // image 수정 =========================================================
@@ -101,16 +121,22 @@ public class MemberService {
             amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
             imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
-            updateMember.get().update(newMemberName, age, imageUrl);
+            updateMember.get().update(newMemberName, imageUrl);
         }
         // image 수정 =========================================================
         else{
-            updateMember.get().update(newMemberName, age);
+            updateMember.get().update(newMemberName);
         }
 
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
     }
 
+    /**
+     * Individual page response entity.
+     * 상대페이지 조회
+     * @param memberId the member id
+     * @return the response entity
+     */
     @Transactional
     public ResponseEntity<ResponseDto> individualPage(Long memberId){
 

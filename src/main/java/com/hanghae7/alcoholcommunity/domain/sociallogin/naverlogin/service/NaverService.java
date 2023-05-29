@@ -91,9 +91,11 @@ public class NaverService {
 				if(naverResponse.getGender().equals("m") || naverResponse.getGender().equals("M")){gender = "male";} else{gender="female";}
 				int currentYear = LocalDate.now().getYear();
 				if(naverResponse.getBirthyear() != null && (currentYear - Integer.parseInt(naverResponse.getBirthyear()) + 1) >= 20) {
+
 					MemberSignupRequest signupRequest = MemberSignupRequest.builder()
 						.memberEmailId(naverResponse.getEmail())
 						.memberUniqueId(UUID.randomUUID().toString())
+						.age(((currentYear - Integer.parseInt(naverResponse.getBirthyear()) + 1)/10)*10)
 						.gender(gender)
 						.memberName(naverResponse.getNickname())
 						.profileImage(naverResponse.getProfile_image())
