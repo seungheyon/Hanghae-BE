@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Member page update request dto.
+ * 마이페이지 수정 시 요청받는 Dto
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
