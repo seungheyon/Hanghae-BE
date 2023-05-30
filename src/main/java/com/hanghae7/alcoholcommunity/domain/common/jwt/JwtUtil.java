@@ -39,7 +39,7 @@ public class JwtUtil {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer ";
 
-	private static final long ACCESS_TIME = 300 * 30 * 60 * 1000L;
+	private static final long ACCESS_TIME =  60 * 1000L;
 	private static final long REFRESH_TIME = 14 * 24 * 60 * 60 * 1000L;
 
 
@@ -47,6 +47,7 @@ public class JwtUtil {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 	private Key key;
+	private RedisDao redisDao;
 
 	@PostConstruct
 	public void init() {
@@ -107,8 +108,11 @@ public class JwtUtil {
 
 	public Boolean refreshTokenValidation(String token) {
 		if (!validateToken(token)) return false;
-		Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmailId(getMemberInfoFromToken(token));
-		return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
+
+		redisDao.getValues(getMemberInfoFromToken(token)).equals(token);
+		// Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmailId(getMemberInfoFromToken(token));
+		// return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
+		return redisDao.getValues(getMemberInfoFromToken(token)).equals(token);
 	}
 
 	public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {

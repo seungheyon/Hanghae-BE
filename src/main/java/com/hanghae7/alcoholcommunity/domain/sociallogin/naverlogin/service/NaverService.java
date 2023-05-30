@@ -2,6 +2,7 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
@@ -47,7 +49,7 @@ public class NaverService {
 	private final NaverClient naverClient;
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
-
+	private RedisDao redisDao;
 	/**
 	 * token을 받기위한 url
 	 */
@@ -114,6 +116,7 @@ public class NaverService {
 			TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
 			response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
 			response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
+			redisDao.setValues(member.get().getMemberUniqueId(), tokenDto.getRefreshToken(), Duration.ofMillis(14 * 24 * 60 * 60 * 1000L));
 			NaverResponseDto responseDto = NaverResponseDto.builder()
 				.memberId(member.get().getMemberId())
 				.memberUniqueId(member.get().getMemberUniqueId())

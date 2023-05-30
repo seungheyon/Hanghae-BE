@@ -2,6 +2,7 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
@@ -23,7 +25,7 @@ import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.client.KakaoC
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoAccount;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoResponseDto;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoToken;
-
+import org.springframework.data.redis.core.RedisTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +37,7 @@ public class KakaoService {
     private final KakaoClient client;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
+    private final RedisDao redisDao;
 
     /**
      * token을 받기위한 url
@@ -108,6 +111,9 @@ public class KakaoService {
             TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
             response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
             response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
+            redisDao.setValues(member.get().getMemberUniqueId(),tokenDto.getRefreshToken(),Duration.ofMillis(14243600000L));
+            // .setValues(.get().getMemberUniqueId(), tokenDto.getRefreshToken(), Duration.ofMillis(14 * 24 * 60 * 60 * 1000L));
+
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
                 .memberId(member.get().getMemberId())
                 .memberUniqueId(member.get().getMemberUniqueId())
