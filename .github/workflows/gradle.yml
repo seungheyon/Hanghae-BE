@@ -16,8 +16,8 @@ on:
 env:
   PROJECT_NAME: alcoholcommunity
   BUCKET_NAME: walkingpuppy7
-  CODE_DEPLOY_APP_NAME: githubaction-soolo
-  DEPLOYMENT_GROUP_NAME: soolo-group
+#   CODE_DEPLOY_APP_NAME: githubaction-soolo
+#   DEPLOYMENT_GROUP_NAME: soolo-group
 
 jobs:
   build:
@@ -38,7 +38,7 @@ jobs:
       
     - name: Set YML
       run: |
-        echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-secret.yml
+        echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-aws.yml
         find src
         
     # Build
