@@ -39,9 +39,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set YML
       run: |
-        echo "${{secrets.APPLICATION_SECRET_KEY}}" >> ./src/main/resources/application-aws.yml
+        echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode >> ./src/main/resources/application-aws.yml
         # find src
-        # | base64 --decode 
+        # 
     # Build
     - name: Build with Gradle
       run: ./gradlew build
