@@ -15,7 +15,7 @@ on:
 
 env:
   PROJECT_NAME: alcoholcommunity
-  BUCKET_NAME: walkingpuppy7
+  BUCKET_NAME: sparta7-soolo
   CODE_DEPLOY_APP_NAME: githubaction-soolo
   DEPLOYMENT_GROUP_NAME: githubaction-soolo
 
