@@ -38,3 +38,4 @@ out/
 
 #### Intelli IDEA ###
 application-secret.yml
+application-aws.yml
