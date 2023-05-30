@@ -60,12 +60,15 @@ jobs:
     - name: Upload to S3
       run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
 
-    - name: Code Deploy
-      run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
-    - name: Notify Slack
-      uses: rtCamp/action-slack-notify@v2.0.0
+     # Deploy
+    - name: Deploy
       env:
-        SLACK_COLOR: '#00FF00'
-        SLACK_TITLE: 'Build and Deploy'
-        SLACK_TEXT: 'The build and deployment process has been completed successfully.'
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws deploy create-deployment \
+        --application-name springboot-intro \
+        --deployment-group-name springboot-intro-deploy-group \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=springboot-intro-build,bundleType=zip,key=springboot-intro-build.zip \
+        --region ap-northeast-2
