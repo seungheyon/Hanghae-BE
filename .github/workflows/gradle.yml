@@ -46,10 +46,6 @@ jobs:
       run: ./gradlew build
       shell: bash
         
-    # appspec.yml Copy
-    - name: Copy appspec
-      run: cp appspec.yml ./deploy/    
-        
     - name: Make Zip File
       run: zip -qq -r ./$GITHUB_SHA.zip .
       shell: bash
