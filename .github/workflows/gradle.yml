@@ -33,13 +33,12 @@ jobs:
         distribution: 'temurin'
         
     - name: Add permission
-      run: chmod +x ./gradlew 
+      run: chmod +x gradlew 
       shell: bash
       
-    - uses: actions/checkout@v2
     - name: Set YML
       run: | 
-        echo "${{secrets.APPLICATION_SECRET_KEY}}" >> ./src/main/resources/application-aws.yml
+        echo "${{secrets.APPLICATION_SECRET_KEY}}" >> src/main/resources/application-aws.yml
         # find src
         #  | base64 --decode
     # Build
