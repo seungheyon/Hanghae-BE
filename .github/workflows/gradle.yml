@@ -16,8 +16,8 @@ on:
 env:
   PROJECT_NAME: alcoholcommunity
   BUCKET_NAME: walkingpuppy7
-#   CODE_DEPLOY_APP_NAME: githubaction-soolo
-#   DEPLOYMENT_GROUP_NAME: soolo-group
+  CODE_DEPLOY_APP_NAME: githubaction-soolo
+  DEPLOYMENT_GROUP_NAME: soolo-group
 
 jobs:
   build:
