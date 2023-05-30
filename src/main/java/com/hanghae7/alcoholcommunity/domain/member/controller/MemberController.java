@@ -94,12 +94,13 @@ public class MemberController {
 
     @GetMapping("/reissue")
     public ResponseEntity<ResponseDto> reissue(HttpServletRequest request, HttpServletResponse response){
-        System.out.println(request.getHeader("Refresh_Key"));
+
 
         String refreshKey = request.getHeader("Refresh_Key").substring(7);
+
+        if(refreshKey.length() != 172) return new ResponseEntity<>(new ResponseDto(400, "토큰 오류!"), HttpStatus.BAD_REQUEST);
+
         String memberUniqueId = jwtUtil.getMemberInfoFromToken(refreshKey);
-        System.out.println(memberUniqueId);
-        System.out.println((redisDao.getValues(memberUniqueId)));
         if(redisDao.getValues(memberUniqueId).substring(7).equals(refreshKey)) {
             TokenDto tokenDto = new TokenDto(jwtUtil.createToken(memberUniqueId, "Access"), null);
             response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
@@ -110,5 +111,12 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/token-test")
+    public ResponseEntity<ResponseDto> tokenTest(@AuthenticationPrincipal UserDetailsImplement userDetailsImplement){
+        System.out.println(userDetailsImplement);
+        System.out.println(userDetailsImplement.getMember());
+        System.out.println(userDetailsImplement.getMember().getMemberUniqueId());
+        return new ResponseEntity<>(new ResponseDto(200, "test"), HttpStatus.OK);
+    }
 
 }

@@ -6,6 +6,7 @@ import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,17 +37,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		if(access_token != null) {
 			if(jwtUtil.validateToken(access_token)) {
 				setAuthentication(jwtUtil.getMemberInfoFromToken(access_token));
-			}
-			else if (refresh_token != null && jwtUtil.refreshTokenValidation(refresh_token)) {
-				String memberUniqueId = jwtUtil.getMemberInfoFromToken(refresh_token);
-				Member member = memberRepository.findByMemberUniqueId(memberUniqueId).get();
-				String newAccessToken = jwtUtil.createToken(memberUniqueId, "Access");
-				jwtUtil.setHeaderAccessToken(response, newAccessToken);
-				setAuthentication(memberUniqueId);
-			} else if (refresh_token == null) {
-				jwtExceptionHandler(response, "AccessToken has Expired. Please send your RefreshToken together.", HttpStatus.BAD_REQUEST.value());
+			// }
+			// else if (refresh_token != null && jwtUtil.refreshTokenValidation(refresh_token)) {
+			// 	String memberUniqueId = jwtUtil.getMemberInfoFromToken(refresh_token);
+			// 	Member member = memberRepository.findByMemberUniqueId(memberUniqueId).get();
+			// 	String newAccessToken = jwtUtil.createToken(memberUniqueId, "Access");
+			// 	jwtUtil.setHeaderAccessToken(response, newAccessToken);
+			// 	setAuthentication(memberUniqueId);
+			// } else if (refresh_token == null) {
+			// 	jwtExceptionHandler(response, "AccessToken has Expired. Please send your RefreshToken together.", HttpStatus.OK.value());
 			} else {
-				jwtExceptionHandler(response, "RefreshToken Expired", HttpStatus.BAD_REQUEST.value());
+				jwtExceptionHandler(response, "잘못된 토큰입니다.", HttpStatus.FORBIDDEN.value());
 				return;
 			}
 		}
@@ -70,5 +71,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		context.setAuthentication(authentication);
 		SecurityContextHolder.setContext(context);
 	}
+
+
 
 }
