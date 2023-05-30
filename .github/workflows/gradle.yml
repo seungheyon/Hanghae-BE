@@ -33,7 +33,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Add permission
-      run: chmod +x gradlew ./gradlew build
+      run: chmod +x ./gradlew 
       shell: bash
       
     - uses: actions/checkout@v2
