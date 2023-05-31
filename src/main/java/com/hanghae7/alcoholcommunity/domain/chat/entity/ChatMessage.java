@@ -25,7 +25,7 @@ public class ChatMessage extends Timestamped implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ChatMessageId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     private ChatRoom chatRoom;
     // 메시지 타입 : 입장, 채팅

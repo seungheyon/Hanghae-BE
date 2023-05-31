@@ -218,6 +218,7 @@ public class PartyService {
 		} else {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
 			partyRepository.delete(party);
+			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
 			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
 			partyParticipateRepository.deleteByParty(party);
 		}
@@ -249,11 +250,12 @@ public class PartyService {
 	@Transactional
 	public void deleteTimeoverParty(){
 		LocalDateTime timenow = LocalDateTime.now();
-		LocalDateTime result = timenow.plusHours(4);
+		LocalDateTime result = timenow.minusHours(4);
 		List<Party> partyList = partyRepository.findTimeoverParty(result);
 		for (Party party : partyList) {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
 			partyRepository.delete(party);
+			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
 			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
 			partyParticipateRepository.deleteByParty(party);
 		}
