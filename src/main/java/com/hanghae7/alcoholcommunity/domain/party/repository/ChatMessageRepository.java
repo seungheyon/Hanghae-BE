@@ -12,7 +12,7 @@ import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-	@Query("delete from ChatMessage cm where cm.chatRoomUniqueId = :chatroomUniqueId")
+	@Query("delete from ChatMessage cm where cm.chatRoomUniqueId = :chatRoomUniqueId")
 	void deleteByChatRoomId(@Param("chatRoomUniqueId") String chatRoomUniqueId);
 }
 
