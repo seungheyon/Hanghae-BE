@@ -1,8 +1,12 @@
 package com.hanghae7.alcoholcommunity.domain.member.controller;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +16,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Please explain the class!!
@@ -25,6 +32,8 @@ import java.io.IOException;
 public class MemberController {
 
     private final MemberService memberService;
+    private final JwtUtil jwtUtil;
+    private final RedisDao redisDao;
 
     /**
      * 마이페이지 조회 (로그인 된 사람의 마이페이지)
@@ -82,4 +91,32 @@ public class MemberController {
             return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/reissue")
+    public ResponseEntity<ResponseDto> reissue(HttpServletRequest request, HttpServletResponse response){
+
+
+        String refreshKey = request.getHeader("Refresh_Key").substring(7);
+
+        if(refreshKey.length() != 172) return new ResponseEntity<>(new ResponseDto(400, "토큰 오류!"), HttpStatus.BAD_REQUEST);
+
+        String memberUniqueId = jwtUtil.getMemberInfoFromToken(refreshKey);
+        if(redisDao.getValues(memberUniqueId).substring(7).equals(refreshKey)) {
+            TokenDto tokenDto = new TokenDto(jwtUtil.createToken(memberUniqueId, "Access"), null);
+            response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
+            return new ResponseEntity<>(new ResponseDto(200, "access key 재 발급 완료"), HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(new ResponseDto(400, "토큰 오류!"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/token-test")
+    public ResponseEntity<ResponseDto> tokenTest(@AuthenticationPrincipal UserDetailsImplement userDetailsImplement){
+        System.out.println(userDetailsImplement);
+        System.out.println(userDetailsImplement.getMember());
+        System.out.println(userDetailsImplement.getMember().getMemberUniqueId());
+        return new ResponseEntity<>(new ResponseDto(200, "test"), HttpStatus.OK);
+    }
+
 }
