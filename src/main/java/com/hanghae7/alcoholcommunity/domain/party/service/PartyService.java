@@ -249,12 +249,13 @@ public class PartyService {
 	@Transactional
 	public void deleteTimeoverParty(){
 		LocalDateTime timenow = LocalDateTime.now();
-		LocalDateTime result = timenow.plusHours(4);
+		LocalDateTime result = timenow.minusHours(4);
 		List<Party> partyList = partyRepository.findTimeoverParty(result);
 		for (Party party : partyList) {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
 			partyRepository.delete(party);
 			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
+			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
 			partyParticipateRepository.deleteByParty(party);
 		}
 	}
