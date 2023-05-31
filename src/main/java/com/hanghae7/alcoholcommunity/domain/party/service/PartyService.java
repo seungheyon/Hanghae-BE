@@ -218,6 +218,7 @@ public class PartyService {
 		} else {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
 			partyRepository.delete(party);
+			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
 			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
 			partyParticipateRepository.deleteByParty(party);
 		}
@@ -254,8 +255,8 @@ public class PartyService {
 		for (Party party : partyList) {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
 			partyRepository.delete(party);
-			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
 			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
+			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
 			partyParticipateRepository.deleteByParty(party);
 		}
 	}
