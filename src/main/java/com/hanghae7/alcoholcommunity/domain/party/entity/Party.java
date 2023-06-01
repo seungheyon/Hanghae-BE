@@ -16,6 +16,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 
 import lombok.AllArgsConstructor;
@@ -72,6 +73,21 @@ public class Party extends Timestamped {
 	@OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
 	private List<PartyParticipate> partyParticipates = new ArrayList<>();
 
+
+	private String placeName;
+	private String placeAddress;
+	private String placeUrl;
+
+	private double distance;
+	private String stationName;
+	private double distanceFromMember;
+
+	@Column(nullable = true)
+	private String imageUrl;
+	public boolean isRecruitmentStatus() {
+		return recruitmentStatus;
+	}
+
 	public Party(PartyRequestDto partyRequestDto, String hostName) {
 			this.title = partyRequestDto.getTitle();
 			this.content = partyRequestDto.getContent();
@@ -83,8 +99,15 @@ public class Party extends Timestamped {
 			this.modifiedAt = LocalDateTime.now();
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
+			this.placeName = partyRequestDto.getPlaceName();
+			this.placeAddress = partyRequestDto.getPlaceAddress();
+			this.placeUrl = partyRequestDto.getPlaceUrl();
+			this.stationName =partyRequestDto.getStationName();
+			this.distance = partyRequestDto.getDistance();
 	}
-
+	public void setImageUrl(String imageUrl){
+		this.imageUrl = imageUrl;
+	}
 	// 모임 생성 시 자기자신 인원수 자동 +1
 	public void addCurrentCount() {
 		this.currentCount = currentCount +1;
@@ -92,6 +115,7 @@ public class Party extends Timestamped {
 
 	// 모임 취소 시 -1
 	public void subCurrentCount(){ this.currentCount = currentCount -1;	}
+
 
 
 	// 모임 게시글 수정
@@ -104,6 +128,11 @@ public class Party extends Timestamped {
 			this.modifiedAt = LocalDateTime.now();
 			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
+			this.placeName = partyRequestDto.getPlaceName();
+			this.placeAddress = partyRequestDto.getPlaceAddress();
+			this.placeUrl = partyRequestDto.getPlaceUrl();
+			this.stationName =partyRequestDto.getStationName();
+			this.distance = partyRequestDto.getDistance();
 		}
 	public void setRecruitmentStatus(boolean recruitmentStatus){
 		this.recruitmentStatus = recruitmentStatus;

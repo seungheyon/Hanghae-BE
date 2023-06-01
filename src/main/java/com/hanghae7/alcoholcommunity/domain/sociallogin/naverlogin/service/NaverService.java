@@ -49,7 +49,7 @@ public class NaverService {
 	private final NaverClient naverClient;
 	private final MemberRepository memberRepository;
 	private final JwtUtil jwtUtil;
-	private RedisDao redisDao;
+	private final RedisDao redisDao;
 	/**
 	 * token을 받기위한 url
 	 */
@@ -117,6 +117,8 @@ public class NaverService {
 			response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
 			response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
 			redisDao.setValues(member.get().getMemberUniqueId(), tokenDto.getRefreshToken(), Duration.ofMillis(14 * 24 * 60 * 60 * 1000L));
+
+
 			NaverResponseDto responseDto = NaverResponseDto.builder()
 				.memberId(member.get().getMemberId())
 				.memberUniqueId(member.get().getMemberUniqueId())

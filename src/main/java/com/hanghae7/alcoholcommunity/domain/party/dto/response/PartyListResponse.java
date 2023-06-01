@@ -36,6 +36,12 @@ public class PartyListResponse {
 	private Double longitude;
 	private List<MemberInfoDto> memberInfo;
 	private int state;
+	private double distance;
+	private String stationName;
+	private String imageUrl;
+	private String placeName;
+	private String placeAddress;
+	private String placeUrl;
 
 	public PartyListResponse(Party party) {
 		this.partyId = party.getPartyId();
@@ -46,6 +52,12 @@ public class PartyListResponse {
 		this.longitude = party.getLongitude();
 		this.totalCount = party.getTotalCount();
 		this.currentCount = party.getCurrentCount();
+		this.distance = party.getDistance();
+		this.stationName = party.getStationName();
+		this.imageUrl = party.getImageUrl();
+		this.placeAddress = party.getPlaceAddress();
+		this.placeName = party.getPlaceName();
+		this.placeUrl = party.getPlaceUrl();
 	}
 
 	public PartyListResponse(Party party, int state) {
@@ -58,6 +70,12 @@ public class PartyListResponse {
 		this.totalCount = party.getTotalCount();
 		this.currentCount = party.getCurrentCount();
 		this.state = state;
+		this.imageUrl = party.getImageUrl();
+		this.distance = party.getDistance();
+		this.stationName = party.getStationName();
+		this.placeAddress = party.getPlaceAddress();
+		this.placeName = party.getPlaceName();
+		this.placeUrl = party.getPlaceUrl();
 	}
 
 	public List<MemberInfoDto> getparticipateMembers(List<Member> participateMembers) {

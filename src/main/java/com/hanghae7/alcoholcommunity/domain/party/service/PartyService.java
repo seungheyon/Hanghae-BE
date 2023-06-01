@@ -1,13 +1,19 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import static com.hanghae7.alcoholcommunity.domain.member.service.MemberService.*;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,7 +22,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
@@ -35,6 +46,7 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.ChatMessageReposito
 import com.hanghae7.alcoholcommunity.domain.party.repository.ChatRoomRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,7 +69,10 @@ public class PartyService {
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatMessageRepository chatMessageRepository;
 	private final JwtUtil jwtUtil;
-
+	private static final String S3_BUCKET_PREFIX = "S3";
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucketName;
+	private final AmazonS3 amazonS3;
 	/**
 	 * 모임 게시글 등록
 	 * @param partyRequestDto 유저 입력값
@@ -65,9 +80,31 @@ public class PartyService {
 	 * @return 모임 생성 유무
 	 */
 	@Transactional
-	public ResponseEntity<ResponseDto> createParty(PartyRequestDto partyRequestDto, Member member) {
+
+	public ResponseEntity<ResponseDto> createParty(PartyRequestDto partyRequestDto, Member member, MultipartFile image) throws
+		IOException {
 
 		Party party = new Party(partyRequestDto, member.getMemberName());
+
+		if(image != null){
+			String newFileName = UUID.randomUUID().toString();
+			String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
+			String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+
+
+			ObjectMetadata objectMetadata = new ObjectMetadata();
+			objectMetadata.setContentType(image.getContentType());
+			objectMetadata.setContentLength(image.getSize());
+
+			InputStream inputStream = image.getInputStream();
+
+			amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
+			String imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
+			party.setImageUrl(imageUrl);
+		}
+
+
 		//모임만들때 채팅룸 생성
 		ChatRoom chatRoom = ChatRoom.create(partyRequestDto.getTitle());
 		chatRoomRepository.save(chatRoom);
@@ -88,7 +125,7 @@ public class PartyService {
 	 * @return 각 리스트 출력
 	 */
 	@Transactional(readOnly = true)
-	public ResponseEntity<ResponseDto> findAll(int recruitmentStatus, int page, HttpServletRequest request) {
+	public ResponseEntity<ResponseDto> findAll(double radius, double longitude, double latitude, int recruitmentStatus, int page, HttpServletRequest request) {
 
 		String accessToken = request.getHeader("Access_key");
 		String memberUniqueId = null;
@@ -107,15 +144,20 @@ public class PartyService {
 
 		List<PartyListResponse> partyList = new ArrayList<>();
 		if(memberUniqueId == null) {
-			for (Party party : parties) {
-				PartyListResponse partyResponse = new PartyListResponse(party);
-				List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
-				partyResponse.getparticipateMembers(partyParticipates.stream()
-					.map(PartyParticipate::getMember)
-					.collect(Collectors.toList()));
-				partyList.add(partyResponse);
+
+				for (Party party : parties) {
+					PartyListResponse partyResponse = new PartyListResponse(party);
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+					partyResponse.getparticipateMembers(partyParticipates.stream()
+						.map(PartyParticipate::getMember)
+						.collect(Collectors.toList()));
+					if(distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude())<= radius){
+						partyList.add(partyResponse);}
+
 			}
-		}else{
+		}
+
+		else{
 			for (Party party : parties) {
 				Optional<Member> searchMember = memberRepository.findByMemberUniqueId(memberUniqueId);
 				if(searchMember.isPresent()){
@@ -125,7 +167,8 @@ public class PartyService {
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
-					partyList.add(partyResponse);
+					if(distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude())<= radius){
+						partyList.add(partyResponse);}
 				}
 			}
 		}
@@ -165,7 +208,8 @@ public class PartyService {
 	 * @return 수정 성공 유무
 	 */
 	@Transactional
-	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member) {
+	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member, MultipartFile image) throws
+		IOException {
 
 		Party party = new Party();
 		try {
@@ -182,9 +226,29 @@ public class PartyService {
 			return new ResponseEntity<>(new ResponseDto(400, "호스트를 찾을 수 없습니다."), HttpStatus.OK);
 
 		}
+
+
 		if (!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
 			return new ResponseEntity<>(new ResponseDto(400, "다른 회원이 개설한 모임입니다."), HttpStatus.OK);
 		} else {
+			if(image != null){
+				String newFileName = UUID.randomUUID().toString();
+				String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
+				String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+
+
+				ObjectMetadata objectMetadata = new ObjectMetadata();
+				objectMetadata.setContentType(image.getContentType());
+				objectMetadata.setContentLength(image.getSize());
+
+				InputStream inputStream = image.getInputStream();
+
+				amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
+					.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
+				String imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
+				party.setImageUrl(imageUrl);
+			}
+
 			party.updateParty(partyRequestDto);
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 수정하였습니다."), HttpStatus.OK);
@@ -261,6 +325,19 @@ public class PartyService {
 		}
 	}
 
+	public double distanceCalculator(double latitude, double longitude, double latitude2, double longitude2){
+		final int R = 6371;
+		double dLat = Math.toRadians(latitude2 - latitude);
+		double dLon = Math.toRadians(longitude2- longitude);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+			+ Math.cos(Math.toRadians(latitude)) * Math.cos(Math.toRadians(latitude2))
+			* Math.sin(dLon / 2) * Math.sin(dLon / 2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		double distance = R * c;
+
+		return distance;
+	}
 }
 
 

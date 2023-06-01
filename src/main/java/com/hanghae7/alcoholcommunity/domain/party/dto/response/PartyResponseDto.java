@@ -41,6 +41,13 @@ public class PartyResponseDto {
 	private LocalDateTime modifiedAt;
 	private List<MemberInfoDto> memberInfo;
 	private int state;
+	private double distance;
+	private String stationName;
+	private String imageUrl;
+	private String placeName;
+	private String placeAddress;
+	private String placeUrl;
+	private double distanceFromMember;
 
 	public PartyResponseDto(Party party, int state) {
 		this.partyId = party.getPartyId();
@@ -55,6 +62,12 @@ public class PartyResponseDto {
 		this.createdAt = party.getCreatedAt();
 		this.modifiedAt = party.getModifiedAt();
 		this.state = state;
+		this.distance = party.getDistance();
+		this.stationName = party.getStationName();;
+		this.imageUrl = party.getImageUrl();
+		this.placeAddress = party.getPlaceAddress();
+		this.placeName = party.getPlaceName();
+		this.placeUrl = party.getPlaceUrl();
 	}
 
 	public List<MemberInfoDto> getparticipateMembers(List<PartyParticipate> participateMembers) {

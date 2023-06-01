@@ -1,15 +1,12 @@
 package com.hanghae7.alcoholcommunity.domain.common.jwt;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
+
+import static com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil.*;
+
+import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,10 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 
-import static com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil.ACCESS_KEY;
-import static com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil.REFRESH_KEY;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -29,6 +27,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final MemberRepository memberRepository;
+
 	@Override
 	protected void doFilterInternal(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String access_token = jwtUtil.resolveToken(request, ACCESS_KEY);
@@ -47,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			// } else if (refresh_token == null) {
 			// 	jwtExceptionHandler(response, "AccessToken has Expired. Please send your RefreshToken together.", HttpStatus.OK.value());
 			} else {
-				jwtExceptionHandler(response, "잘못된 토큰입니다.", HttpStatus.FORBIDDEN.value());
+				jwtExceptionHandler(response, "403 : 잘못된 토큰입니다.", HttpStatus.FORBIDDEN.value());
 				return;
 			}
 		}
@@ -58,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		response.setStatus(statusCode);
 		response.setContentType("application/json");
 		try {
-			String json = new ObjectMapper().writeValueAsString(new MemberResponseDto(/*msg, HttpStatus.UNAUTHORIZED*/));
+			String json = new ObjectMapper().writeValueAsString(new TokenMessageDto());
 			response.getWriter().write(json);
 		} catch (Exception e){
 			log.error(e.getMessage());
