@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TokenMessageDto {
+	@Builder.Default
 	private int status = 403;
+	@Builder.Default
 	private String msg = "Token is Expired!!!!!!!";
 }
