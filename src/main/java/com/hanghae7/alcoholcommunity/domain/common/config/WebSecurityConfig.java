@@ -55,6 +55,10 @@ public class WebSecurityConfig {
 		config.addAllowedOrigin("http://localhost:3000");
 		config.addAllowedOrigin("http://localhost:8080");
 		config.addAllowedOrigin("http://13.209.47.171:8080");
+
+		config.addAllowedOrigin("http://im-soolo.com");
+		config.addAllowedOrigin("https://im-soolo.com");
+
 		config.addAllowedOrigin("https://soolo-fe.vercel.app");
 		config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 		config.addExposedHeader(JwtUtil.ACCESS_KEY);

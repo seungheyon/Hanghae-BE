@@ -36,6 +36,14 @@ jobs:
       run: chmod +x gradlew 
       shell: bash
       
+    # (+++) application.yml 생성 
+    - name:  make application.yml
+      run: touch ./src/main/resources/application.yml
+      shell: bash
+    - name: deliver application.yml
+      run: echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application.yml
+      shell: bash 
+      
     - name: Set YML
       run: | 
         echo "${{secrets.APPLICATION_SECRET_KEY}}" >> src/main/resources/application-aws.yml
