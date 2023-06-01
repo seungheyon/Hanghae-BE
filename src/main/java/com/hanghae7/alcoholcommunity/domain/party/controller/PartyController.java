@@ -1,5 +1,7 @@
 package com.hanghae7.alcoholcommunity.domain.party.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -12,8 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
@@ -45,8 +48,16 @@ public class PartyController {
 	 * @return 모임 생성 유무
 	 */
 	@PostMapping("/party/new-party")
+<<<<<<< Updated upstream
 	public ResponseEntity<ResponseDto> createParty(@RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.createParty(partyRequestDto, userDetails.getMember());
+=======
+	public ResponseEntity<ResponseDto> createParty( @RequestPart(value = "data") PartyRequestDto partyRequestDto,
+													@RequestPart(value ="image", required = false) MultipartFile image,
+													@AuthenticationPrincipal UserDetailsImplement userDetails) throws
+		IOException {
+		return partyService.createParty(partyRequestDto, userDetails.getMember(), image);
+>>>>>>> Stashed changes
 	}
 
 	/**
@@ -56,11 +67,18 @@ public class PartyController {
 	 * @param request 토큰값을 확인하기 위한 정보
 	 * @return 각 리스트 출력
 	 */
-	@GetMapping("/parties")
-	public ResponseEntity<ResponseDto> findAll(@RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
+	// @GetMapping("/parties")
+	// public ResponseEntity<ResponseDto> findAll(@RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
+	//
+	// 	return partyService.findAll(recruitmentStatus, page, request);
+	// }
 
-		return partyService.findAll(recruitmentStatus, page, request);
+	@GetMapping("/parties")
+	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "20",required = false)double radius, @RequestParam(defaultValue = "127",required = false)double longitude, @RequestParam(defaultValue = "37",required = false) double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
+
+		return partyService.findAll(radius, longitude, latitude, page, recruitmentStatus, request);
 	}
+
 
 	/**
 	 * 모임 상세조회
@@ -81,8 +99,12 @@ public class PartyController {
 	 * @return 수정 성공 유무
 	 */
 	@PutMapping("/party/{partyId}")
-	public ResponseEntity<ResponseDto> updateParty(@PathVariable Long partyId, @RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
-		return partyService.updateParty(partyId, partyRequestDto, userDetails.getMember());
+	public ResponseEntity<ResponseDto> updateParty( @PathVariable Long partyId,
+													@RequestPart(value = "data") PartyRequestDto partyRequestDto,
+													@RequestPart(value ="image", required = false) MultipartFile image,
+													@AuthenticationPrincipal UserDetailsImplement userDetails)
+													throws IOException{
+		return partyService.updateParty(partyId, partyRequestDto, userDetails.getMember(), image);
 	}
 
 	/**

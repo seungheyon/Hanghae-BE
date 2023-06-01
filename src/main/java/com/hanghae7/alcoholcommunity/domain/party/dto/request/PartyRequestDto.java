@@ -24,5 +24,10 @@ public class PartyRequestDto {
 	private Double latitude;
 	private Double longitude;
 	private int totalCount;
+	private String placeName;
+	private String placeAddress;
+	private String placeUrl;
+	private double distance;
+	private String stationName;
 
 }
