@@ -39,11 +39,9 @@ public class JwtUtil {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer ";
 
-<<<<<<< Updated upstream
+
 	private static final long ACCESS_TIME =  24 * 60 * 60 * 1000L;
-=======
-	private static final long ACCESS_TIME =  6 * 60 * 60 * 1000L;
->>>>>>> Stashed changes
+
 	private static final long REFRESH_TIME = 14 * 24 * 60 * 60 * 1000L;
 
 

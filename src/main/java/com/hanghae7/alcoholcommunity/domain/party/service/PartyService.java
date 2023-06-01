@@ -80,12 +80,9 @@ public class PartyService {
 	 * @return 모임 생성 유무
 	 */
 	@Transactional
-<<<<<<< Updated upstream
-	public ResponseEntity<ResponseDto> createParty(PartyRequestDto partyRequestDto, Member member) {
-=======
+
 	public ResponseEntity<ResponseDto> createParty(PartyRequestDto partyRequestDto, Member member, MultipartFile image) throws
 		IOException {
->>>>>>> Stashed changes
 
 		Party party = new Party(partyRequestDto, member.getMemberName());
 

@@ -48,16 +48,13 @@ public class PartyController {
 	 * @return 모임 생성 유무
 	 */
 	@PostMapping("/party/new-party")
-<<<<<<< Updated upstream
-	public ResponseEntity<ResponseDto> createParty(@RequestBody PartyRequestDto partyRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
-		return partyService.createParty(partyRequestDto, userDetails.getMember());
-=======
+
 	public ResponseEntity<ResponseDto> createParty( @RequestPart(value = "data") PartyRequestDto partyRequestDto,
 													@RequestPart(value ="image", required = false) MultipartFile image,
 													@AuthenticationPrincipal UserDetailsImplement userDetails) throws
 		IOException {
 		return partyService.createParty(partyRequestDto, userDetails.getMember(), image);
->>>>>>> Stashed changes
+
 	}
 
 	/**
