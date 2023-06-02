@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,9 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRep
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import static com.hanghae7.alcoholcommunity.domain.sse.SseController.getEmitter;
 
 @RequiredArgsConstructor
 @Service
@@ -108,6 +112,17 @@ public class PartyParticipateService {
 			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
 			}
+			// 파티 참가승인 알림 전송 파트
+			String  participantId = participate.getMember().getMemberUniqueId();
+			try{
+				getEmitter(participantId).send(SseEmitter.event()
+						.data("참가승인 알림")
+						.build()
+				);
+			} catch (IOException e) {
+				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+			}
+
 		} else {
 			return new ResponseEntity<>(new ResponseDto(200, "이미 꽉찬 모임방 입니다."), HttpStatus.OK);
 		}
@@ -130,6 +145,17 @@ public class PartyParticipateService {
 		}
 
 		participate.setRejection(true);
+
+		// 파티 참가거절 알림 전송 파트
+		String  participantId = participate.getMember().getMemberUniqueId();
+		try{
+			getEmitter(participantId).send(SseEmitter.event()
+					.data("참가거절 알림")
+					.build()
+			);
+		} catch (IOException e) {
+			return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+		}
 
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
