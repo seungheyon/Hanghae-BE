@@ -151,7 +151,9 @@ public class PartyService {
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
-					if(distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude())<= radius){
+					double distanceFromCoordinate =distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude());
+					if(distanceFromCoordinate<= radius){
+						partyResponse.setDistanceCal(distanceFromCoordinate);
 						partyList.add(partyResponse);}
 
 			}
@@ -167,7 +169,9 @@ public class PartyService {
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
-					if(distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude())<= radius){
+					double distanceFromCoordinate =distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude());
+					if(distanceFromCoordinate<= radius){
+						partyResponse.setDistanceCal(distanceFromCoordinate);
 						partyList.add(partyResponse);}
 				}
 			}

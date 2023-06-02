@@ -42,6 +42,7 @@ public class PartyListResponse {
 	private String placeName;
 	private String placeAddress;
 	private String placeUrl;
+	private double distanceFromCoordinate;
 
 	public PartyListResponse(Party party) {
 		this.partyId = party.getPartyId();
@@ -58,6 +59,9 @@ public class PartyListResponse {
 		this.placeAddress = party.getPlaceAddress();
 		this.placeName = party.getPlaceName();
 		this.placeUrl = party.getPlaceUrl();
+	}
+	public void setDistanceCal(double distanceFromCoordinate){
+		this.distanceFromCoordinate = distanceFromCoordinate;
 	}
 
 	public PartyListResponse(Party party, int state) {
