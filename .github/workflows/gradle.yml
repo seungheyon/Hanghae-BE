@@ -56,8 +56,8 @@ jobs:
       
     - name: Set YML
       run: | 
-        echo "${{secrets.APPLICATION_SECRET_KEY}}"  | base64 --decode > src/main/resources/application-aws.yml
-         find src         
+        echo "${{secrets.APPLICATION_SECRET_KEY}}" | base64 --decode > src/main/resources/application-aws.yml
+        find src         
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
