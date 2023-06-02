@@ -54,7 +54,7 @@ public class WebSecurityConfig {
 
 		config.addAllowedOrigin("http://localhost:3000");
 		config.addAllowedOrigin("http://localhost:8080");
-		config.addAllowedOrigin("http://13.209.47.171:8080");
+		config.addAllowedOrigin("http://52.79.171.11:8080");
 
 		config.addAllowedOrigin("http://im-soolo.com");
 		config.addAllowedOrigin("https://im-soolo.com");

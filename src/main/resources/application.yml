@@ -6,10 +6,6 @@ spring:
     host: localhost
     port: 6379
 
-  jwt:
-    secret:
-      key: eyJzdWIiOiIyMDIzMDUwMzIzMDAiLCJuYW1lIjoiZG9u
-
   jpa:
       properties:
         hibernate:
