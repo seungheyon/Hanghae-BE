@@ -17,6 +17,11 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * The type Sse controller.
+ * SSE 연결을 요청받는 컨트롤러
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sse")
@@ -24,34 +29,16 @@ public class SseController {
 
     private static Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    // SSE event 생성
+
+    /**
+     * Stream emitter events sse emitter.
+     *
+     * @param userDetails the user details
+     * @return the sse emitter
+     * @throws IOException the io exception
+     */
+// SSE event 생성, SseEmitter 사용
     @GetMapping("/stream")
-    public Flux<ServerSentEvent<String>> streamEvents(){
-
-
-        String memberUniqueId = "UniqueId";
-        Flux<ServerSentEvent<String>> sseStream = Flux.just("Initial data")
-                .map(data -> ServerSentEvent.<String>builder()
-                        .id(memberUniqueId)
-                        .event("first-event")
-                        .data("data "+data)
-                        .build());
-                //.concatWith(Flux.never()); // 데이터 전송 후 스트림 유지
-
-        //sseStream 을 사용해서 한번 더 데이터를 전송하고 싶다
-        Flux<ServerSentEvent<String>> updateStream = Flux.just("Second data")
-                .map(data -> ServerSentEvent.<String>builder()
-                        .id(memberUniqueId)
-                        .event("second-event")
-                        .data(data)
-                        .build());
-
-
-        return sseStream;
-    }
-
-    // SseEmitter 사용
-    @GetMapping("/emitterStream")
     public SseEmitter streamEmitterEvents(@AuthenticationPrincipal UserDetailsImplement userDetails) throws IOException {
         String memberUniqueId = userDetails.getMember().getMemberUniqueId();
         SseEmitter sseEmitter = new SseEmitter();
@@ -63,9 +50,11 @@ public class SseController {
                                 .name("reconnect")
                         .data("Initial data")
                         .build());
-            } catch (IOException e){
+            } catch (IOException e) {
                 // 예외처리
+                e.printStackTrace();
             }
+
         });
 
         emitters.put(memberUniqueId, sseEmitter);
@@ -78,53 +67,31 @@ public class SseController {
         return sseEmitter;
     }
 
-    @GetMapping("/streamSec")
-    public Flux<ServerSentEvent<String>> streamEvents2(){
-
-        String memberUniqueId = "UniqueId";
-
-        // 최초 연결 시에만 데이터를 전송하는 Flux 생성
-        Flux<ServerSentEvent<String>> initialData = Flux.just("Initial data")
-                .map(data -> ServerSentEvent.<String>builder()
-                        .id(memberUniqueId)
-                        .event("first-event")
-                        .data(data)
-                        .build());
-
-        initialData.map(data -> ServerSentEvent.<String>builder()
-                .event("second-event")
-                .data("Second data")
-                .build());
-
-        // 이후에는 데이터를 전송하지 않고 스트림 유지
-        Flux<ServerSentEvent<String>> keepAlive = Flux.interval(Duration.ofSeconds(1))
-                .map(tick -> ServerSentEvent.<String>builder()
-                        .event("keep-alive")
-                        .build());
-
-        // 최초 데이터 전송 후 스트림 유지를 위해 concatWith 사용
-        Flux<ServerSentEvent<String>> sseStream = initialData.concatWith(keepAlive);
-
-        // 다른 데이터를 전송하는 부분을 추가
-        Flux<ServerSentEvent<String>> updateStream = sseStream.concatWith(Flux.just("Updated data")
-                .map(data -> ServerSentEvent.<String>builder()
-                        .id(memberUniqueId)
-                        .event("update-event")
-                        .data(data)
-                        .build())
-        );
-
-        return updateStream;
-    }
-
+    /**
+     * Add emitter.
+     * emitter 객체에 접근하기 위한 메서드(sseEmitter 추가)
+     * @param memberUniqueId the member unique id
+     * @param emitter        the emitter
+     */
     public static void addEmitter(String memberUniqueId, SseEmitter emitter) {
         emitters.put(memberUniqueId, emitter);
     }
 
+    /**
+     * Remove emitter.
+     * emitter 객체에 접근하기 위한 메서드(sseEmitter 삭제)
+     * @param memberUniqueId the member unique id
+     */
     public static void removeEmitter(String memberUniqueId) {
         emitters.remove(memberUniqueId);
     }
 
+    /**
+     * Gets emitter.
+     * emitter 객체에 접근하기 위한 메서드(sseEmitter 가져오기)
+     * @param memberUniqueId the member unique id
+     * @return the emitter
+     */
     public static SseEmitter getEmitter(String memberUniqueId) {
         return emitters.get(memberUniqueId);
     }

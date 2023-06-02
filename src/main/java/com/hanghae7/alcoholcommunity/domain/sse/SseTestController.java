@@ -19,12 +19,17 @@ import static com.hanghae7.alcoholcommunity.domain.sse.SseController.getEmitter;
 public class SseTestController {
 
     @PostMapping("/emitterPost")
-    public void streamEmitterEvents(@AuthenticationPrincipal UserDetailsImplement userDetails) throws IOException {
+    public void streamEmitterEvents(@AuthenticationPrincipal UserDetailsImplement userDetails){
         String uniqueId = userDetails.getMember().getMemberUniqueId();
-        getEmitter(uniqueId).send(SseEmitter.event()
-                .data("푸시알림 데이터")
-                .build()
-        );
+        try{
+            getEmitter(uniqueId).send(SseEmitter.event()
+                    .data("푸시알림 데이터")
+                    .build()
+            );
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
 
     }
 
