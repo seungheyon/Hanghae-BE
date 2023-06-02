@@ -162,28 +162,16 @@ public class PartyParticipateService {
 
 	/**
 	 * 모임 리스트 (전체/승인완료된리스트/승인대기중인 리스트)
-	 * @param approveStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
 	 * @param member token을 통해 얻은 Member
 	 * @return approveStatus값에 따른 모임리스트 출력
 	 */
 	@Transactional(readOnly = true)
-	public ResponseEntity<ResponseDto> getParticipatePartyList(int approveStatus, Member member) {
+	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member) {
 		List<PartyParticipate> parties;
-		if (approveStatus == 0) {
-			parties = partyParticipateRepository.findByAllParty(member);
-		} else if (approveStatus == 1) {
-			parties = partyParticipateRepository.findByAcceptedParty(member);
-		} else {
-			parties = partyParticipateRepository.findByJoinParty(member);
-		}
+		parties = partyParticipateRepository.findByAllParty(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
 		for (PartyParticipate party : parties) {
-			int state;
-			if (party.isAwaiting()) {
-				state = 2;
-			} else {
-				state = 1;
-			}
+			int state = getState(party);
 			PartyListResponse partyResponse = new PartyListResponse(party.getParty(), state);
 			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(
 				party.getParty().getPartyId());
@@ -195,6 +183,15 @@ public class PartyParticipateService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", partyList), HttpStatus.OK);
 	}
 
+	public int getState(PartyParticipate partyParticipate) {
+		if (partyParticipate.isRejected()) {
+			return 3;
+		} else if (partyParticipate.isAwaiting()) {
+			return 2;
+		} else {
+			return 1;
+		}
+	}
 
 	/**
 	 * 내게 들어온 모임 승인 요청 목록

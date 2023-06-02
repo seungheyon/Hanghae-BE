@@ -58,13 +58,12 @@ public class PartyParticipateController {
 
 	/**
 	 * 모임 리스트 (전체/승인완료된리스트/승인대기중인 리스트)
-	 * @param approveStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
 	 * @param userDetails 사용자 정보
 	 * @return approveStatus값에 따른 모임리스트 출력
 	 */
 	@GetMapping("party/my-party-list")
-	public ResponseEntity<ResponseDto> getParticipateList(@RequestParam int approveStatus, @AuthenticationPrincipal UserDetailsImplement userDetails){
-		return partyParticipateService.getParticipatePartyList(approveStatus ,userDetails.getMember());
+	public ResponseEntity<ResponseDto> getParticipateList(@AuthenticationPrincipal UserDetailsImplement userDetails){
+		return partyParticipateService.getParticipatePartyList(userDetails.getMember());
 	}
 
 
