@@ -3,10 +3,10 @@ os: linux
 files:
 
 - source: /
-  destination: /home/ubuntu/github-action-alcoholcommunity
+  destination: /home/ubuntu/soolo-serv
 permissions:
 
-- object: /home/ubuntu/github-action-alcoholcommunity/
+- object: /home/ubuntu/soolo-serv
   owner: ubuntu
   group: ubuntu
 hooks:
