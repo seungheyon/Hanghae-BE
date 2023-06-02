@@ -64,14 +64,10 @@ public class PartyController {
 	 * @param request 토큰값을 확인하기 위한 정보
 	 * @return 각 리스트 출력
 	 */
-	// @GetMapping("/parties")
-	// public ResponseEntity<ResponseDto> findAll(@RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
-	//
-	// 	return partyService.findAll(recruitmentStatus, page, request);
-	// }
+
 
 	@GetMapping("/parties")
-	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "20",required = false)double radius, @RequestParam(defaultValue = "127",required = false)double longitude, @RequestParam(defaultValue = "37",required = false) double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
+	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
 
 		return partyService.findAll(radius, longitude, latitude, page, recruitmentStatus, request);
 	}
