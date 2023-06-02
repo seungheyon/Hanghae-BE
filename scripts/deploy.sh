@@ -1,7 +1,7 @@
-REPOSITORY=/home/ubuntu/github-action-alcoholcommunity
+REPOSITORY=/home/ubuntu/soolo-serv
 cd $REPOSITORY
 
-APP_NAME=github-action-alcoholcommunity
+APP_NAME=soolo-serv
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
