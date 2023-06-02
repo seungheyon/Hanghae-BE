@@ -30,8 +30,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-	@Value("${jwt.secret.key}")
-	private String secretKey;
+	// @Value("${jwt.secret.key}")
+	private final String secretKey = "eyJzdWIiOiIyMDIzMDUwMzIzMDAiLCJuYW1lIjoiZG9u";
 
 	public static final String ACCESS_KEY = "ACCESS_KEY";
 	public static final String REFRESH_KEY = "REFRESH_KEY";

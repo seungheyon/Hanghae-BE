@@ -22,10 +22,6 @@ spring:
       max-file-size: 10MB  # 원하는 파일 크기로 설정
       max-request-size: 10MB  # 원하는 요청 크기로 설정
 
-jwt:
-  secret:
-    key: eyJzdWIiOiIyMDIzMDUwMzIzMDAiLCJuYW1lIjoiZG9u
-
 server:
   compression:
     enabled: true
