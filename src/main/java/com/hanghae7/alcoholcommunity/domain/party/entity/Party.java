@@ -75,7 +75,7 @@ public class Party extends Timestamped {
 	@Builder.Default
 	private List<PartyParticipate> partyParticipates = new ArrayList<>();
 
-
+	private String regionName;
 	private String placeName;
 	private String placeAddress;
 	private String placeUrl;
@@ -106,6 +106,7 @@ public class Party extends Timestamped {
 			this.placeUrl = partyRequestDto.getPlaceUrl();
 			this.stationName =partyRequestDto.getStationName();
 			this.distance = partyRequestDto.getDistance();
+			this.regionName = partyRequestDto.getRegionName();
 	}
 	public void setImageUrl(String imageUrl){
 		this.imageUrl = imageUrl;
@@ -135,6 +136,7 @@ public class Party extends Timestamped {
 			this.placeUrl = partyRequestDto.getPlaceUrl();
 			this.stationName =partyRequestDto.getStationName();
 			this.distance = partyRequestDto.getDistance();
+			this.regionName = partyRequestDto.getRegionName();
 		}
 	public void setRecruitmentStatus(boolean recruitmentStatus){
 		this.recruitmentStatus = recruitmentStatus;
