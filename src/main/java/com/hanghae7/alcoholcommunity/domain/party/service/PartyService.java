@@ -127,6 +127,7 @@ public class PartyService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> findAll(double radius, double longitude, double latitude, int page, int recruitmentStatus, HttpServletRequest request) {
 
+
 		String accessToken = request.getHeader("Access_key");
 		String memberUniqueId = null;
 		if (accessToken != null) {
