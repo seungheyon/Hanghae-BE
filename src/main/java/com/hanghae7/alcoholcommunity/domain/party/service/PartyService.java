@@ -104,7 +104,6 @@ public class PartyService {
 			party.setImageUrl(imageUrl);
 		}
 
-
 		//모임만들때 채팅룸 생성
 		ChatRoom chatRoom = ChatRoom.create(partyRequestDto.getTitle());
 		chatRoomRepository.save(chatRoom);
@@ -112,6 +111,7 @@ public class PartyService {
 		chatMessageRepository.save(chatMessage);
 		PartyParticipate partyParticipate = new PartyParticipate(party, member, true, false, chatRoom);
 		party.addCurrentCount();
+		party.setRecruitmentStatus(true);
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
