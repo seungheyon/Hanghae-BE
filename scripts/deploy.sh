@@ -10,7 +10,7 @@ sudo chmod +x $JAR_PATH
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
-if [ -z $CURRENT_PID ]
+if [ -z "$CURRENT_PID" ]
 then
   echo "> 종료할것 없음."
 else
