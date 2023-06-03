@@ -110,7 +110,11 @@ public class PartyController {
 	public ResponseEntity<ResponseDto> deleteParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.deleteParty(partyId, userDetails.getMember());
 	}
-
+	
+	@GetMapping("/test-vepo")
+	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
+		return partyService.findAll(radius, longitude, latitude, page,  recruitmentStatus, request);
+	}
 
 
 }
