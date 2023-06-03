@@ -17,4 +17,5 @@ public class IndividualPageResponseDto {
     private int age;
     private String gender;
     private String profileImage;
+    private String introduce;
 }

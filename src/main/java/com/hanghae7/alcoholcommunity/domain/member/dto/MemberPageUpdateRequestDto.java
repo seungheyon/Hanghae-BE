@@ -16,5 +16,5 @@ import lombok.NoArgsConstructor;
 public class MemberPageUpdateRequestDto {
 
     private String memberName;
-    private int age;
+    private String introduce;
 }
