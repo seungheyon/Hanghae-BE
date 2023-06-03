@@ -10,6 +10,7 @@ file_exists_behavior: OVERWRITE
 permissions:
 # home/ubuntu/soolo-serv
 - object: /
+  pattern : "**"
   owner: ubuntu
   group: ubuntu
 hooks:
