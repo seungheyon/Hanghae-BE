@@ -86,4 +86,9 @@ jobs:
         env:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --file-exists-behavior OVERWRITE --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws deploy create-deployment \
+          --application-name $CODE_DEPLOY_APP_NAME \ 
+          --deployment-config-name CodeDeployDefault.OneAtATime \
+          --deployment-group-name $DEPLOYMENT_GROUP_NAME \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
