@@ -23,6 +23,7 @@ public class RecruitingPartyResponseDto {
 	private boolean recruitmentStatus;
 	private String profileImage;
 	private String hostName;
+	private String regionName;
 
 	public RecruitingPartyResponseDto(Party party, Member member){
 		this.id = party.getPartyId();
@@ -35,5 +36,6 @@ public class RecruitingPartyResponseDto {
 		this.recruitmentStatus = party.isRecruitmentStatus();
 		this.profileImage = member.getProfileImage();
 		this.hostName = member.getMemberName();
+		this.regionName = party.getRegionName();
 	}
 }
