@@ -8,7 +8,7 @@ files:
 
 permissions:
 # home/ubuntu/soolo-serv
-  - object: /home/ubuntu/soolo-serv
+  - object: /home/ubuntu/soolo-serv/
 #    pattern : "**"
     owner: ubuntu
     group: ubuntu
