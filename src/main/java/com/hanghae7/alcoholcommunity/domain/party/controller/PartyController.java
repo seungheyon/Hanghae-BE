@@ -47,7 +47,7 @@ public class PartyController {
 	 * @param userDetails 사용자 정보
 	 * @return 모임 생성 유무
 	 */
-	@PostMapping("/party/new-party-test")
+	@PostMapping("/party/new-party")
 
 	public ResponseEntity<ResponseDto> createParty( @RequestPart(value = "data") PartyRequestDto partyRequestDto,
 													@RequestPart(value ="image", required = false) MultipartFile image,
