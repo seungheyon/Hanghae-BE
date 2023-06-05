@@ -99,7 +99,7 @@ public class Party extends Timestamped {
 			this.hostName = hostName;
 			this.createdAt = LocalDateTime.now();
 			this.modifiedAt = LocalDateTime.now();
-			this.partyDate = partyRequestDto.getPartyDate().minusHours(9);
+			this.partyDate = partyRequestDto.getPartyDate();
 			this.totalCount = partyRequestDto.getTotalCount();
 			this.placeName = partyRequestDto.getPlaceName();
 			this.placeAddress = partyRequestDto.getPlaceAddress();
