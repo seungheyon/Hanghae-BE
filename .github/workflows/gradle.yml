@@ -64,7 +64,7 @@ jobs:
         
       # 압축파일 형태로 전달
       - name: Make Zip File
-        run: zip -qq -r ./$GITHUB_SHA.zip ./deploy
+        run: zip -qq -r ./$GITHUB_SHA.zip .
         shell: bash
 
       - name: Configure AWS credentials
