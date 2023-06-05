@@ -4,7 +4,7 @@ files:
 
 - source: /
   destination: /home/ubuntu/soolo-serv/
-#  overwrite: yes
+  overwrite: yes
 #file_exists_behavior: OVERWRITE
 
 permissions:
