@@ -17,10 +17,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class MemberResponseDto {
+
     private String memberEmailId;
     private String memberName;
     private String profileImage;
     private String gender;
     private int age;
+    private String introduce;
 
 }

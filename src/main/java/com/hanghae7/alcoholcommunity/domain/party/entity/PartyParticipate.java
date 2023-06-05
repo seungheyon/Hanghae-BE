@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,9 +45,15 @@ public class PartyParticipate {
 	@Column(nullable = false)
 	private boolean host = false;
 
-	public PartyParticipate(Party party, Member member) {
+	private String amountAlcohol;
+
+	private String reason;
+
+	public PartyParticipate(Party party, Member member, PartyJoinRequestDto partyJoinRequestDto) {
 		this.party=party;
 		this.member=member;
+		this.reason=partyJoinRequestDto.getReason();
+		this.amountAlcohol=partyJoinRequestDto.getAmountAlcohol();
 	}
 
 	public PartyParticipate(Party party, Member member, boolean host, boolean awaiting, ChatRoom chatRoom) {

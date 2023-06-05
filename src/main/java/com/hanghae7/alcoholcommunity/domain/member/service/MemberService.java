@@ -76,6 +76,7 @@ public class MemberService {
         int age = member.getAge();
         String gender = member.getGender();
         String profileImage = member.getProfileImage();
+        String introduce = member.getIntroduce();
 
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .memberEmailId(memberEmailId)
@@ -83,6 +84,7 @@ public class MemberService {
                 .profileImage(profileImage)
                 .age(age)
                 .gender(gender)
+                .introduce(introduce)
                 .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);
@@ -100,6 +102,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, Member member, MultipartFile image) throws IOException {
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
+        String newIntroduce = memberPageUpdateRequestDto.getIntroduce();
         Optional<Member> updateMember = memberRepository.findByMemberUniqueId(member.getMemberUniqueId());
         // image가 null 일 경우  -> 처리해야 함
         // image 수정 =========================================================
@@ -121,11 +124,11 @@ public class MemberService {
             amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
             imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
-            updateMember.get().update(newMemberName, imageUrl);
+            updateMember.get().update1(newMemberName, imageUrl);
         }
         // image 수정 =========================================================
         else{
-            updateMember.get().update(newMemberName);
+            updateMember.get().update(newMemberName, newIntroduce);
         }
 
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
@@ -153,6 +156,8 @@ public class MemberService {
         int age = member.getAge();
         String gender = member.getGender();
         String profileImage = member.getProfileImage();
+        String introduce = member.getIntroduce();
+
 
         IndividualPageResponseDto individualPageResponseDto = IndividualPageResponseDto.builder()
                 .memberEmailId(emailId)
@@ -160,6 +165,7 @@ public class MemberService {
                 .age(age)
                 .gender(gender)
                 .profileImage(profileImage)
+                .introduce(introduce)
                 .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "상대방 프로필 조회 성공.", individualPageResponseDto), HttpStatus.OK);

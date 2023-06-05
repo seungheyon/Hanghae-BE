@@ -104,7 +104,6 @@ public class PartyService {
 			party.setImageUrl(imageUrl);
 		}
 
-
 		//모임만들때 채팅룸 생성
 		ChatRoom chatRoom = ChatRoom.create(partyRequestDto.getTitle());
 		chatRoomRepository.save(chatRoom);
@@ -112,6 +111,7 @@ public class PartyService {
 		chatMessageRepository.save(chatMessage);
 		PartyParticipate partyParticipate = new PartyParticipate(party, member, true, false, chatRoom);
 		party.addCurrentCount();
+		party.setRecruitmentStatus(true);
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
@@ -125,7 +125,8 @@ public class PartyService {
 	 * @return 각 리스트 출력
 	 */
 	@Transactional(readOnly = true)
-	public ResponseEntity<ResponseDto> findAll(double radius, double longitude, double latitude, int recruitmentStatus, int page, HttpServletRequest request) {
+	public ResponseEntity<ResponseDto> findAll(double radius, double longitude, double latitude, int page, int recruitmentStatus, HttpServletRequest request) {
+
 
 		String accessToken = request.getHeader("Access_key");
 		String memberUniqueId = null;
@@ -151,7 +152,9 @@ public class PartyService {
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
-					if(distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude())<= radius){
+					double distanceFromCoordinate =distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude());
+					if(distanceFromCoordinate<= radius){
+						partyResponse.setDistanceCal(distanceFromCoordinate);
 						partyList.add(partyResponse);}
 
 			}
@@ -167,7 +170,9 @@ public class PartyService {
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
-					if(distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude())<= radius){
+					double distanceFromCoordinate =distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude());
+					if(distanceFromCoordinate<= radius){
+						partyResponse.setDistanceCal(distanceFromCoordinate);
 						partyList.add(partyResponse);}
 				}
 			}

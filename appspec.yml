@@ -1,14 +1,21 @@
 version: 0.0
 os: linux
 files:
+  - source: /
+    destination: /home/ubuntu/soolo-serv
+#    overwrite: yes
+#file_exists_behavior: OVERWRITE
 
-- source: /
-  destination: /home/ubuntu/github-action-alcoholcommunity
 permissions:
-
-- object: /home/ubuntu/github-action-alcoholcommunity/
-  owner: ubuntu
-  group: ubuntu
+# home/ubuntu/soolo-serv
+  - object: /home/ubuntu/soolo-serv/
+#    pattern : "**"
+    owner: ubuntu
+    group: ubuntu
 hooks:
-  AfterInstall:
-  - location: scripts/deploy.sh
+   AfterInstall:
+     - location: scripts/deploy.sh
+#  ApplicationStart:
+#    - location: /deployment-archive/deploy.sh
+#      timeout : 60
+#      runas : ubuntu

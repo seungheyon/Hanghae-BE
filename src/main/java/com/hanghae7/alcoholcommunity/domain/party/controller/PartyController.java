@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,16 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
-import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.service.PartyService;
 
@@ -64,12 +60,10 @@ public class PartyController {
 	 * @param request 토큰값을 확인하기 위한 정보
 	 * @return 각 리스트 출력
 	 */
-
-
-	@GetMapping("/parties")
+	@GetMapping("/parties/jjintest")
 	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
 
-		return partyService.findAll(radius, longitude, latitude, page, recruitmentStatus, request);
+		return partyService.findAll(radius, longitude, latitude, page,  recruitmentStatus, request);
 	}
 
 
@@ -110,7 +104,5 @@ public class PartyController {
 	public ResponseEntity<ResponseDto> deleteParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.deleteParty(partyId, userDetails.getMember());
 	}
-
-
 
 }

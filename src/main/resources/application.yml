@@ -27,3 +27,10 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html
     min-response-size: 2048
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error

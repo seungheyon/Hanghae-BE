@@ -63,7 +63,7 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	 * @param member
 	 * @return 해당 멤버가 참여신청한 참여정보를 리턴
 	 */
-	@Query("select p from PartyParticipate p join fetch p.party join fetch p.member where p.member = :member and p.rejected = false and p.host = false order by p.party.partyDate")
+	@Query("select p from PartyParticipate p join fetch p.party join fetch p.member where p.member = :member and p.host = false order by p.party.partyDate")
 	List<PartyParticipate> findByAllParty(@Param("member") Member member);
 
 	/**

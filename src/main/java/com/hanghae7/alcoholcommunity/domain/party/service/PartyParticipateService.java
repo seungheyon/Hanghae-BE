@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
@@ -39,7 +40,7 @@ public class PartyParticipateService {
 	 * @return PartyID와 신청한 Member값 반환
 	 */
 	@Transactional
-	public ResponseEntity<ResponseDto> participateParty(Long partyId, Member member) {
+	public ResponseEntity<ResponseDto> participateParty(Long partyId, PartyJoinRequestDto partyJoinRequestDto, Member member) {
 
 		Party party = new Party();
 		try {
@@ -51,7 +52,7 @@ public class PartyParticipateService {
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
 		if(party.isRecruitmentStatus() == true) {
 			if (participate.isEmpty()) {
-				partyParticipateRepository.save(new PartyParticipate(party, member));
+				partyParticipateRepository.save(new PartyParticipate(party, member, partyJoinRequestDto));
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 			} else if (participate.get().isHost()) {
 				return new ResponseEntity<>(new ResponseDto(200, "이미 호스트인 모임입니다."), HttpStatus.OK);
@@ -68,14 +69,14 @@ public class PartyParticipateService {
 			}
 		}
 		else{
-			if(!participate.get().isAwaiting()){
+			if(participate.isEmpty()){
+				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
+			}
+			else{
 				partyParticipateRepository.delete(participate.get());
 				party.subCurrentCount();
 				party.setRecruitmentStatus(true);
 				return new ResponseEntity<>(new ResponseDto(200, "모임에서 탈퇴하였습니다."), HttpStatus.OK);
-			}
-			else {
-				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
 			}
 		}
 	}
