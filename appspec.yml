@@ -10,13 +10,13 @@ files:
 permissions:
 # home/ubuntu/soolo-serv
 - object: home/ubuntu/soolo-serv
-#  pattern : "**"
+  pattern : "**"
   owner: ubuntu
   group: ubuntu
 hooks:
-   AfterInstall:
-     - location: scripts/deploy.sh
-#  ApplicationStrat:
-#    - location: scripts/deploy.sh
-#      timeout : 60
-#      runas : ubuntu
+#   AfterInstall:
+#     - location: scripts/deploy.sh
+  ApplicationStrat:
+    - location: scripts/deploy.sh
+      timeout : 60
+      runas : ubuntu
