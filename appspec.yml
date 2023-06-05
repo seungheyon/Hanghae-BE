@@ -14,7 +14,7 @@ permissions:
     group: ubuntu
 hooks:
    AfterInstall:
-     - location: deploy.sh
+     - location: scripts/deploy.sh
 #  ApplicationStart:
 #    - location: /deployment-archive/deploy.sh
 #      timeout : 60
