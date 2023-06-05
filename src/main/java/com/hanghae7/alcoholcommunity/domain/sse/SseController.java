@@ -2,18 +2,13 @@ package com.hanghae7.alcoholcommunity.domain.sse;
 
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import reactor.core.publisher.*;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,17 +34,21 @@ public class SseController {
      */
 // SSE event 생성, SseEmitter 사용
     @GetMapping("/stream")
-    public SseEmitter streamEmitterEvents(@AuthenticationPrincipal UserDetailsImplement userDetails) throws IOException {
+    public SseEmitter streamEmitterEvents(
+            @AuthenticationPrincipal UserDetailsImplement userDetails
+    ) throws IOException {
         String memberUniqueId = userDetails.getMember().getMemberUniqueId();
         SseEmitter sseEmitter = new SseEmitter();
 
         sseEmitter.onCompletion(() -> emitters.remove(memberUniqueId));
         sseEmitter.onTimeout(() -> {
             try{
-                sseEmitter.send(SseEmitter.event()
+                sseEmitter.send(
+                        SseEmitter.event()
                                 .name("reconnect")
                         .data("Initial data")
-                        .build());
+                        .build()
+                );
             } catch (IOException e) {
                 // 예외처리
                 e.printStackTrace();
