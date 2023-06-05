@@ -62,7 +62,7 @@ public class PartyController {
 	 */
 
 
-	@GetMapping("/parties/test")
+	@GetMapping("/parties/jinja")
 	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
 
 		return partyService.findAll(radius, longitude, latitude, page,  recruitmentStatus, request);
@@ -107,8 +107,4 @@ public class PartyController {
 		return partyService.deleteParty(partyId, userDetails.getMember());
 	}
 
-	@GetMapping("/party/test-vepo")
-	public String testVepo(){
-		return "JadongVepo SungGonghaera!!!";
-	}
 }
