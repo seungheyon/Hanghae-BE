@@ -69,14 +69,14 @@ public class PartyParticipateService {
 			}
 		}
 		else{
-			if(!participate.get().isAwaiting()){
+			if(participate.isEmpty()){
+				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
+			}
+			else{
 				partyParticipateRepository.delete(participate.get());
 				party.subCurrentCount();
 				party.setRecruitmentStatus(true);
 				return new ResponseEntity<>(new ResponseDto(200, "모임에서 탈퇴하였습니다."), HttpStatus.OK);
-			}
-			else {
-				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
 			}
 		}
 	}
