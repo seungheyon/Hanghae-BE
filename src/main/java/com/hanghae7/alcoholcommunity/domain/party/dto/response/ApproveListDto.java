@@ -25,6 +25,8 @@ public class ApproveListDto {
 	private LocalDateTime partyDate;
 	private String memberName;
 	private String memberProfileImage;
+	private String reason;
+	private String amountAlcohol;
 
 	public ApproveListDto(PartyParticipate partyParticipate){
 		this.partyParticipateId = partyParticipate.getId();
@@ -34,6 +36,8 @@ public class ApproveListDto {
 		this.partyDate = partyParticipate.getParty().getPartyDate();
 		this.memberName = partyParticipate.getMember().getMemberName();
 		this.memberProfileImage = partyParticipate.getMember().getProfileImage();
+		this.reason = partyParticipate.getReason();
+		this.amountAlcohol = partyParticipate.getAmountAlcohol();
 	}
 
 }

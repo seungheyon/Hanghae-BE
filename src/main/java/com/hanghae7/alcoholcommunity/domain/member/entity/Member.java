@@ -94,10 +94,9 @@ public class Member extends Timestamped {
 	 * Update.
 	 * 멤버 업데이트 메서드(파라미터로 이미지가 있을 경우)
 	 * @param newMemberName   the new member name
-	 * @param age             the age
 	 * @param newProfileImage the new profile image
 	 */
-	public void update(String newMemberName ,String newProfileImage){
+	public void update1(String newMemberName ,String newProfileImage){
 		this.memberName = newMemberName;
 		this.profileImage = newProfileImage;
 	}
@@ -109,10 +108,10 @@ public class Member extends Timestamped {
 	 * Update.
 	 * 멤버 업데이트 메서드(파라미터로 이미지가 없을 경우)
 	 * @param newMemberName the new member name
-	 * @param age           the age
 	 */
-	public void update(String newMemberName){
+	public void update(String newMemberName, String newIntroduce){
 		this.memberName = newMemberName;
+		this.introduce = newIntroduce;
 	}
 
 

@@ -22,5 +22,6 @@ public class MemberResponseDto {
     private String profileImage;
     private String gender;
     private int age;
+    private String introduce;
 
 }
