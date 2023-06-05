@@ -17,6 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class MemberResponseDto {
+
     private String memberEmailId;
     private String memberName;
     private String profileImage;
