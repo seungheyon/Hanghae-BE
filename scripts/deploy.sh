@@ -6,8 +6,8 @@ cd $REPOSITORY
 
 APP_NAME=soolo-serv
 
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+JAR_NAME=$(ls $REPOSITORY | grep 'SNAPSHOT.jar' | tail -n 1)
+JAR_PATH=$REPOSITORY/$JAR_NAME
 
 # JAR 파일에 실행 권한 설정
 sudo chmod +x "$JAR_PATH"
