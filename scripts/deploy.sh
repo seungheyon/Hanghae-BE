@@ -1,11 +1,7 @@
 REPOSITORY=/home/ubuntu/soolo-serv
-
-echo "> 현재 Pid 확인"
-
 cd $REPOSITORY
 
 APP_NAME=soolo-serv
-
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/buid/libs/$JAR_NAME
 
