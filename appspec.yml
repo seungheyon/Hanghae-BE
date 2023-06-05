@@ -3,19 +3,19 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/soolo-serv/
-    overwrite: yes
+#    overwrite: yes
 #file_exists_behavior: OVERWRITE
 
 permissions:
 # home/ubuntu/soolo-serv
-  - object: /
-    pattern : "**"
+  - object: /home/ubuntu/soolo-serv/
+#    pattern : "**"
     owner: ubuntu
     group: ubuntu
 hooks:
-#   AfterInstall:
-#     - location: scripts/deploy.sh
-  ApplicationStart:
-    - location: scripts/deploy.sh
-      timeout : 60
-      runas : ubuntu
+   AfterInstall:
+     - location: /deployment-archive/deploy.sh
+#  ApplicationStart:
+#    - location: /deployment-archive/deploy.sh
+#      timeout : 60
+#      runas : ubuntu
