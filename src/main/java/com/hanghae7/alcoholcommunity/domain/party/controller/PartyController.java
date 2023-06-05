@@ -107,8 +107,4 @@ public class PartyController {
 		return partyService.deleteParty(partyId, userDetails.getMember());
 	}
 
-	@GetMapping("/party/test-vepo")
-	public String testVepo(){
-		return "JadongVepo SungGonghaera!!!";
-	}
 }
