@@ -106,9 +106,9 @@ public class PartyController {
 	public ResponseEntity<ResponseDto> deleteParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.deleteParty(partyId, userDetails.getMember());
 	}
-	
-	@GetMapping("/test-vepo")
+
+	@GetMapping("/party/test-vepo")
 	public String testVepo(){
-		return "JadongVepo SungGong";
+		return "JadongVepo SungGonghaera!!!";
 	}
 }
