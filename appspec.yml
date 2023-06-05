@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/soolo-serv/build/libs
+    destination: /home/ubuntu/soolo-serv
 
 permissions:
-  - object: /home/ubuntu/soolo-serv/build/libs/
+  - object: /home/ubuntu/soolo-serv/
     owner: ubuntu
     group: ubuntu
 hooks:
