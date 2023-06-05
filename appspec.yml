@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/soolo-serv/
+    destination: /home/ubuntu/soolo-serv
 #    overwrite: yes
 #file_exists_behavior: OVERWRITE
 
