@@ -3,14 +3,11 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.controller;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoResponseDto;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.dto.NaverResponseDto;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.service.NaverService;
 
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,6 @@ package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoInfo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

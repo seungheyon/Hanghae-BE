@@ -25,7 +25,6 @@ import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.client.KakaoC
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoAccount;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoResponseDto;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoToken;
-import org.springframework.data.redis.core.RedisTemplate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

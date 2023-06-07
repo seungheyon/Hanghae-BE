@@ -2,8 +2,6 @@ package com.hanghae7.alcoholcommunity.domain.party.dto.response;
 
 import java.time.LocalDateTime;
 
-import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 import lombok.Getter;

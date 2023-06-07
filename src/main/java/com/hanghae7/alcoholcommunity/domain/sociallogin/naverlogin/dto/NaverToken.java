@@ -1,15 +1,7 @@
 package com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.dto;
 
-import java.net.URI;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoInfo;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoToken;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.client.NaverClient;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

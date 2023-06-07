@@ -1,6 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +21,6 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRep
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import static com.hanghae7.alcoholcommunity.domain.sse.SseController.getEmitter;
 
 @RequiredArgsConstructor
 @Service
