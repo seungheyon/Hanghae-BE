@@ -110,12 +110,10 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/token-test")
-    public ResponseEntity<ResponseDto> tokenTest(@AuthenticationPrincipal UserDetailsImplement userDetailsImplement){
-        System.out.println(userDetailsImplement);
-        System.out.println(userDetailsImplement.getMember());
-        System.out.println(userDetailsImplement.getMember().getMemberUniqueId());
-        return new ResponseEntity<>(new ResponseDto(200, "test"), HttpStatus.OK);
+    @DeleteMapping("/member/logout")
+    public ResponseEntity<ResponseDto> memberLogout(HttpServletRequest request){
+
+        return memberService.memberLogout(request);
     }
 
 }

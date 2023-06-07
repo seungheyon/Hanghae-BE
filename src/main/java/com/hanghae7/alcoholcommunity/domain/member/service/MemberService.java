@@ -5,6 +5,9 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
+import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.member.dto.IndividualPageResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
@@ -23,8 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Please explain the class!!
@@ -39,7 +45,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PartyParticipateRepository partyParticipateRepository;
-
+    private final RedisDao redisDao;
+    private final JwtUtil jwtUtil;
     // image part
     private static final String S3_BUCKET_PREFIX = "S3";
 
@@ -161,5 +168,14 @@ public class MemberService {
                 .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "상대방 프로필 조회 성공.", individualPageResponseDto), HttpStatus.OK);
+    }
+
+    public ResponseEntity<ResponseDto> memberLogout(HttpServletRequest request) {
+
+        String accessKey = request.getHeader("Access_Key").substring(7);
+        redisDao.setValues(accessKey,"blackList", Duration.ofMillis(5400000L));
+        String memberUniqueId = jwtUtil.getMemberInfoFromToken(accessKey);
+        redisDao.deleteValues(memberUniqueId);
+        return new ResponseEntity<>(new ResponseDto(200, "Log OUT!!!!"), HttpStatus.OK);
     }
 }
