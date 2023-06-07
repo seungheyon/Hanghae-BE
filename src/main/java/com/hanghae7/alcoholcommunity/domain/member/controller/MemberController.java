@@ -6,7 +6,6 @@ import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
-import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -5,15 +5,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
-import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.member.dto.IndividualPageResponseDto;
-import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPagePartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
-import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
-import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,10 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

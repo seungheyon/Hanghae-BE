@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.hanghae7.alcoholcommunity.domain.sociallogin.config.FeignConfiguration;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoInfo;
-import com.hanghae7.alcoholcommunity.domain.sociallogin.kakaologin.dto.KakaoToken;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.dto.NaverInfo;
 import com.hanghae7.alcoholcommunity.domain.sociallogin.naverlogin.dto.NaverToken;
 

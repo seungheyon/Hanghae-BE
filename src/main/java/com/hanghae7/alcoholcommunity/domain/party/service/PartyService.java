@@ -1,7 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
-import static com.hanghae7.alcoholcommunity.domain.member.service.MemberService.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
