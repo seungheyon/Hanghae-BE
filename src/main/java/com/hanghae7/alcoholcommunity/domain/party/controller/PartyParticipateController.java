@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
-import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
+// import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.service.PartyParticipateService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class PartyParticipateController {
 	 * @return PartyID와 신청한 Member값 반환
 	 */
 	@PostMapping("/party/join/{partyId}")
-	public ResponseEntity<ResponseDto> participateParty(@PathVariable Long partyId, @RequestBody PartyJoinRequestDto partyJoinRequestDto, @AuthenticationPrincipal UserDetailsImplement userDetails) {
-		return partyParticipateService.participateParty(partyId, partyJoinRequestDto, userDetails.getMember());
+	public ResponseEntity<ResponseDto> participateParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) { // @RequestBody PartyJoinRequestDto partyJoinRequestDto,
+		return partyParticipateService.participateParty(partyId, userDetails.getMember()); //partyJoinRequestDto,
 	}
 
 	/**
