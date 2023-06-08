@@ -31,7 +31,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 	 * @param pageable
 	 * @return 모든 파티를 날짜순으로 리턴
 	 */
-	@Query("select p from Party p ORDER BY p.partyDate desc")
+	@Query("select p from Party p ORDER BY p.partyDate")
 	List<Party> findAllParty(Pageable pageable);
 
 	/**
@@ -40,7 +40,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 	 * @param pageable
 	 * @return 모집중, 모집완료된 모임정보를 각각의 status에 따라 리턴
 	 */
-	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.createdAt desc")
+	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.partyDate")
 	List<Party> findAllPartyRecruitmentStatus(@Param("status") boolean status, Pageable pageable);
 
 	@Query("select p from Party p where p.partyDate < :Date")

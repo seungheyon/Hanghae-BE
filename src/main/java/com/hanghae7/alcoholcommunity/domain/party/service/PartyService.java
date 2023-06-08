@@ -135,7 +135,7 @@ public class PartyService {
 			memberUniqueId = jwtUtil.getMemberInfoFromToken(accessToken.substring(7));
 		}
 		List<Party> parties;
-		Pageable pageable = PageRequest.of(page, 10);
+		Pageable pageable = PageRequest.of(page, 20);
 		if(recruitmentStatus == 0){
 			parties = partyRepository.findAllParty(pageable);
 		}else if(recruitmentStatus == 1){
