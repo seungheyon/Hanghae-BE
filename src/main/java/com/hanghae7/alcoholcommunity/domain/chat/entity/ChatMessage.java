@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +43,11 @@ public class ChatMessage extends Timestamped implements Serializable {
         ENTER, EXIT
     }
 
-    public ChatMessage(MessageType type, String chatRoomUniqueId, String sender, String message, LocalDateTime createdAt, ChatRoom chatRoom) {
+    public ChatMessage(MessageType type, String chatRoomUniqueId, Member member, String message, LocalDateTime createdAt, ChatRoom chatRoom) {
         this.type = type;
         this.chatRoomUniqueId = chatRoomUniqueId;
-        this.sender = sender;
+        this.sender = member.getMemberName();
+        this.memberProfileImage = member.getProfileImage();
         this.message = message;
         this.createdAt = createdAt;
         this.chatRoom = chatRoom;

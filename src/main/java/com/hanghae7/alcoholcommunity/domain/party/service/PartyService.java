@@ -105,7 +105,7 @@ public class PartyService {
 		//모임만들때 채팅룸 생성
 		ChatRoom chatRoom = ChatRoom.create(partyRequestDto.getTitle());
 		chatRoomRepository.save(chatRoom);
-		ChatMessage chatMessage = new ChatMessage(ChatMessage.MessageType.ENTER, chatRoom.getChatRoomUniqueId(), member.getMemberName(), "채팅방이 생성되었습니다", LocalDateTime.now(), chatRoom);
+		ChatMessage chatMessage = new ChatMessage(ChatMessage.MessageType.ENTER, chatRoom.getChatRoomUniqueId(), member, "채팅방이 생성되었습니다", LocalDateTime.now(), chatRoom);
 		chatMessageRepository.save(chatMessage);
 		PartyParticipate partyParticipate = new PartyParticipate(party, member, true, false, chatRoom);
 		party.addCurrentCount();
@@ -122,7 +122,6 @@ public class PartyService {
 	 * @param page              요청한 페이지 번호
 	 * @param recruitmentStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
 	 * @param request           토큰값을 확인하기 위한 정보
-	 * @param keyword			검색어
 	 * @return 각 리스트 출력
 	 */
 	@Transactional(readOnly = true)
