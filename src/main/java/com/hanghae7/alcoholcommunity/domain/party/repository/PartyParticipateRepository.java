@@ -3,16 +3,13 @@ package com.hanghae7.alcoholcommunity.domain.party.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.JoinPartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
-import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 /**
  * i
