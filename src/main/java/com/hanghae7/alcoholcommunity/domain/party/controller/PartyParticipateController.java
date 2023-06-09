@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
-import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
+//import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 // import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.service.PartyParticipateService;
 
