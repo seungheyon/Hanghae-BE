@@ -2,10 +2,7 @@ package com.hanghae7.alcoholcommunity.domain.member.dto;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 import lombok.Builder;
 import lombok.Getter;

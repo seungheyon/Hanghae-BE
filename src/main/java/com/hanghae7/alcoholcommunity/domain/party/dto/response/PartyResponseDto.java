@@ -49,6 +49,7 @@ public class PartyResponseDto {
 	private String placeUrl;
 	private double distanceFromMember;
 	private String regionName;
+	private String categoryName;
 
 	public PartyResponseDto(Party party, int state) {
 		this.partyId = party.getPartyId();
@@ -70,6 +71,7 @@ public class PartyResponseDto {
 		this.placeName = party.getPlaceName();
 		this.placeUrl = party.getPlaceUrl();
 		this.regionName = party.getRegionName();
+		this.categoryName = party.getCategoryName();
 	}
 
 	public List<MemberInfoDto> getparticipateMembers(List<PartyParticipate> participateMembers) {

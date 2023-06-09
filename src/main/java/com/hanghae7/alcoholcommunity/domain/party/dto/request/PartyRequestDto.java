@@ -27,5 +27,6 @@ public class PartyRequestDto {
 	private double distance;
 	private String stationName;
 	private String regionName;
+	private String categoryName;
 
 }

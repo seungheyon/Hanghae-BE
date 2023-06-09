@@ -6,7 +6,6 @@ import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
-import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -111,12 +110,10 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/token-test")
-    public ResponseEntity<ResponseDto> tokenTest(@AuthenticationPrincipal UserDetailsImplement userDetailsImplement){
-        System.out.println(userDetailsImplement);
-        System.out.println(userDetailsImplement.getMember());
-        System.out.println(userDetailsImplement.getMember().getMemberUniqueId());
-        return new ResponseEntity<>(new ResponseDto(200, "test"), HttpStatus.OK);
+    @DeleteMapping("/member/logout")
+    public ResponseEntity<ResponseDto> memberLogout(HttpServletRequest request){
+
+        return memberService.memberLogout(request);
     }
 
 }

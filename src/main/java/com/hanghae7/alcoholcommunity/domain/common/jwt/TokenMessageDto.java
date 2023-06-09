@@ -14,4 +14,9 @@ public class TokenMessageDto {
 	private int status = 403;
 	@Builder.Default
 	private String msg = "Token is Expired!!!!!!!";
+
+	public TokenMessageDto(String msg, int statusCode){
+		this.msg = msg;
+		this.status = statusCode;
+	}
 }

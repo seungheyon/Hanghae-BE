@@ -1,7 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.common;
 
-import java.util.Objects;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

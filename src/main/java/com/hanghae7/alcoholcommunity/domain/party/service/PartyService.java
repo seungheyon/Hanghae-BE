@@ -50,7 +50,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * Please explain the class!!
  *
- * @fileName      : example
+ * @fileName      : party service
  * @author        : mycom
  * @since         : 2023-05-19
  */
@@ -114,11 +114,14 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
 	}
 
-	/**???????????????????????????
+	/**
+	 * ???????????????????????????
 	 * 모임 전체조회(전체/모집중/모집마감)
-	 * @param recruitmentStatus  0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
-	 * @param page 요청한 페이지 번호
-	 * @param request 토큰값을 확인하기 위한 정보
+	 *
+	 * @param page              요청한 페이지 번호
+	 * @param recruitmentStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
+	 * @param request           토큰값을 확인하기 위한 정보
+	 * @param keyword			검색어
 	 * @return 각 리스트 출력
 	 */
 	@Transactional(readOnly = true)
@@ -131,7 +134,7 @@ public class PartyService {
 			memberUniqueId = jwtUtil.getMemberInfoFromToken(accessToken.substring(7));
 		}
 		List<Party> parties;
-		Pageable pageable = PageRequest.of(page, 10);
+		Pageable pageable = PageRequest.of(page, 20);
 		if(recruitmentStatus == 0){
 			parties = partyRepository.findAllParty(pageable);
 		}else if(recruitmentStatus == 1){
@@ -153,8 +156,8 @@ public class PartyService {
 					if(distanceFromCoordinate<= radius){
 						partyResponse.setDistanceCal(distanceFromCoordinate);
 						partyList.add(partyResponse);}
+				}
 
-			}
 		}
 
 		else{
@@ -173,10 +176,14 @@ public class PartyService {
 						partyList.add(partyResponse);}
 				}
 			}
+
 		}
+
+
 
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
 	}
+
 
 	/**
 	 * 모임 상세조회
@@ -340,6 +347,76 @@ public class PartyService {
 
 		return distance;
 	}
+
+	/**
+	 * ???????????????????????????
+	 * 모임 검색 조회(전체/모집중/모집마감)
+	 *
+	 * @param page              요청한 페이지 번호
+	 * @param recruitmentStatus 0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
+	 * @param request           토큰값을 확인하기 위한 정보
+	 * @param keyword			검색어
+	 * @return 각 리스트 출력
+	 */
+	@Transactional(readOnly = true)
+	public ResponseEntity<ResponseDto> findAllSearch(double radius, double longitude, double latitude, int page, int recruitmentStatus, HttpServletRequest request,
+		String keyword) {
+
+		String accessToken = request.getHeader("Access_key");
+		String memberUniqueId = null;
+		if (accessToken != null) {
+			memberUniqueId = jwtUtil.getMemberInfoFromToken(accessToken.substring(7));
+		}
+
+		Pageable pageable = PageRequest.of(page, 10);
+		List<Party> parties;
+		if(recruitmentStatus == 0){
+			parties = partyRepository.findAllPartyByKeyword(pageable, keyword);
+		}else if(recruitmentStatus == 1){
+			parties = partyRepository.findAllPartyByKeywordRecruitmentStatus(true, pageable, keyword);
+		} else {
+			parties = partyRepository.findAllPartyByKeywordRecruitmentStatus(false, pageable, keyword);
+		}
+
+		List<PartyListResponse> partyList = new ArrayList<>();
+		if(memberUniqueId == null) {
+
+			for (Party party : parties) {
+				PartyListResponse partyResponse = new PartyListResponse(party);
+				List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+				partyResponse.getparticipateMembers(partyParticipates.stream()
+					.map(PartyParticipate::getMember)
+					.collect(Collectors.toList()));
+				double distanceFromCoordinate =distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude());
+				if(distanceFromCoordinate<= radius){
+					partyResponse.setDistanceCal(distanceFromCoordinate);
+					partyList.add(partyResponse);}
+			}
+
+		}
+
+		else{
+			for (Party party : parties) {
+				Optional<Member> searchMember = memberRepository.findByMemberUniqueId(memberUniqueId);
+				if(searchMember.isPresent()){
+					int state = getState(party, searchMember.get());
+					PartyListResponse partyResponse = new PartyListResponse(party, state);
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+					partyResponse.getparticipateMembers(partyParticipates.stream()
+						.map(PartyParticipate::getMember)
+						.collect(Collectors.toList()));
+					double distanceFromCoordinate =distanceCalculator(latitude,longitude,partyResponse.getLatitude(),partyResponse.getLongitude());
+					if(distanceFromCoordinate<= radius){
+						partyResponse.setDistanceCal(distanceFromCoordinate);
+						partyList.add(partyResponse);}
+				}
+			}
+
+		}
+
+		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
+	}
+
 }
 
 

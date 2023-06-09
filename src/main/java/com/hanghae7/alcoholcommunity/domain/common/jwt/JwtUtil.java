@@ -1,7 +1,5 @@
 package com.hanghae7.alcoholcommunity.domain.common.jwt;
 
-import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
-import com.hanghae7.alcoholcommunity.domain.common.security.RefreshToken;
 import com.hanghae7.alcoholcommunity.domain.common.security.RefreshTokenRepository;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsServiceImplement;
 
@@ -22,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 ;
 

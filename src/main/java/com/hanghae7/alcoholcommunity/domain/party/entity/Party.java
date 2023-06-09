@@ -82,6 +82,7 @@ public class Party extends Timestamped {
 	private double distance;
 	private String stationName;
 	private double distanceFromMember;
+	private String categoryName;
 
 	@Column(nullable = true)
 	private String imageUrl;
@@ -106,6 +107,7 @@ public class Party extends Timestamped {
 			this.stationName =partyRequestDto.getStationName();
 			this.distance = partyRequestDto.getDistance();
 			this.regionName = partyRequestDto.getRegionName();
+			this.categoryName = partyRequestDto.getCategoryName();
 	}
 	public void setImageUrl(String imageUrl){
 		this.imageUrl = imageUrl;
@@ -136,6 +138,7 @@ public class Party extends Timestamped {
 			this.stationName =partyRequestDto.getStationName();
 			this.distance = partyRequestDto.getDistance();
 			this.regionName = partyRequestDto.getRegionName();
+			this.categoryName = partyRequestDto.getCategoryName();
 		}
 	public void setRecruitmentStatus(boolean recruitmentStatus){
 		this.recruitmentStatus = recruitmentStatus;

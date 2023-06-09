@@ -60,12 +60,27 @@ public class PartyController {
 	 * @param request 토큰값을 확인하기 위한 정보
 	 * @return 각 리스트 출력
 	 */
-	@GetMapping("/parties/jjintest")
-	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus, @RequestParam int page, HttpServletRequest request) {
+	@GetMapping("/parties")
+	public ResponseEntity<ResponseDto> findAll(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus,
+		@RequestParam int page, HttpServletRequest request) {
 
 		return partyService.findAll(radius, longitude, latitude, page,  recruitmentStatus, request);
 	}
 
+
+	/**
+	 *  모임 전체조회(전체/모집중/모집마감)
+	 * @param recruitmentStatus  0: 전체 리스트 / 1: 승인완료된 모임리스트 / 2: 승인 대기중인 모임 리스트
+	 * @param page 요청한 페이지 번호
+	 * @param request 토큰값을 확인하기 위한 정보
+	 * @return 각 리스트 출력
+	 */
+	@GetMapping("/parties/search")
+	public ResponseEntity<ResponseDto> findAllSearch(@RequestParam(defaultValue = "500")double radius, @RequestParam(defaultValue = "127.027616")double longitude, @RequestParam(defaultValue = "37.497967") double latitude, @RequestParam int recruitmentStatus,
+		@RequestParam int page, HttpServletRequest request, @RequestParam String keyword) {
+
+		return partyService.findAllSearch(radius, longitude, latitude, page,  recruitmentStatus, request, keyword);
+	}
 
 	/**
 	 * 모임 상세조회

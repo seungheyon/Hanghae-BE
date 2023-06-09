@@ -27,6 +27,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final MemberRepository memberRepository;
+	private final RedisDao redisDao;
 
 	@Override
 	protected void doFilterInternal(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,9 +36,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		if(access_token != null) {
 			if(jwtUtil.validateToken(access_token)) {
+				if (redisDao.getValues(request.getHeader("Access_key").substring(7))!= null) {
+					jwtExceptionHandler(response, "410 : This token already Logged Out ", 410);
+					return;
+				}
 				setAuthentication(jwtUtil.getMemberInfoFromToken(access_token));
-			// }
-			// else if (refresh_token != null && jwtUtil.refreshTokenValidation(refresh_token)) {
 			// 	String memberUniqueId = jwtUtil.getMemberInfoFromToken(refresh_token);
 			// 	Member member = memberRepository.findByMemberUniqueId(memberUniqueId).get();
 			// 	String newAccessToken = jwtUtil.createToken(memberUniqueId, "Access");
@@ -46,7 +49,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			// } else if (refresh_token == null) {
 			// 	jwtExceptionHandler(response, "AccessToken has Expired. Please send your RefreshToken together.", HttpStatus.OK.value());
 			} else {
-				jwtExceptionHandler(response, "403 : 잘못된 토큰입니다.", HttpStatus.FORBIDDEN.value());
+				jwtExceptionHandler(response, "403 : Wrong token", HttpStatus.FORBIDDEN.value());
 				return;
 			}
 		}
@@ -57,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		response.setStatus(statusCode);
 		response.setContentType("application/json");
 		try {
-			String json = new ObjectMapper().writeValueAsString(new TokenMessageDto());
+			String json = new ObjectMapper().writeValueAsString(new TokenMessageDto(msg, statusCode));
 			response.getWriter().write(json);
 		} catch (Exception e){
 			log.error(e.getMessage());
