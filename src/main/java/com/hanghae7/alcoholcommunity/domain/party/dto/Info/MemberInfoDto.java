@@ -20,4 +20,7 @@ public class MemberInfoDto {
 	private Long memberId;
 	private String memberName;
 	private String profileImage;
+	private String gender;
+	private int age;
+	private String introduce;
 }
