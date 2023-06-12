@@ -82,7 +82,11 @@ public class PartyResponseDto {
 			memberInfo.setMemberId(member.getMemberId());
 			memberInfo.setMemberName(member.getMemberName());
 			memberInfo.setProfileImage(member.getProfileImage());
+			memberInfo.setAge(member.getAge());
+			memberInfo.setGender(member.getGender());
+			memberInfo.setIntroduce(member.getIntroduce());
 			memberInfos.add(memberInfo);
+
 		}
 		this.memberInfo = memberInfos;
 		return memberInfos;

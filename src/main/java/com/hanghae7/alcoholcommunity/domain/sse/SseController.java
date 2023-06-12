@@ -34,17 +34,21 @@ public class SseController {
      */
 // SSE event 생성, SseEmitter 사용
     @GetMapping("/stream")
-    public SseEmitter streamEmitterEvents(@AuthenticationPrincipal UserDetailsImplement userDetails) throws IOException {
+    public SseEmitter streamEmitterEvents(
+            @AuthenticationPrincipal UserDetailsImplement userDetails
+    ) throws IOException {
         String memberUniqueId = userDetails.getMember().getMemberUniqueId();
         SseEmitter sseEmitter = new SseEmitter();
 
         sseEmitter.onCompletion(() -> emitters.remove(memberUniqueId));
         sseEmitter.onTimeout(() -> {
             try{
-                sseEmitter.send(SseEmitter.event()
+                sseEmitter.send(
+                        SseEmitter.event()
                                 .name("reconnect")
                         .data("Initial data")
-                        .build());
+                        .build()
+                );
             } catch (IOException e) {
                 // 예외처리
                 e.printStackTrace();
