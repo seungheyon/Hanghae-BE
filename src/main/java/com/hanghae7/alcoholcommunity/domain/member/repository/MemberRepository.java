@@ -14,14 +14,18 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+
+
 	/**
 	 * Find by member unique id optional.
 	 * MemberUniqueId로 멤버 검색
 	 * @param memberUniqueId the member unique id
 	 * @return the optional
 	 */
-	@Query("SELECT m FROM Member m WHERE m.memberUniqueId = :memberUniqueId")
-	Optional<Member> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);
+/*	@Query("SELECT m FROM Member m WHERE m.memberUniqueId = :memberUniqueId")
+	Optional<Member> findByMemberUniqueId(@Param("memberUniqueId") String memberUniqueId);*/
+
+	Optional<Member> findByMemberUniqueId(String memberUniqueId);
 
 	/**
 	 * Find by member email id and social optional.
@@ -30,11 +34,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 * @param social        the social
 	 * @return the optional
 	 */
-	@Query("SELECT m FROM Member m WHERE m.memberEmailId = :memberEmailId and m.social = :social")
-	Optional<Member> findByMemberEmailIdAndSocial(@Param("memberEmailId") String memberEmailId, @Param("social") String social);
+/*	@Query("SELECT m FROM Member m WHERE m.memberEmailId = :memberEmailId and m.social = :social")
+	Optional<Member> findByMemberEmailIdAndSocial(@Param("memberEmailId") String memberEmailId, @Param("social") String social);*/
+	Optional<Member> findByMemberEmailIdAndSocial(String memberEmailId, String social);
 
 	Optional<Member> findById(Long memberId);
-
-
 
 }

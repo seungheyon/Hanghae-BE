@@ -84,6 +84,8 @@ public class Party extends Timestamped {
 	private double distanceFromMember;
 	private String categoryName;
 
+	private boolean isDeleted = false;
+
 	@Column(nullable = true)
 	private String imageUrl;
 	public boolean isRecruitmentStatus() {
@@ -119,6 +121,8 @@ public class Party extends Timestamped {
 
 	// 모임 취소 시 -1
 	public void subCurrentCount(){ this.currentCount = currentCount -1;	}
+
+	public void deleteParty(){ this.isDeleted = true;	}
 
 
 

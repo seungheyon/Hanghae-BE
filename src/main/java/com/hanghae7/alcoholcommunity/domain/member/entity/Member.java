@@ -99,8 +99,6 @@ public class Member extends Timestamped {
 	}
 
 
-
-
 	/**
 	 * Update.
 	 * 멤버 업데이트 메서드(파라미터로 이미지가 없을 경우)
