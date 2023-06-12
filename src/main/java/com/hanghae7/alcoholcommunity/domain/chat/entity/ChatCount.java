@@ -41,6 +41,8 @@ public class ChatCount {
 
 	private boolean readStatus;
 
+	private boolean isDeleted = false;
+
 	public ChatCount(PartyParticipate partyParticipate, ChatMessage chatMessage){
 		this.partyParticipate = partyParticipate;
 		this.chatMessage = chatMessage;

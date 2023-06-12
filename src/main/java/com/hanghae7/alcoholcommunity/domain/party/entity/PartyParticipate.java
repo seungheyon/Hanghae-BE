@@ -49,6 +49,8 @@ public class PartyParticipate {
 
 	private String reason;
 
+	private boolean isDeleted = false;
+
 	public PartyParticipate(Party party, Member member) { //, PartyJoinRequestDto partyJoinRequestDto
 		this.party=party;
 		this.member=member;
