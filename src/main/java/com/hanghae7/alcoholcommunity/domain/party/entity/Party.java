@@ -84,6 +84,7 @@ public class Party extends Timestamped {
 	private double distanceFromMember;
 	private String categoryName;
 
+	@Builder.Default
 	private boolean isDeleted = false;
 
 	@Column(nullable = true)
@@ -122,7 +123,6 @@ public class Party extends Timestamped {
 	// 모임 취소 시 -1
 	public void subCurrentCount(){ this.currentCount = currentCount -1;	}
 
-	public void deleteParty(){ this.isDeleted = true;	}
 
 
 
