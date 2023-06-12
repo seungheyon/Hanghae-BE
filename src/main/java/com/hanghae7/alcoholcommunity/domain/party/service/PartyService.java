@@ -11,6 +11,13 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
+import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
+import com.hanghae7.alcoholcommunity.domain.party.repository.ChatMessageRepository;
+import com.hanghae7.alcoholcommunity.domain.party.repository.ChatRoomRepository;
+import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
+import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +43,7 @@ import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponseDto;
+
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 

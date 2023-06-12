@@ -86,6 +86,7 @@ public class PartyResponseDto {
 			memberInfo.setAge(member.getAge());
 			memberInfo.setIntroduce(member.getIntroduce());
 			memberInfos.add(memberInfo);
+
 		}
 		this.memberInfo = memberInfos;
 		return memberInfos;
