@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
  * @author        : mycom
  * @since         : 2023-06-03
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-public class PartyJoinRequestDto {
-	String reason;
-	String amountAlcohol;
-}
+// @AllArgsConstructor
+// @NoArgsConstructor
+// @Getter
+// public class PartyJoinRequestDto {
+// 	String reason;
+// 	String amountAlcohol;
+// }

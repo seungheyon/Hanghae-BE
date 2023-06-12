@@ -78,6 +78,7 @@ public class MemberService {
         String gender = member.getGender();
         String profileImage = member.getProfileImage();
         String introduce = member.getIntroduce();
+        String social =  member.getSocial();
 
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .memberEmailId(memberEmailId)
@@ -86,6 +87,7 @@ public class MemberService {
                 .age(age)
                 .gender(gender)
                 .introduce(introduce)
+                .social(social)
                 .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);

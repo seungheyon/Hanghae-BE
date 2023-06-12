@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
+// import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
@@ -21,6 +22,9 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRep
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import static com.hanghae7.alcoholcommunity.domain.sse.SseController.getEmitter;
 
 @RequiredArgsConstructor
 @Service
@@ -36,7 +40,7 @@ public class PartyParticipateService {
 	 * @return PartyID와 신청한 Member값 반환
 	 */
 	@Transactional
-	public ResponseEntity<ResponseDto> participateParty(Long partyId, PartyJoinRequestDto partyJoinRequestDto, Member member) {
+	public ResponseEntity<ResponseDto> participateParty(Long partyId, Member member) { //PartyJoinRequestDto partyJoinRequestDto,
 
 		Party party = new Party();
 		try {
@@ -48,7 +52,7 @@ public class PartyParticipateService {
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByisDeletedFalseAndPartyAndMember(party, member);
 		if(party.isRecruitmentStatus() == true) {
 			if (participate.isEmpty()) {
-				partyParticipateRepository.save(new PartyParticipate(party, member, partyJoinRequestDto));
+				partyParticipateRepository.save(new PartyParticipate(party, member)); //, partyJoinRequestDto
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 			} else if (participate.get().isHost()) {
 				return new ResponseEntity<>(new ResponseDto(200, "이미 호스트인 모임입니다."), HttpStatus.OK);
@@ -110,15 +114,18 @@ public class PartyParticipateService {
 				party.setRecruitmentStatus(false);
 			}
 			// 파티 참가승인 알림 전송 파트
-//			String  participantId = participate.getMember().getMemberUniqueId();
-//			try{
-//				getEmitter(participantId).send(SseEmitter.event()
-//						.data("참가승인 알림")
-//						.build()
-//				);
-//			} catch (IOException e) {
-//				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
-//			}
+			String  participantId = participate.getMember().getMemberUniqueId();
+			try{
+				SseEmitter emitter = getEmitter(participantId);
+				if(emitter!=null){
+					emitter.send(SseEmitter.event()
+							.data("참가승인 알림")
+							.build()
+					);
+				}
+			} catch (IOException e) {
+				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+			}
 
 		} else {
 			return new ResponseEntity<>(new ResponseDto(200, "이미 꽉찬 모임방 입니다."), HttpStatus.OK);
@@ -144,15 +151,18 @@ public class PartyParticipateService {
 		participate.setRejection(true);
 
 		// 파티 참가거절 알림 전송 파트
-//		String  participantId = participate.getMember().getMemberUniqueId();
-//		try{
-//			getEmitter(participantId).send(SseEmitter.event()
-//					.data("참가거절 알림")
-//					.build()
-//			);
-//		} catch (IOException e) {
-//			return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
-//		}
+		String  participantId = participate.getMember().getMemberUniqueId();
+		try{
+			SseEmitter emitter = getEmitter(participantId);
+			if(emitter!=null){
+				emitter.send(SseEmitter.event()
+						.data("참가거절 알림")
+						.build()
+				);
+			}
+		} catch (IOException e) {
+			return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+		}
 
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
