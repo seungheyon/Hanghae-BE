@@ -18,10 +18,5 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
  */
 public interface ChatCountRepository extends JpaRepository<ChatCount, Long> {
 
-	@Query("select c from ChatCount c where c.partyParticipate = :partyParticipate and c.readStatus = false")
-	List<ChatCount> findChatCountByPartyParticipate(@Param("partyParticipate") PartyParticipate partyParticipate);
-
-	@Query("select count(c) from ChatCount c where c.partyParticipate = :partyParticipate and c.readStatus = false")
-	long countBychatCount(@Param("partyParticipate") PartyParticipate partyParticipate);
 
 }

@@ -40,8 +40,8 @@ import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
-import com.hanghae7.alcoholcommunity.domain.party.repository.ChatMessageRepository;
-import com.hanghae7.alcoholcommunity.domain.party.repository.ChatRoomRepository;
+import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
+import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatRoomRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
@@ -136,11 +136,11 @@ public class PartyService {
 		List<Party> parties;
 		Pageable pageable = PageRequest.of(page, 20);
 		if(recruitmentStatus == 0){
-			parties = partyRepository.findAllParty(pageable);
+			parties = partyRepository.findAllByisDeletedFalseOrderByPartyDate(pageable);
 		}else if(recruitmentStatus == 1){
-			parties = partyRepository.findAllPartyRecruitmentStatus(true, pageable);
+			parties = partyRepository.findAllByisDeletedFalseAndRecruitmentStatusOrderByPartyDate(true, pageable);
 		} else {
-			parties = partyRepository.findAllPartyRecruitmentStatus(false, pageable);
+			parties = partyRepository.findAllByisDeletedFalseAndRecruitmentStatusOrderByPartyDate(false, pageable);
 		}
 
 		List<PartyListResponse> partyList = new ArrayList<>();
@@ -148,7 +148,7 @@ public class PartyService {
 
 				for (Party party : parties) {
 					PartyListResponse partyResponse = new PartyListResponse(party);
-					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
@@ -166,7 +166,7 @@ public class PartyService {
 				if(searchMember.isPresent()){
 					int state = getState(party, searchMember.get());
 					PartyListResponse partyResponse = new PartyListResponse(party, state);
-					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
@@ -202,7 +202,7 @@ public class PartyService {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 모임이 존재하지 않습니다."), HttpStatus.OK);
 		}
-		List<PartyParticipate> partyMember = partyParticipateRepository.findByPartyId(partyId);
+		List<PartyParticipate> partyMember = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(partyId);
 		int state = getState(party, member);
 		PartyResponseDto partyResponseDto = new PartyResponseDto(party,state);
 		partyResponseDto.getparticipateMembers(partyMember);
@@ -229,8 +229,10 @@ public class PartyService {
 		}
 		Member hostMember = new Member();
 		try {
-			hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
+
+			PartyParticipate participate1 = partyParticipateRepository.findMemberByisDeletedFalseAndHostTrueAndPartyPartyId(partyId).orElseThrow(
 				() -> new IllegalArgumentException("호스트를 찾을 수 없습니다."));
+			hostMember = participate1.getMember();
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "호스트를 찾을 수 없습니다."), HttpStatus.OK);
 
@@ -259,6 +261,9 @@ public class PartyService {
 			}
 
 			party.updateParty(partyRequestDto);
+			/*PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
+			chatRoomRepository.updateChatRoomTitle(partyParticipate.getChatRoom().getChatRoomUniqueId(), partyRequestDto.getTitle());*/
+
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 수정하였습니다."), HttpStatus.OK);
 	}
@@ -281,19 +286,20 @@ public class PartyService {
 		}
 		Member hostMember = new Member();
 		try {
-			hostMember = partyParticipateRepository.findByPartyIdAndHost(partyId).orElseThrow(
+			PartyParticipate participate1 = partyParticipateRepository.findMemberByisDeletedFalseAndHostTrueAndPartyPartyId(partyId).orElseThrow(
 				() -> new IllegalArgumentException("호스트를 찾을 수 없습니다."));
+			hostMember = participate1.getMember();
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "호스트를 찾을 수 없습니다."), HttpStatus.OK);
 		}
 		if (!hostMember.getMemberUniqueId().equals(member.getMemberUniqueId())) {
 			return new ResponseEntity<>(new ResponseDto(400, "해당 사용자가 아닙니다."), HttpStatus.BAD_REQUEST);
 		} else {
-			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
-			partyRepository.delete(party);
-			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
-			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
-			partyParticipateRepository.deleteByParty(party);
+			PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
+			partyRepository.softDeleteParty(party.getPartyId());
+			chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
+			chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
+			partyParticipateRepository.softDeletepartyId(party.getPartyId());
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
 	}
@@ -305,7 +311,7 @@ public class PartyService {
 	 * @return ??????????
 	 */
 	public int getState(Party party, Member member) {
-		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
+		Optional<PartyParticipate> participate = partyParticipateRepository.findByisDeletedFalseAndPartyAndMember(party, member);
 		if (participate.isPresent()) {
 			if (participate.get().isRejected()) {
 				return 3;
@@ -324,13 +330,13 @@ public class PartyService {
 	public void deleteTimeoverParty(){
 		LocalDateTime timenow = LocalDateTime.now();
 		LocalDateTime result = timenow.minusHours(4);
-		List<Party> partyList = partyRepository.findTimeoverParty(result);
+		List<Party> partyList = partyRepository.findAllByPartyDateBefore(result);
 		for (Party party : partyList) {
-			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
-			partyRepository.delete(party);
-			chatMessageRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomUniqueId());
-			chatRoomRepository.deleteByChatRoomId(partyParticipate.getChatRoom().getChatRoomId());
-			partyParticipateRepository.deleteByParty(party);
+			PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
+			partyRepository.softDeleteParty(party.getPartyId());
+			chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
+			chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
+			partyParticipateRepository.softDeletepartyId(party.getPartyId());
 		}
 	}
 
@@ -383,7 +389,7 @@ public class PartyService {
 
 			for (Party party : parties) {
 				PartyListResponse partyResponse = new PartyListResponse(party);
-				List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+				List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
 				partyResponse.getparticipateMembers(partyParticipates.stream()
 					.map(PartyParticipate::getMember)
 					.collect(Collectors.toList()));
@@ -401,7 +407,7 @@ public class PartyService {
 				if(searchMember.isPresent()){
 					int state = getState(party, searchMember.get());
 					PartyListResponse partyResponse = new PartyListResponse(party, state);
-					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getPartyId());
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
