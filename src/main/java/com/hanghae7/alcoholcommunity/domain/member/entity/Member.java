@@ -1,6 +1,7 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
 import java.time.LocalDateTime;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,8 +53,6 @@ public class Member extends Timestamped {
 	private String social;
 
 	private LocalDateTime createdAt;
-
-
 
 	private Member(String memberEmailId, String memberUniqueId, int age, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;

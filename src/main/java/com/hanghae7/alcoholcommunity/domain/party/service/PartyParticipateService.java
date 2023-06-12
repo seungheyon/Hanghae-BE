@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberNoticeDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,7 @@ public class PartyParticipateService {
 
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final PartyRepository partyRepository;
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	/**
 	 * 모임신청 메소드, 신청 save시 기본 awating값은 True 설정
@@ -115,13 +119,24 @@ public class PartyParticipateService {
 			}
 			// 파티 참가승인 알림 전송 파트
 			String  participantId = participate.getMember().getMemberUniqueId();
+			MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle());
+			String jsonData = "";
+			try{
+				jsonData = objectMapper.writeValueAsString(memberNoticeDto);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+
 			try{
 				SseEmitter emitter = getEmitter(participantId);
 				if(emitter!=null){
 					emitter.send(SseEmitter.event()
-							.data("참가승인 알림")
+							.data(jsonData+"모임 참가승인")
 							.build()
 					);
+				}
+				else{
+					// redis 에 멤버별로 List 저장
 				}
 			} catch (IOException e) {
 				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
