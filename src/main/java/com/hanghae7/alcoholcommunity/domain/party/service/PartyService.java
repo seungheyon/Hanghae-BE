@@ -340,8 +340,10 @@ public class PartyService {
 		for (Party party : partyList) {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
 			partyRepository.softDeleteParty(party.getPartyId());
-			chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
-			chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
+			if(partyParticipate != null) {
+				chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
+				chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
+			}
 			partyParticipateRepository.softDeletepartyId(party.getPartyId());
 		}
 	}
