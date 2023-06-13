@@ -101,6 +101,6 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	@Query("UPDATE PartyParticipate SET isDeleted = true WHERE id = :partyParticipateId")
 	void softDeletePartyParticipate(@Param("partyParticipateId") Long partyParticipateId);
 
-	void deleteByMemberMemberId(Long memberId);
+	void deleteAllByMemberMemberId(Long memberId);
 }
 

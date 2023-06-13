@@ -37,7 +37,7 @@ public class ReportService {
 			reportedMember.get().setBlock();
 		}
 
-		partyParticipateRepository.deleteByMemberMemberId(reportedMember.get().getMemberId());
+		partyParticipateRepository.deleteAllByMemberMemberId(reportedMember.get().getMemberId());
 
 		return new ResponseEntity<>(new ResponseDto(200, "정지 처리가 정상적으로 이루어졌습니다."), HttpStatus.OK);
 	}
