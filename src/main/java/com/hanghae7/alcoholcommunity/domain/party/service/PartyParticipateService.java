@@ -50,7 +50,7 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
-		if (party.isRecruitmentStatus()) {
+		if (party.isRecruitmentStatus() == true) {
 			if (participate.isEmpty()) {
 				if (partyJoinRequestDto.getAmountAlcohol() == null && partyJoinRequestDto.getReason() == null) {
 					return new ResponseEntity<>(new ResponseDto(400, "주량과 모임신청사유를 적어주세요!"), HttpStatus.OK);
