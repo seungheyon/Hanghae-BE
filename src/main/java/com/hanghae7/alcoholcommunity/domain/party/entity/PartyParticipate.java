@@ -48,9 +48,9 @@ public class PartyParticipate {
 	private String amountAlcohol;
 
 	private String reason;
+	private boolean isDeleted = false;
 
 	public PartyParticipate(Party party, Member member, PartyJoinRequestDto partyJoinRequestDto) {
-	private boolean isDeleted = false;
 		this.party=party;
 		this.member=member;
 		this.reason=partyJoinRequestDto.getReason();
