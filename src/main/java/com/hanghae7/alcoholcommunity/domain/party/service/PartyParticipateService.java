@@ -3,6 +3,7 @@ package com.hanghae7.alcoholcommunity.domain.party.service;
 import static com.hanghae7.alcoholcommunity.domain.sse.SseController.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
+import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
@@ -32,6 +35,7 @@ public class PartyParticipateService {
 
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final PartyRepository partyRepository;
+	private final ChatMessageRepository chatMessageRepository;
 
 	/**
 	 * 모임신청 메소드, 신청 save시 기본 awating값은 True 설정
@@ -118,6 +122,8 @@ public class PartyParticipateService {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
 			participate.setChatRoom(partyParticipate.getChatRoom());
 			party.addCurrentCount();
+			ChatMessage chatMessage = new ChatMessage(ChatMessage.MessageType.ENTER, partyParticipate.getChatRoom().getChatRoomUniqueId(), participate.getMember(), participate.getMember().getMemberName()+" 님이 채팅에 참여하였습니다", LocalDateTime.now(),  partyParticipate.getChatRoom());
+			chatMessageRepository.save(chatMessage);
 			//채팅방에 추가해주는 로직추가되야함
 			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
