@@ -31,13 +31,15 @@ public class ChatMessage extends Timestamped implements Serializable {
     private ChatRoom chatRoom;
     // 메시지 타입 : 입장, 채팅
 
-    private String memberId;
+    private Long memberId;
     private MessageType type; // 메시지 타입
     private String chatRoomUniqueId; // 방번호
     private String sender; // 메시지 보낸사람
     private String memberProfileImage; //프로필 이미지
     private String message; // 메// 시지
     private LocalDateTime createdAt;
+
+    private boolean isDeleted = false;
 
     public enum MessageType {
         ENTER, EXIT
@@ -46,6 +48,7 @@ public class ChatMessage extends Timestamped implements Serializable {
     public ChatMessage(MessageType type, String chatRoomUniqueId, Member member, String message, LocalDateTime createdAt, ChatRoom chatRoom) {
         this.type = type;
         this.chatRoomUniqueId = chatRoomUniqueId;
+        this.memberId = member.getMemberId();
         this.sender = member.getMemberName();
         this.memberProfileImage = member.getProfileImage();
         this.message = message;
