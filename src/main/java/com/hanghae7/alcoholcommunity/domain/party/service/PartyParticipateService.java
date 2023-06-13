@@ -41,7 +41,9 @@ public class PartyParticipateService {
 	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> participateParty(Long partyId, PartyJoinRequestDto partyJoinRequestDto, Member member) {
-
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(
@@ -181,6 +183,9 @@ public class PartyParticipateService {
 	 */
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member) {
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		List<PartyParticipate> parties;
 		parties = partyParticipateRepository.findByisDeletedFalseAndHostFalseAndMemberOrderByPartyPartyDate(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
@@ -213,7 +218,9 @@ public class PartyParticipateService {
 	 * @return 승인 요청 된 멤버 리스트 출력
 	 */
 	public ResponseEntity<ResponseDto> getApproveList(Member member) {
-
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
 		List<ApproveListDto> approveMemberList = new ArrayList<>();
 
@@ -225,6 +232,9 @@ public class PartyParticipateService {
 	}
 
 	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		List<PartyParticipate> parties = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndMemberOrderByPartyPartyDate(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
 		for (PartyParticipate party : parties) {
