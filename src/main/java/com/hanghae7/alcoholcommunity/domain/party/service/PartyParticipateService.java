@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-// import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
+import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
@@ -40,7 +40,7 @@ public class PartyParticipateService {
 	 * @return PartyID와 신청한 Member값 반환
 	 */
 	@Transactional
-	public ResponseEntity<ResponseDto> participateParty(Long partyId, Member member) { //PartyJoinRequestDto partyJoinRequestDto,
+	public ResponseEntity<ResponseDto> participateParty(Long partyId, PartyJoinRequestDto partyJoinRequestDto, Member member) {
 
 		Party party = new Party();
 		try {
