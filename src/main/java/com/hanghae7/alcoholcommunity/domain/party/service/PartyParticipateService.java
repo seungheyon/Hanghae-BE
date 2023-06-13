@@ -49,6 +49,7 @@ public class PartyParticipateService {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
+
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByPartyAndMember(party, member);
 		if (party.isRecruitmentStatus()) {
 			if (participate.isEmpty()) {
@@ -66,11 +67,11 @@ public class PartyParticipateService {
 			} else if (participate.get().isRejected()) {
 				return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
 			} else if (participate.get().isAwaiting()) {
-				partyParticipateRepository.delete(participate.get());
+				partyParticipateRepository.softDeletePartyParticipate(participate.get().getId());
 
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 			} else {
-				partyParticipateRepository.delete(participate.get());
+				partyParticipateRepository.softDeletePartyParticipate(participate.get().getId());
 				party.subCurrentCount();
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 			}
@@ -78,8 +79,9 @@ public class PartyParticipateService {
 		else {
 			if (participate.isEmpty()) {
 				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
-			} else {
-				partyParticipateRepository.delete(participate.get());
+			}
+			else{
+				partyParticipateRepository.softDeletePartyParticipate(participate.get().getId());
 				party.subCurrentCount();
 				party.setRecruitmentStatus(true);
 				return new ResponseEntity<>(new ResponseDto(200, "모임에서 탈퇴하였습니다."), HttpStatus.OK);
@@ -111,7 +113,7 @@ public class PartyParticipateService {
 
 		if (party.isRecruitmentStatus()) {
 			participate.setAwaiting(false);
-			PartyParticipate partyParticipate = partyParticipateRepository.findByParty(party);
+			PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
 			participate.setChatRoom(partyParticipate.getChatRoom());
 			party.addCurrentCount();
 			//채팅방에 추가해주는 로직추가되야함
@@ -180,12 +182,12 @@ public class PartyParticipateService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member) {
 		List<PartyParticipate> parties;
-		parties = partyParticipateRepository.findByAllParty(member);
+		parties = partyParticipateRepository.findByisDeletedFalseAndHostFalseAndMemberOrderByPartyPartyDate(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
 		for (PartyParticipate party : parties) {
 			int state = getState(party);
 			PartyListResponse partyResponse = new PartyListResponse(party.getParty(), state);
-			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(
+			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(
 				party.getParty().getPartyId());
 			partyResponse.getparticipateMembers(partyParticipates.stream()
 				.map(PartyParticipate::getMember)
@@ -223,11 +225,11 @@ public class PartyParticipateService {
 	}
 
 	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {
-		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipateByHost(member);
+		List<PartyParticipate> parties = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndMemberOrderByPartyPartyDate(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
 		for (PartyParticipate party : parties) {
 			PartyListResponse partyResponse = new PartyListResponse(party.getParty(), 1);
-			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByPartyId(party.getParty().getPartyId());
+			List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getParty().getPartyId());
 			partyResponse.getparticipateMembers(partyParticipates.stream()
 				.map(PartyParticipate::getMember)
 				.collect(Collectors.toList()));

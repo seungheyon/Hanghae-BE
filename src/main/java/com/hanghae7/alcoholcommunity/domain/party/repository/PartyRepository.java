@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,32 +24,19 @@ import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 public interface PartyRepository extends JpaRepository<Party, Long> {
 
 
-	@Query("select p from Party p  ORDER BY p.createdAt desc")
-	Optional<Party> findByPartyId(Long partyId);
-
-	/**
-	 * 생성된 모든 파티를 생성된 날짜순으로 얻기위한 쿼리
-	 * @param pageable
-	 * @return 모든 파티를 날짜순으로 리턴
-	 */
-	@Query("select p from Party p ORDER BY p.partyDate")
-	List<Party> findAllParty(Pageable pageable);
-
-	/**
-	 * status 정보에 따라 모집중, 모집완료된 모임정보를 얻기위한 쿼리
-	 * @param status
-	 * @param pageable
-	 * @return 모집중, 모집완료된 모임정보를 각각의 status에 따라 리턴
-	 */
-	@Query("select p from Party p where p.recruitmentStatus = :status ORDER BY p.partyDate")
-	List<Party> findAllPartyRecruitmentStatus(@Param("status") boolean status, Pageable pageable);
-
-	@Query("select p from Party p where p.partyDate < :Date")
-	List<Party> findTimeoverParty(@Param("Date")LocalDateTime dateTime);
-
+	Optional<Party> findByPartyIdOrderByCreatedAtDesc(Long partyId);
+	List<Party> findAllByisDeletedFalseOrderByPartyDate(Pageable pageable);
+	List<Party> findAllByisDeletedFalseAndRecruitmentStatusOrderByPartyDate(boolean status, Pageable pageable);
+	List<Party> findAllByPartyDateBefore(LocalDateTime dateTime);
 	@Query("select p from Party p where p.placeName like %:keyword% or p.stationName like %:keyword% or p.placeAddress like %:keyword% ORDER BY p.partyDate desc")
 	List<Party> findAllPartyByKeyword(Pageable pageable, @Param("keyword")String keyword);
 
 	@Query("select p from Party p where p.recruitmentStatus = :status and p.placeName like %:keyword% or p.stationName like %:keyword% or p.placeAddress like %:keyword% ORDER BY p.partyDate desc")
 	List<Party> findAllPartyByKeywordRecruitmentStatus(@Param("status") boolean status, Pageable pageable, @Param("keyword")String keyword);
+
+	@Modifying
+	@Query("UPDATE Party SET isDeleted = true WHERE partyId = :partyId")
+	void softDeleteParty(@Param("partyId") Long partyId);
+
+
 }

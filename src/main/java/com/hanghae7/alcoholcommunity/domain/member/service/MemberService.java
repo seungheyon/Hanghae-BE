@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
@@ -47,6 +48,7 @@ public class MemberService {
     private final PartyParticipateRepository partyParticipateRepository;
     private final RedisDao redisDao;
     private final JwtUtil jwtUtil;
+    private final ChatMessageRepository chatMessageRepository;
     // image part
     private static final String S3_BUCKET_PREFIX = "S3";
 
@@ -126,10 +128,13 @@ public class MemberService {
                     .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
             imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
             updateMember.get().update1(newMemberName, imageUrl);
+            chatMessageRepository.updateChatMessageProfileAndMemberInfo(member.getMemberId(), imageUrl, newMemberName);
+
         }
         // image 수정 =========================================================
         else{
             updateMember.get().update(newMemberName, newIntroduce);
+            chatMessageRepository.updateChatMessageMemberInfo(member.getMemberId(), newMemberName);
         }
 
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
