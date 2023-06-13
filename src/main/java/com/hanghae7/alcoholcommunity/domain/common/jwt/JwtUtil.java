@@ -2,6 +2,8 @@ package com.hanghae7.alcoholcommunity.domain.common.jwt;
 
 import com.hanghae7.alcoholcommunity.domain.common.security.RefreshTokenRepository;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsServiceImplement;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 ;
 

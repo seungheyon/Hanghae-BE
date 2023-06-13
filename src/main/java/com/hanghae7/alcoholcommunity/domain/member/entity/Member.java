@@ -98,6 +98,9 @@ public class Member extends Timestamped {
 		this.profileImage = newProfileImage;
 	}
 
+	public void setBlock(){
+		this.authority ="BLOCK";
+	}
 
 	/**
 	 * Update.
