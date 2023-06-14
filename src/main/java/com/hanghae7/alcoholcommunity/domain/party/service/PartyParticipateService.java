@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberNoticeDto;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Notice;
+import com.hanghae7.alcoholcommunity.domain.member.repository.NoticeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,9 @@ public class PartyParticipateService {
 
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final PartyRepository partyRepository;
+	private final NoticeRepository noticeRepository;
 	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final RedisDao redisDao;
 
 	/**
 	 * 모임신청 메소드, 신청 save시 기본 awating값은 True 설정
@@ -119,24 +124,25 @@ public class PartyParticipateService {
 			}
 			// 파티 참가승인 알림 전송 파트
 			String  participantId = participate.getMember().getMemberUniqueId();
-			MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle());
-			String jsonData = "";
-			try{
-				jsonData = objectMapper.writeValueAsString(memberNoticeDto);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
 
 			try{
 				SseEmitter emitter = getEmitter(participantId);
 				if(emitter!=null){
+					// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
+					MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle(), true);
+					String jsonData = objectMapper.writeValueAsString(memberNoticeDto);
 					emitter.send(SseEmitter.event()
-							.data(jsonData+"모임 참가승인")
+							.data(jsonData)
 							.build()
 					);
 				}
 				else{
-					// redis 에 멤버별로 List 저장
+					// DB에 멤버별로 부재중 알림 저장
+					MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle(), false);
+					String jsonData = objectMapper.writeValueAsString(memberNoticeDto);
+					Notice notice = new Notice(jsonData, participate.getMember());
+					noticeRepository.save(notice);
+					participate.getMember().getMemberNotice().add(notice);
 				}
 			} catch (IOException e) {
 				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);

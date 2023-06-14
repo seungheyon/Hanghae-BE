@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.member.entity;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 import lombok.Getter;
@@ -53,6 +54,9 @@ public class Member extends Timestamped {
 	private String social;
 
 	private LocalDateTime createdAt;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Notice> memberNotice;
 
 	private Member(String memberEmailId, String memberUniqueId, int age, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;

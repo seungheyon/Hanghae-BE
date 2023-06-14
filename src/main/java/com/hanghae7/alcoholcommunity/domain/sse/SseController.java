@@ -1,6 +1,9 @@
 package com.hanghae7.alcoholcommunity.domain.sse;
 
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberNoticeDto;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -58,10 +63,33 @@ public class SseController {
 
         emitters.put(memberUniqueId, sseEmitter);
 
+//        List<Notice> noticeList = userDetails.getMember().getMemberNotice();
+//        Iterator<Notice> iterator = noticeList.iterator();
+//        while(iterator.hasNext()){
+//            Notice notice = iterator.next();
+//            String jsonData = notice.getNotice();
+//            sseEmitter.send(SseEmitter.event()
+//                    .data(jsonData)
+//                    .build()
+//            );
+//            iterator.remove();
+//        }
         sseEmitter.send(SseEmitter.event()
-                .data("Initial data")
-                .build()
-        );
+                    .data("testData")
+                    .build()
+            );
+
+//        for (Notice notice : noticeList) {
+//            String jsonString = notice.getNotice();
+//            sseEmitter.send(SseEmitter.event()
+//                    .data(jsonString)
+//                    .build()
+//            );
+//            // noticeList 에서 방금 전송한 notice 삭제
+//            iterator.remove();
+//        }
+
+
 
         return sseEmitter;
     }
