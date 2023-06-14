@@ -106,6 +106,9 @@ public class NaverService {
 						member = Optional.of(newMember);
 				}
 				else{
+					if(member.get().getAuthority().equals("BLOCK")){
+						return new ResponseEntity<>(new ResponseDto(401, "이용 정지 된 회원입니다."), HttpStatus.BAD_REQUEST);
+					}
 					return new ResponseEntity<>(new ResponseDto(401, "성인만 저희 서비스를 이용할 수 있습니다."), HttpStatus.BAD_REQUEST);
 				}
 			}

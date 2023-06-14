@@ -87,6 +87,9 @@ public class PartyService {
 
 	public ResponseEntity<ResponseDto> createParty(PartyRequestDto partyRequestDto, Member member, MultipartFile image) throws
 		IOException {
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 
 		Party party = new Party(partyRequestDto, member.getMemberName());
 
@@ -133,11 +136,13 @@ public class PartyService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> findAll(double radius, double longitude, double latitude, int page, int recruitmentStatus, HttpServletRequest request) {
 
-
 		String accessToken = request.getHeader("Access_key");
 		String memberUniqueId = null;
 		if (accessToken != null) {
 			memberUniqueId = jwtUtil.getMemberInfoFromToken(accessToken.substring(7));
+			if(memberRepository.findByMemberUniqueId(memberUniqueId).get().getAuthority().equals("BLOCK")){
+				return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+			}
 		}
 		List<Party> parties;
 		Pageable pageable = PageRequest.of(page, 20);
@@ -151,7 +156,6 @@ public class PartyService {
 
 		List<PartyListResponse> partyList = new ArrayList<>();
 		if(memberUniqueId == null) {
-
 				for (Party party : parties) {
 					PartyListResponse partyResponse = new PartyListResponse(party);
 					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
@@ -185,8 +189,6 @@ public class PartyService {
 
 		}
 
-
-
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
 	}
 
@@ -200,7 +202,9 @@ public class PartyService {
 
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParty(Long partyId, Member member) {
-
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(
@@ -225,7 +229,9 @@ public class PartyService {
 	@Transactional
 	public ResponseEntity<ResponseDto> updateParty(Long partyId, PartyRequestDto partyRequestDto, Member member, MultipartFile image) throws
 		IOException {
-
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(
@@ -282,7 +288,9 @@ public class PartyService {
 	 */
 	@Transactional
 	public ResponseEntity<ResponseDto> deleteParty(Long partyId, Member member) {
-
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(
@@ -340,8 +348,10 @@ public class PartyService {
 		for (Party party : partyList) {
 			PartyParticipate partyParticipate = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndParty(party);
 			partyRepository.softDeleteParty(party.getPartyId());
-			chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
-			chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
+			if(partyParticipate != null) {
+				chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
+				chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
+			}
 			partyParticipateRepository.softDeletepartyId(party.getPartyId());
 		}
 	}
@@ -378,6 +388,9 @@ public class PartyService {
 		String memberUniqueId = null;
 		if (accessToken != null) {
 			memberUniqueId = jwtUtil.getMemberInfoFromToken(accessToken.substring(7));
+			if(memberRepository.findByMemberUniqueId(memberUniqueId).get().getAuthority().equals("BLOCK")){
+					return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+			}
 		}
 
 		Pageable pageable = PageRequest.of(page, 10);

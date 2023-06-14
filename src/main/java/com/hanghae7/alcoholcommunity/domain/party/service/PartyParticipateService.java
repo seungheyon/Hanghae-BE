@@ -1,5 +1,7 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
+import static com.hanghae7.alcoholcommunity.domain.sse.SseController.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-// import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
+import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
@@ -28,9 +31,6 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRep
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import static com.hanghae7.alcoholcommunity.domain.sse.SseController.getEmitter;
 
 @RequiredArgsConstructor
 @Service
@@ -49,8 +49,10 @@ public class PartyParticipateService {
 	 * @return PartyID와 신청한 Member값 반환
 	 */
 	@Transactional
-	public ResponseEntity<ResponseDto> participateParty(Long partyId, Member member) { //PartyJoinRequestDto partyJoinRequestDto,
-
+	public ResponseEntity<ResponseDto> participateParty(Long partyId, PartyJoinRequestDto partyJoinRequestDto, Member member) {
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		Party party = new Party();
 		try {
 			party = partyRepository.findById(partyId).orElseThrow(
@@ -58,10 +60,18 @@ public class PartyParticipateService {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
+
 		Optional<PartyParticipate> participate = partyParticipateRepository.findByisDeletedFalseAndPartyAndMember(party, member);
-		if(party.isRecruitmentStatus() == true) {
+		if (party.isRecruitmentStatus() == true) {
 			if (participate.isEmpty()) {
-				partyParticipateRepository.save(new PartyParticipate(party, member)); //, partyJoinRequestDto
+				if (partyJoinRequestDto.getAmountAlcohol() == null && partyJoinRequestDto.getReason() == null) {
+					return new ResponseEntity<>(new ResponseDto(400, "주량과 모임신청사유를 적어주세요!"), HttpStatus.OK);
+				} else if (partyJoinRequestDto.getAmountAlcohol() == null) {
+					return new ResponseEntity<>(new ResponseDto(400, "주량을 적어주세요!"), HttpStatus.OK);
+				} else if (partyJoinRequestDto.getReason() == null) {
+					return new ResponseEntity<>(new ResponseDto(400, "모임신청사유를 적어주세요!"), HttpStatus.OK);
+				}
+				partyParticipateRepository.save(new PartyParticipate(party, member, partyJoinRequestDto));
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청에 성공했습니다."), HttpStatus.OK);
 			} else if (participate.get().isHost()) {
 				return new ResponseEntity<>(new ResponseDto(200, "이미 호스트인 모임입니다."), HttpStatus.OK);
@@ -77,8 +87,8 @@ public class PartyParticipateService {
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 			}
 		}
-		else{
-			if(participate.isEmpty()){
+		else {
+			if (participate.isEmpty()) {
 				return new ResponseEntity<>(new ResponseDto(200, "모집이 마감된 모임입니다."), HttpStatus.OK);
 			}
 			else{
@@ -89,7 +99,6 @@ public class PartyParticipateService {
 			}
 		}
 	}
-
 	/**
 	 * 주최자가 승인신청 여부판단, 꽉찬 모임이라면 승인안됨
 	 * @param participateId 파티신청 정보의 ID
@@ -195,6 +204,9 @@ public class PartyParticipateService {
 	 */
 	@Transactional(readOnly = true)
 	public ResponseEntity<ResponseDto> getParticipatePartyList(Member member) {
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		List<PartyParticipate> parties;
 		parties = partyParticipateRepository.findByisDeletedFalseAndHostFalseAndMemberOrderByPartyPartyDate(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
@@ -227,7 +239,9 @@ public class PartyParticipateService {
 	 * @return 승인 요청 된 멤버 리스트 출력
 	 */
 	public ResponseEntity<ResponseDto> getApproveList(Member member) {
-
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
 		List<ApproveListDto> approveMemberList = new ArrayList<>();
 
@@ -239,6 +253,9 @@ public class PartyParticipateService {
 	}
 
 	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {
+		if(member.getAuthority().equals("BLOCK")){
+			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
+		}
 		List<PartyParticipate> parties = partyParticipateRepository.findByisDeletedFalseAndHostTrueAndMemberOrderByPartyPartyDate(member);
 		List<PartyListResponse> partyList = new ArrayList<>();
 		for (PartyParticipate party : parties) {
