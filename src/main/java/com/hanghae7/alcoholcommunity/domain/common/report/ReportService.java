@@ -30,6 +30,7 @@ public class ReportService {
 		return new ResponseEntity<>(new ResponseDto(200, "신고가 정상적으로 접수되었습니다."), HttpStatus.OK);
 	}
 
+	@Transactional
 	public ResponseEntity<ResponseDto> blockMember(String memberUniqueId, Member member) {
 
 		Optional<Member> reportedMember = memberRepository.findByMemberUniqueId(memberUniqueId);
@@ -37,7 +38,7 @@ public class ReportService {
 			reportedMember.get().setBlock();
 		}
 
-		partyParticipateRepository.deleteAllByMemberMemberId(reportedMember.get().getMemberId());
+		partyParticipateRepository.softDeletememberId(reportedMember.get().getMemberId());
 
 		return new ResponseEntity<>(new ResponseDto(200, "정지 처리가 정상적으로 이루어졌습니다."), HttpStatus.OK);
 	}
