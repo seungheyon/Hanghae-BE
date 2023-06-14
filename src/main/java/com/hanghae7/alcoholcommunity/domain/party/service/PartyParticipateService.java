@@ -5,7 +5,9 @@ import static com.hanghae7.alcoholcommunity.domain.sse.SseController.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -228,13 +230,22 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
 		}
 		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
-		List<ApproveListDto> approveMemberList = new ArrayList<>();
+		Map<Party, List<ApproveListDto>> partyMap = new HashMap<>();
 
 		for (PartyParticipate partyParticipate : parties) {
+			Party party = partyParticipate.getParty();
 			ApproveListDto approveListDto = new ApproveListDto(partyParticipate);
-			approveMemberList.add(approveListDto);
+
+			if (partyMap.containsKey(party)) {
+				partyMap.get(party).add(approveListDto);
+			} else {
+				List<ApproveListDto> approveListDtos = new ArrayList<>();
+				approveListDtos.add(approveListDto);
+				partyMap.put(party, approveListDtos);
+			}
 		}
-		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveMemberList), HttpStatus.OK);
+		List<List<ApproveListDto>> partyLists = new ArrayList<>(partyMap.values());
+		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", partyLists), HttpStatus.OK);
 	}
 
 	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {

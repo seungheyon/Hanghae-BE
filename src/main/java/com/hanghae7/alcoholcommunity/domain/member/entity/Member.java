@@ -53,8 +53,6 @@ public class Member extends Timestamped {
 
 	private LocalDateTime createdAt;
 
-
-
 	private Member(String memberEmailId, String memberUniqueId, int age, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
 		this.memberUniqueId = memberUniqueId;

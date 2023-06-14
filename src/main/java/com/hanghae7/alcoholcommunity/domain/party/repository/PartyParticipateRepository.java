@@ -94,15 +94,15 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 	List<PartyParticipate> findByisDeletedFalseAndHostTrueAndMemberOrderByPartyPartyDate(Member member);
 
 	@Modifying
-	@Query("UPDATE PartyParticipate SET isDeleted = true WHERE party.partyId = :partyId")
+	@Query("UPDATE PartyParticipate pp SET pp.isDeleted = true WHERE pp.party.partyId = :partyId")
 	void softDeletepartyId(@Param("partyId") Long partyId);
 
 	@Modifying
-	@Query("UPDATE PartyParticipate SET isDeleted = true WHERE member.memberId = :memberId")
+	@Query("UPDATE PartyParticipate pp SET pp.isDeleted = true WHERE pp.member.memberId = :memberId")
 	void softDeletememberId(@Param("memberId") Long memberId);
 
 	@Modifying
-	@Query("UPDATE PartyParticipate SET isDeleted = true WHERE id = :partyParticipateId")
+	@Query("UPDATE PartyParticipate pp SET pp.isDeleted = true WHERE pp.id = :partyParticipateId")
 	void softDeletePartyParticipate(@Param("partyParticipateId") Long partyParticipateId);
 
 	void deleteAllByMemberMemberId(Long memberId);
