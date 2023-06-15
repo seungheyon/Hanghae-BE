@@ -1,11 +1,13 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
-import static com.hanghae7.alcoholcommunity.domain.sse.SseController.*;
+// import static com.hanghae7.alcoholcommunity.domain.sse.SseController.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,8 @@ import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
 import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.notification.entity.Notice;
+import com.hanghae7.alcoholcommunity.domain.notification.repository.NoticeRepository;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.ApproveListDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
@@ -35,6 +39,7 @@ public class PartyParticipateService {
 
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final PartyRepository partyRepository;
+	private final NoticeRepository noticeRepository;
 	private final ChatMessageRepository chatMessageRepository;
 
 	/**
@@ -128,19 +133,9 @@ public class PartyParticipateService {
 			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
 			}
-			// 파티 참가승인 알림 전송 파트
-			String  participantId = participate.getMember().getMemberUniqueId();
-			try{
-				SseEmitter emitter = getEmitter(participantId);
-				if(emitter!=null){
-					emitter.send(SseEmitter.event()
-							.data("참가승인 알림")
-							.build()
-					);
-				}
-			} catch (IOException e) {
-				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
-			}
+			// 파티 참가승인 알림 메세지 생성
+			Notice notice = new Notice(party.getPartyId(), party.getTitle(), true, false, participate.getMember());
+			noticeRepository.save(notice);
 
 		} else {
 			return new ResponseEntity<>(new ResponseDto(200, "이미 꽉찬 모임방 입니다."), HttpStatus.OK);
@@ -165,20 +160,18 @@ public class PartyParticipateService {
 
 		participate.setRejection(true);
 
-		// 파티 참가거절 알림 전송 파트
-		String  participantId = participate.getMember().getMemberUniqueId();
-		try{
-			SseEmitter emitter = getEmitter(participantId);
-			if(emitter!=null){
-				emitter.send(SseEmitter.event()
-						.data("참가거절 알림")
-						.build()
-				);
-			}
-		} catch (IOException e) {
-			return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+
+		Party party = new Party();
+		try {
+			party = partyRepository.findById(participate.getParty().getPartyId()).orElseThrow(
+				() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
 		}
 
+		// 파티 참가거절 알림 메세지 생성
+		Notice notice = new Notice(party.getPartyId(), party.getTitle(), false, false, participate.getMember());
+		noticeRepository.save(notice);
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
 
@@ -228,13 +221,22 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
 		}
 		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
-		List<ApproveListDto> approveMemberList = new ArrayList<>();
+		Map<Party, List<ApproveListDto>> partyMap = new HashMap<>();
 
 		for (PartyParticipate partyParticipate : parties) {
+			Party party = partyParticipate.getParty();
 			ApproveListDto approveListDto = new ApproveListDto(partyParticipate);
-			approveMemberList.add(approveListDto);
+
+			if (partyMap.containsKey(party)) {
+				partyMap.get(party).add(approveListDto);
+			} else {
+				List<ApproveListDto> approveListDtos = new ArrayList<>();
+				approveListDtos.add(approveListDto);
+				partyMap.put(party, approveListDtos);
+			}
 		}
-		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveMemberList), HttpStatus.OK);
+		List<List<ApproveListDto>> partyLists = new ArrayList<>(partyMap.values());
+		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", partyLists), HttpStatus.OK);
 	}
 
 	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {

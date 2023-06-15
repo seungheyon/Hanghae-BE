@@ -1,15 +1,17 @@
-package com.hanghae7.alcoholcommunity.domain.member.entity;
+package com.hanghae7.alcoholcommunity.domain.notification.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name="Notice")
 public class Notice {
 

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hanghae7.alcoholcommunity.domain.common.entity.Timestamped;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
+import com.hanghae7.alcoholcommunity.domain.notification.entity.Notice;
 
 /**
  * The type Member.
