@@ -9,12 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
-import com.hanghae7.alcoholcommunity.domain.member.dto.MemberNoticeDto;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Notice;
-import com.hanghae7.alcoholcommunity.domain.member.repository.NoticeRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
+import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyJoinRequestDto;
@@ -40,9 +35,6 @@ public class PartyParticipateService {
 
 	private final PartyParticipateRepository partyParticipateRepository;
 	private final PartyRepository partyRepository;
-	private final NoticeRepository noticeRepository;
-	private final ObjectMapper objectMapper = new ObjectMapper();
-	private final RedisDao redisDao;
 	private final ChatMessageRepository chatMessageRepository;
 
 	/**
@@ -131,7 +123,7 @@ public class PartyParticipateService {
 			participate.setChatRoom(partyParticipate.getChatRoom());
 			party.addCurrentCount();
 			ChatMessage chatMessage = new ChatMessage(ChatMessage.MessageType.ENTER, partyParticipate.getChatRoom().getChatRoomUniqueId(), participate.getMember(), participate.getMember().getMemberName()+" 님이 채팅에 참여하였습니다", LocalDateTime.now(),  partyParticipate.getChatRoom());
-
+			chatMessageRepository.save(chatMessage);
 			//채팅방에 추가해주는 로직추가되야함
 			if (party.getCurrentCount() == party.getTotalCount()) {
 				party.setRecruitmentStatus(false);
@@ -141,23 +133,10 @@ public class PartyParticipateService {
 			try{
 				SseEmitter emitter = getEmitter(participantId);
 				if(emitter!=null){
-					// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
-					//MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle(), true, true);
-					Notice notice = new Notice(party.getPartyId(), party.getTitle(),true, true, participate.getMember());
-					String jsonData = objectMapper.writeValueAsString(notice);
 					emitter.send(SseEmitter.event()
-						.data(jsonData)
-						.build()
+							.data("참가승인 알림")
+							.build()
 					);
-				}
-				else{
-					// DB에 멤버별로 부재중 알림 저장
-					Notice notice = new Notice(party.getPartyId(), party.getTitle(),true, false, participate.getMember());
-					//MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle(), true, false);
-					//String jsonData = objectMapper.writeValueAsString(notice);
-					//Notice notice = new Notice(jsonData, participate.getMember());
-					noticeRepository.save(notice);
-					participate.getMember().getMemberNotice().add(notice);
 				}
 			} catch (IOException e) {
 				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
@@ -186,36 +165,15 @@ public class PartyParticipateService {
 
 		participate.setRejection(true);
 
-		Party party = new Party();
-		try {
-			party = partyRepository.findById(participate.getParty().getPartyId()).orElseThrow(
-				() -> new IllegalArgumentException("존재하지 않는 모임 입니다."));
-		} catch (IllegalArgumentException e) {
-			return new ResponseEntity<>(new ResponseDto(400, "존재하지 않는 모임 입니다."), HttpStatus.OK);
-		}
-
 		// 파티 참가거절 알림 전송 파트
 		String  participantId = participate.getMember().getMemberUniqueId();
 		try{
 			SseEmitter emitter = getEmitter(participantId);
 			if(emitter!=null){
-				// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
-				//MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle(), false, true);
-				Notice notice = new Notice(party.getPartyId(), party.getTitle(),false, true, participate.getMember());
-				String jsonData = objectMapper.writeValueAsString(notice);
 				emitter.send(SseEmitter.event()
-					.data(jsonData)
-					.build()
+						.data("참가거절 알림")
+						.build()
 				);
-			}
-			else{
-				// DB에 멤버별로 부재중 알림 저장
-				Notice notice = new Notice(party.getPartyId(), party.getTitle(),false, false, participate.getMember());
-				//MemberNoticeDto memberNoticeDto = new MemberNoticeDto(party.getPartyId(), party.getTitle(), false, false);
-				//String jsonData = objectMapper.writeValueAsString(memberNoticeDto);
-				//Notice notice = new Notice(jsonData, participate.getMember());
-				noticeRepository.save(notice);
-				participate.getMember().getMemberNotice().add(notice);
 			}
 		} catch (IOException e) {
 			return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
