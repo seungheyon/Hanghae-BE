@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ReportRequestDto {
 	private String reportContent;
 	private String reportType;
-	private String reportedId;
+	private Long reportedId;
 }

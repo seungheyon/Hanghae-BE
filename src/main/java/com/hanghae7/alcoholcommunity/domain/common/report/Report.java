@@ -31,7 +31,7 @@ public class Report extends Timestamped {
 	private String reporterId;
 
 	@Column(nullable = false)
-	private String reportedId;
+	private Long reportedId;
 
 	@Column(nullable = false)
 	private String reportType;
