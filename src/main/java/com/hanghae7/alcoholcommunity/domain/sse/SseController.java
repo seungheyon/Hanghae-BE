@@ -1,6 +1,13 @@
 package com.hanghae7.alcoholcommunity.domain.sse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberNoticeDto;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Notice;
+import com.hanghae7.alcoholcommunity.domain.member.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +32,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SseController {
 
     private static Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final NoticeRepository noticeRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     /**
@@ -32,10 +43,10 @@ public class SseController {
      * @return the sse emitter
      * @throws IOException the io exception
      */
-// SSE event 생성, SseEmitter 사용
+    // SSE event 생성, SseEmitter 사용
     @GetMapping("/stream")
     public SseEmitter streamEmitterEvents(
-            @AuthenticationPrincipal UserDetailsImplement userDetails
+        @AuthenticationPrincipal UserDetailsImplement userDetails
     ) throws IOException {
         String memberUniqueId = userDetails.getMember().getMemberUniqueId();
         SseEmitter sseEmitter = new SseEmitter();
@@ -44,9 +55,9 @@ public class SseController {
         sseEmitter.onTimeout(() -> {
             try{
                 sseEmitter.send(
-                        SseEmitter.event()
-                                .name("reconnect")
-                        .data("Initial data")
+                    SseEmitter.event()
+                        .name("reconnect")
+                        .data("reconnect")
                         .build()
                 );
             } catch (IOException e) {
@@ -58,10 +69,41 @@ public class SseController {
 
         emitters.put(memberUniqueId, sseEmitter);
 
-        sseEmitter.send(SseEmitter.event()
-                .data("Initial data")
+        List<Notice> noticeList = userDetails.getMember().getMemberNotice();
+        Iterator<Notice> iterator = noticeList.iterator();
+        while(iterator.hasNext()){
+            Notice notice = iterator.next();
+            if(notice.getIsRead()){
+                continue;
+            }
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            String jsonData = objectMapper.writeValueAsString(notice);
+            sseEmitter.send(SseEmitter.event()
+                .data(jsonData)
                 .build()
-        );
+            );
+            notice.updateRead(true);
+            iterator.remove();
+            //noticeRepository.delete(notice);
+            //noticeRepository.deleteById(notice.getNoticeId());
+        }
+        //        sseEmitter.send(SseEmitter.event()
+        //                    .data("testData")
+        //                    .build()
+        //            );
+
+        //        for (Notice notice : noticeList) {
+        //            String jsonString = notice.getNotice();
+        //            sseEmitter.send(SseEmitter.event()
+        //                    .data(jsonString)
+        //                    .build()
+        //            );
+        //            // noticeList 에서 방금 전송한 notice 삭제
+        //            iterator.remove();
+        //        }
+
+
 
         return sseEmitter;
     }
