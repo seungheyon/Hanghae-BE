@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class ReportController {
-	private ReportService reportService;
+	private final ReportService reportService;
 	@PostMapping("/report")
 	public ResponseEntity<ResponseDto> reportMember( @RequestBody ReportRequestDto  reportRequestDto,
 													@AuthenticationPrincipal UserDetailsImplement userDetails){
