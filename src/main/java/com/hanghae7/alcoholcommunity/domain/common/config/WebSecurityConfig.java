@@ -54,6 +54,8 @@ public class WebSecurityConfig {
 		config.addAllowedOrigin("http://52.79.171.11:8080");
 		config.addAllowedOrigin("http://im-soolo.store");
 		config.addAllowedOrigin("https://im-soolo.store");
+		config.addAllowedOrigin("http://www.im-soolo.store");
+		config.addAllowedOrigin("https://www.im-soolo.store");
 		config.addAllowedOrigin("https://soolo-fe.vercel.app");
 		config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 		config.addExposedHeader(JwtUtil.ACCESS_KEY);
