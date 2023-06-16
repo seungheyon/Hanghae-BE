@@ -12,4 +12,5 @@ public class MemberNoticeDto {
     private Long partyId;
     private String title;
     private Boolean accepted;
+    private Boolean isRead;
 }
