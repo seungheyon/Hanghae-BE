@@ -1,7 +1,11 @@
 package com.hanghae7.alcoholcommunity.domain.party.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.party.dto.Info.MemberInfoDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 
 import lombok.Getter;
@@ -27,6 +31,7 @@ public class ApproveListDto {
 	private String memberProfileImage;
 	private String reason;
 	private String amountAlcohol;
+	private List<MemberInfoDto> memberInfo;
 
 	public ApproveListDto(PartyParticipate partyParticipate){
 		this.partyParticipateId = partyParticipate.getId();
@@ -38,6 +43,19 @@ public class ApproveListDto {
 		this.memberProfileImage = partyParticipate.getMember().getProfileImage();
 		this.reason = partyParticipate.getReason();
 		this.amountAlcohol = partyParticipate.getAmountAlcohol();
+	}
+
+	public List<MemberInfoDto> getparticipateMembers(List<Member> participateMembers) {
+		List<MemberInfoDto> memberInfos  = new ArrayList<>();
+		for (Member member : participateMembers) {
+			MemberInfoDto memberInfo = new MemberInfoDto();
+			memberInfo.setMemberId(member.getMemberId());
+			memberInfo.setMemberName(member.getMemberName());
+			memberInfo.setProfileImage(member.getProfileImage());
+			memberInfos.add(memberInfo);
+		}
+		this.memberInfo = memberInfos;
+		return memberInfos;
 	}
 
 }

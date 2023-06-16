@@ -14,10 +14,10 @@ import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
 import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@EnableScheduling
 @Service
 public class ReportService {
 	private final ReportRepository reportRepository;
@@ -26,10 +26,16 @@ public class ReportService {
 	@Transactional
 	public ResponseEntity<ResponseDto> reportMember(ReportRequestDto reportRequestDto, Member member) {
 		Report report = new Report(member, reportRequestDto);
-		reportRepository.save(report);
-		return new ResponseEntity<>(new ResponseDto(200, "신고가 정상적으로 접수되었습니다."), HttpStatus.OK);
+		if(reportRepository.findByReporterIdAndReportedId(member.getMemberUniqueId(), reportRequestDto.getReportedId()).isEmpty()){
+			reportRepository.save(report);
+			return new ResponseEntity<>(new ResponseDto(200, "신고가 정상적으로 접수되었습니다."), HttpStatus.OK);}
+		else{
+			return new ResponseEntity<>(new ResponseDto(200, "이미 신고한 대상입니다."), HttpStatus.OK);
+		}
+
 	}
 
+	@Transactional
 	public ResponseEntity<ResponseDto> blockMember(String memberUniqueId, Member member) {
 
 		Optional<Member> reportedMember = memberRepository.findByMemberUniqueId(memberUniqueId);
@@ -37,7 +43,7 @@ public class ReportService {
 			reportedMember.get().setBlock();
 		}
 
-		partyParticipateRepository.deleteAllByMemberMemberId(reportedMember.get().getMemberId());
+		partyParticipateRepository.softDeletememberId(reportedMember.get().getMemberId());
 
 		return new ResponseEntity<>(new ResponseDto(200, "정지 처리가 정상적으로 이루어졌습니다."), HttpStatus.OK);
 	}

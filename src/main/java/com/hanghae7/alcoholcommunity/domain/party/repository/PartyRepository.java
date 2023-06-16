@@ -35,7 +35,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 	List<Party> findAllPartyByKeywordRecruitmentStatus(@Param("status") boolean status, Pageable pageable, @Param("keyword")String keyword);
 
 	@Modifying
-	@Query("UPDATE Party SET isDeleted = true WHERE partyId = :partyId")
+	@Query("UPDATE Party p SET p.isDeleted = true WHERE p.partyId = :partyId")
 	void softDeleteParty(@Param("partyId") Long partyId);
 
 

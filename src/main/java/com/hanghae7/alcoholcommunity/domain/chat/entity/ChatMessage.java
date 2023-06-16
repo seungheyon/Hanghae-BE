@@ -32,6 +32,7 @@ public class ChatMessage extends Timestamped implements Serializable {
     // 메시지 타입 : 입장, 채팅
 
     private Long memberId;
+    private String memberUniqueId;
     private MessageType type; // 메시지 타입
     private String chatRoomUniqueId; // 방번호
     private String sender; // 메시지 보낸사람
@@ -49,6 +50,7 @@ public class ChatMessage extends Timestamped implements Serializable {
         this.type = type;
         this.chatRoomUniqueId = chatRoomUniqueId;
         this.memberId = member.getMemberId();
+        this.memberUniqueId = member.getMemberUniqueId();
         this.sender = member.getMemberName();
         this.memberProfileImage = member.getProfileImage();
         this.message = message;
