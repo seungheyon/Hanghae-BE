@@ -61,7 +61,7 @@ public class WebSecurityConfig {
 		config.addAllowedOrigin("http://www.im-soolo.com");
 		config.addAllowedOrigin("https://www.im-soolo.com");
 		config.addAllowedOrigin("https://soolo-fe.vercel.app");
-		config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+		// config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
 		config.addExposedHeader(JwtUtil.ACCESS_KEY);
 		config.addExposedHeader(JwtUtil.REFRESH_KEY);
 		config.addAllowedMethod("*");

@@ -36,7 +36,7 @@ public class JwtUtil {
 	public static final String ACCESS_KEY = "ACCESS_KEY";
 	public static final String REFRESH_KEY = "REFRESH_KEY";
 
-	public static final String AUTHORIZATION_HEADER = "Authorization";
+	// public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer ";
 
 
