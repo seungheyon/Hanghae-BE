@@ -31,7 +31,6 @@ public class ApproveListDto {
 	private String memberProfileImage;
 	private String reason;
 	private String amountAlcohol;
-	private List<MemberInfoDto> memberInfo;
 
 	public ApproveListDto(PartyParticipate partyParticipate){
 		this.partyParticipateId = partyParticipate.getId();
@@ -54,7 +53,6 @@ public class ApproveListDto {
 			memberInfo.setProfileImage(member.getProfileImage());
 			memberInfos.add(memberInfo);
 		}
-		this.memberInfo = memberInfos;
 		return memberInfos;
 	}
 
