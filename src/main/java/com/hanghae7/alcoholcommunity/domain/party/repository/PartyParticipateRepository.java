@@ -79,7 +79,7 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 		"WHERE pp.awaiting = true and pp.party.partyId IN " +
 		"(SELECT p.party.partyId FROM PartyParticipate p " +
 		"WHERE p.member = :member AND p.host = true) " +
-		"AND pp.host = false and pp.rejected = false")
+		"AND pp.host = false and pp.rejected = false and pp.isDeleted = false")
 	List<PartyParticipate> findPartyParticipatesByHostAndMemberId(@Param("member") Member member);
 
 
