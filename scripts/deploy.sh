@@ -1,5 +1,5 @@
-BASE_PATH="/home/ubuntu/soolo-serv/build/libs
-BUILD_PATH=$(ls $BASE_PATH/*.jar)
+BASE_PATH="/home/ubuntu/soolo-serv
+BUILD_PATH=$(ls $BASE_PATH/build/libs/*.jar)
 JAR_NAME=$(basename "$BUILD_PATH")
 
 cd $BASE_PATH
