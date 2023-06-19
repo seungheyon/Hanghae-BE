@@ -49,6 +49,8 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 /*	@Query("select p from PartyParticipate p join fetch p.member where p.isDeleted = false and p.party.partyId = :partyId and p.awaiting = false order by p.host desc ")
 	List<PartyParticipate> findByPartyId(@Param("partyId") Long partyId);*/
 
+	List<PartyParticipate> findByisDeletedFalseAndAwaitingFalseAndRejectedFalseAndPartyPartyIdOrderByHostDesc(Long partyId);
+
 	List<PartyParticipate> findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(Long partyId);
 
 /*	@Query("select p from PartyParticipate p where p.isDeleted= false and p.party = :party and p.host = true")
@@ -79,7 +81,7 @@ public interface PartyParticipateRepository extends JpaRepository<PartyParticipa
 		"WHERE pp.awaiting = true and pp.party.partyId IN " +
 		"(SELECT p.party.partyId FROM PartyParticipate p " +
 		"WHERE p.member = :member AND p.host = true) " +
-		"AND pp.host = false and pp.rejected = false")
+		"AND pp.host = false and pp.rejected = false and pp.isDeleted = false")
 	List<PartyParticipate> findPartyParticipatesByHostAndMemberId(@Param("member") Member member);
 
 

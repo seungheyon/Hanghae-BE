@@ -158,7 +158,7 @@ public class PartyService {
 		if(memberUniqueId == null) {
 				for (Party party : parties) {
 					PartyListResponse partyResponse = new PartyListResponse(party);
-					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
+					List<PartyParticipate> partyParticipates = partyParticipateRepository.findByisDeletedFalseAndAwaitingFalseAndRejectedFalseAndPartyPartyIdOrderByHostDesc(party.getPartyId());
 					partyResponse.getparticipateMembers(partyParticipates.stream()
 						.map(PartyParticipate::getMember)
 						.collect(Collectors.toList()));
