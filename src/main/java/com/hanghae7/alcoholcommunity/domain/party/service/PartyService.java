@@ -94,6 +94,9 @@ public class PartyService {
 		Party party = new Party(partyRequestDto, member.getMemberName());
 
 		if(image != null){
+			if(!imageTypeChecker(image)){
+				return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
+			}
 			String newFileName = UUID.randomUUID().toString();
 			String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
 			String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
@@ -122,6 +125,16 @@ public class PartyService {
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
+	}
+
+	private boolean imageTypeChecker(MultipartFile image) {
+		String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
+		for(String type : imageType){
+			if(image.getContentType().contains(type)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -255,6 +268,9 @@ public class PartyService {
 			return new ResponseEntity<>(new ResponseDto(400, "다른 회원이 개설한 모임입니다."), HttpStatus.OK);
 		} else {
 			if(image != null){
+				if(!imageTypeChecker(image)){
+					return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
+				}
 				String newFileName = UUID.randomUUID().toString();
 				String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
 				String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
