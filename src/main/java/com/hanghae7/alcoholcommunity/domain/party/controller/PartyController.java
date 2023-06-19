@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -118,6 +119,11 @@ public class PartyController {
 	@DeleteMapping("/party/{partyId}")
 	public ResponseEntity<ResponseDto> deleteParty(@PathVariable Long partyId, @AuthenticationPrincipal UserDetailsImplement userDetails) {
 		return partyService.deleteParty(partyId, userDetails.getMember());
+	}
+
+	@GetMapping("/test")
+	public ResponseEntity<Void> forTest(){
+		return partyService.forTest();
 	}
 
 }

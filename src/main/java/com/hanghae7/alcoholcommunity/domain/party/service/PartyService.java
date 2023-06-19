@@ -458,6 +458,10 @@ public class PartyService {
 		return new ResponseEntity<>(new ResponseDto(200, "모임 조회에 성공했습니다.", new PartyListResponseDto(partyList, page, partyList.size())), HttpStatus.OK);
 	}
 
+	@Transactional(readOnly = true)
+	public ResponseEntity<Void> forTest(){
+		return ResponseEntity.ok().build();
+	}
 }
 
 
