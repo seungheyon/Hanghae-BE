@@ -221,22 +221,12 @@ public class PartyParticipateService {
 			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
 		}
 		List<PartyParticipate> parties = partyParticipateRepository.findPartyParticipatesByHostAndMemberId(member);
-		Map<Party, List<ApproveListDto>> partyMap = new HashMap<>();
-
+		List<ApproveListDto> approveListDtos = new ArrayList<>();
 		for (PartyParticipate partyParticipate : parties) {
-			Party party = partyParticipate.getParty();
 			ApproveListDto approveListDto = new ApproveListDto(partyParticipate);
-
-			if (partyMap.containsKey(party)) {
-				partyMap.get(party).add(approveListDto);
-			} else {
-				List<ApproveListDto> approveListDtos = new ArrayList<>();
-				approveListDtos.add(approveListDto);
-				partyMap.put(party, approveListDtos);
-			}
+			approveListDtos.add(approveListDto);
 		}
-		List<List<ApproveListDto>> partyLists = new ArrayList<>(partyMap.values());
-		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", partyLists), HttpStatus.OK);
+		return new ResponseEntity<>(new ResponseDto(200, "승인요청멤버 조회에 성공했습니다.", approveListDtos), HttpStatus.OK);
 	}
 
 	public ResponseEntity<ResponseDto> getHostPartyList(Member member) {
