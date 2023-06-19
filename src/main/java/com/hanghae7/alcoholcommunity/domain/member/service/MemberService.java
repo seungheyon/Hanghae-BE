@@ -110,7 +110,9 @@ public class MemberService {
         // image가 null 일 경우  -> 처리해야 함
         // image 수정 =========================================================
         if (image != null) {
-
+            if(!imageTypeChecker(image)){
+                return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
+            }
             String imageUrl;
             // 새로 부여한 이미지명
             String newFileName = UUID.randomUUID().toString();
@@ -138,6 +140,16 @@ public class MemberService {
         }
 
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
+    }
+
+    private boolean imageTypeChecker(MultipartFile image) {
+        String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
+        for(String type : imageType){
+            if(image.getContentType().contains(type)){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
