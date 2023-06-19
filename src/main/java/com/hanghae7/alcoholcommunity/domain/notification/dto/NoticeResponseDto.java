@@ -1,5 +1,6 @@
 package com.hanghae7.alcoholcommunity.domain.notification.dto;
 
+import com.hanghae7.alcoholcommunity.domain.notification.entity.Notice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,4 +13,10 @@ public class NoticeResponseDto {
 	private Long partyId;
 	private String partyTitle;
 	private Boolean accepted;
+
+	public NoticeResponseDto(Notice notice) {
+		this.partyId = notice.getPartyId();
+		this.partyTitle = notice.getPartyTitle();
+		this.accepted = notice.getAccepted();
+	}
 }

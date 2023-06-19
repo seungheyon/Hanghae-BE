@@ -11,12 +11,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
-import com.hanghae7.alcoholcommunity.domain.member.dto.MemberNoticeDto;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Notice;
-import com.hanghae7.alcoholcommunity.domain.member.repository.NoticeRepository;
+
+import com.hanghae7.alcoholcommunity.domain.notification.dto.NoticeResponseDto;
+import com.hanghae7.alcoholcommunity.domain.notification.sse.SseSend;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,6 +37,8 @@ import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import static com.hanghae7.alcoholcommunity.domain.notification.controller.SseController.getEmitter;
+
 @RequiredArgsConstructor
 @Service
 public class PartyParticipateService {
@@ -47,6 +47,8 @@ public class PartyParticipateService {
 	private final PartyRepository partyRepository;
 	private final NoticeRepository noticeRepository;
 	private final ChatMessageRepository chatMessageRepository;
+	private final ObjectMapper objectMapper;
+	private final SseSend sseSend;
 
 	/**
 	 * 모임신청 메소드, 신청 save시 기본 awating값은 True 설정
@@ -141,8 +143,35 @@ public class PartyParticipateService {
 			}
 
 			// 파티 참가승인 알림 메세지 생성
-			Notice notice = new Notice(party.getPartyId(), party.getTitle(), true, false, participate.getMember());
-			noticeRepository.save(notice);
+//			Notice notice = new Notice(party.getPartyId(), party.getTitle(), true, false, participate.getMember());
+//			noticeRepository.save(notice);
+			// 파티 참가승인 알림 전송 파트
+			String  participantId = participate.getMember().getMemberUniqueId();
+			try{
+				SseEmitter emitter = getEmitter(participantId);
+				if(emitter!=null){
+					// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
+					Notice notice = new Notice(party.getPartyId(), party.getTitle(),true, false, participate.getMember());
+					NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice);
+					String jsonData = objectMapper.writeValueAsString(noticeResponseDto);
+					try{
+						sseSend.sseSend(emitter, jsonData);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+					noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
+				}
+				else{
+					// DB에 멤버별로 부재중 알림 저장
+					Notice notice = new Notice(party.getPartyId(), party.getTitle(),true, false, participate.getMember());
+					noticeRepository.save(notice);
+					participate.getMember().getMemberNotice().add(notice);
+				}
+			} catch (IOException e) {
+				return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+			}
+			// -> 파티 참가승인 알림 전송 파트
 
 		} else {
 			return new ResponseEntity<>(new ResponseDto(200, "이미 꽉찬 모임방 입니다."), HttpStatus.OK);
@@ -177,8 +206,36 @@ public class PartyParticipateService {
 
 
 		// 파티 참가거절 알림 메세지 생성
-		Notice notice = new Notice(party.getPartyId(), party.getTitle(), false, false, participate.getMember());
-		noticeRepository.save(notice);
+//		Notice notice = new Notice(party.getPartyId(), party.getTitle(), false, false, participate.getMember());
+//		noticeRepository.save(notice);
+		// 파티 참가승인 알림 전송 파트
+		String  participantId = participate.getMember().getMemberUniqueId();
+		try{
+			SseEmitter emitter = getEmitter(participantId);
+			if(emitter!=null){
+				// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
+				Notice notice = new Notice(party.getPartyId(), party.getTitle(),false, false, participate.getMember());
+				NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice);
+				String jsonData = objectMapper.writeValueAsString(noticeResponseDto);
+				try{
+					sseSend.sseSend(emitter, jsonData);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+				noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
+			}
+			else{
+				// DB에 멤버별로 부재중 알림 저장
+				Notice notice = new Notice(party.getPartyId(), party.getTitle(),false, false, participate.getMember());
+				noticeRepository.save(notice);
+				participate.getMember().getMemberNotice().add(notice);
+			}
+		} catch (IOException e) {
+			return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+		}
+		// -> 파티 참가승인 알림 전송 파트
+
 		return new ResponseEntity<>(new ResponseDto(200, "해당 유저를 승인 거절 하였습니다."), HttpStatus.OK);
 	}
 
