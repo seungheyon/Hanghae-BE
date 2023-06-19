@@ -1,11 +1,11 @@
 BASE_PATH="/home/ubuntu/soolo-serv/build/libs
-BUILD_PATH=$(ls $BASE_PATH/build/libs/*.jar)
+BUILD_PATH=$(ls $BASE_PATH/*.jar)
 JAR_NAME=$(basename "$BUILD_PATH")
 
 cd $BASE_PATH
 
 APP_NAME="soolo-serv"
-JAR_PATH="$BASE_PATH/build/libs/$JAR_NAME"
+JAR_PATH="$BASE_PATH/$JAR_NAME"
 
 sudo chmod +x "$JAR_PATH"
 
