@@ -13,6 +13,7 @@
  import org.springframework.http.ResponseEntity;
  import org.springframework.security.core.annotation.AuthenticationPrincipal;
  import org.springframework.web.bind.annotation.GetMapping;
+ import org.springframework.web.bind.annotation.PostMapping;
  import org.springframework.web.bind.annotation.RequestMapping;
  import org.springframework.web.bind.annotation.RestController;
  import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -58,58 +59,26 @@
          sseEmitter.onCompletion(() -> emitters.remove(memberUniqueId));
          sseEmitter.onTimeout(() -> emitters.remove(memberUniqueId));
          sseEmitter.send(SseEmitter.event()
-                   .data("connection is open for "+sseTimeout+"sec")
+                   .data("connection is open for "+sseTimeout/1000L+"sec")
                    .build()
          );
-//                 (() -> {
-//             try{
-//                 sseEmitter.send(
-//                     SseEmitter.event()
-//                         .name("reconnect")
-//                         .data("reconnect")
-//                         .build()
-//                 );
-//             } catch (IOException e) {
-//                 // 예외처리
-//                 e.printStackTrace();
-//             }
-//
-//         });
-
          emitters.put(memberUniqueId, sseEmitter);
-
-
-         //        sseEmitter.send(SseEmitter.event()
-         //                    .data("testData")
-         //                    .build()
-         //            );
-
-         //        for (Notice notice : noticeList) {
-         //            String jsonString = notice.getNotice();
-         //            sseEmitter.send(SseEmitter.event()
-         //                    .data(jsonString)
-         //                    .build()
-         //            );
-         //            // noticeList 에서 방금 전송한 notice 삭제
-         //            iterator.remove();
-         //        }
-
-
 
          return sseEmitter;
      }
 
 
-     @GetMapping("/notice")
+     /**
+      * Get AbsenceNotice, update isRead -> true
+      * @param userDetails
+      * @return
+      */
+     @PostMapping("/notice")
      public ResponseEntity<ResponseDto> getAbsenceNotice(
              @AuthenticationPrincipal UserDetailsImplement userDetails
      ){
          return sseService.getAbsenceNotice(userDetails.getMember());
      }
-
-
-
-
 
 
      /**
@@ -140,4 +109,5 @@
      public static SseEmitter getEmitter(String memberUniqueId) {
          return emitters.get(memberUniqueId);
      }
+
  }

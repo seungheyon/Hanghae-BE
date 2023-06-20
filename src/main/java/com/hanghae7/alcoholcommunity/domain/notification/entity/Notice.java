@@ -8,8 +8,10 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name="Notice")
@@ -45,5 +47,8 @@ public class Notice {
 
 	public void updateRead(Boolean isRead){
 		this.isRead = isRead;
+	}
+	public void updateToRead(){
+		this.isRead = true;
 	}
 }
