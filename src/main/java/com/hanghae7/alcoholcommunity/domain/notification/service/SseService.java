@@ -32,10 +32,17 @@ public class SseService {
         List<Notice> noticeList = member.getMemberNotice();
         List<NoticeResponseDto> noticeResponseDtoList = new ArrayList<>();
 
+
         for (Notice notice : noticeList) {
             if (notice.getIsRead()) {
                 continue;
             } else {
+                // noticeCode = 1 일 경우와 2 일 경우 나눠서 처리
+
+                // if noticeCode == 1 (신청자 알림)
+                // 프론트에서 어떻게 받을지 정하고 구현
+
+                // if noticeCode == 2 (승인거절여부 알림)
                 noticeResponseDtoList.add(new NoticeResponseDto(notice));
                 Notice not = noticeRepository.findByNoticeId(notice.getNoticeId());
                 not.updateRead(true);

@@ -21,6 +21,9 @@ public class Notice {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long noticeId;
 
+	@Column
+	private Integer noticeCode;
+
 	@Column(nullable = false)
 	private Long partyId;
 
@@ -33,22 +36,25 @@ public class Notice {
 	@Column(nullable = false)
 	private Boolean isRead;
 
+	// 알림이 전송되는 target
 	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Member member;
 
-	public Notice(Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member){
+	@Column
+	private String participantsUniqueId;
+
+	public Notice(Integer noticeCode, Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member, String participantsUniqueId) {
+		this.noticeCode = noticeCode;
 		this.partyId = partyId;
 		this.partyTitle = partyTitle;
 		this.accepted = accepted;
 		this.isRead = isRead;
 		this.member = member;
+		this.participantsUniqueId = participantsUniqueId;
 	}
 
 	public void updateRead(Boolean isRead){
 		this.isRead = isRead;
-	}
-	public void updateToRead(){
-		this.isRead = true;
 	}
 }

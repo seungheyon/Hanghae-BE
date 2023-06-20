@@ -91,7 +91,7 @@ public class PartyService {
 			return new ResponseEntity<>(new ResponseDto(400, "정지된 아이디 입니다."), HttpStatus.OK);
 		}
 
-		Party party = new Party(partyRequestDto, member.getMemberName());
+		Party party = new Party(partyRequestDto, member.getMemberName(), member.getMemberUniqueId());
 
 		if(image != null){
 			if(!imageTypeChecker(image)){

@@ -60,6 +60,7 @@ public class Party extends Timestamped {
 
 	private String concept;
 	private String hostName;
+	private String hostUniqueId;
 
 	private Double latitude;
 	private Double longitude;
@@ -93,13 +94,14 @@ public class Party extends Timestamped {
 		return recruitmentStatus;
 	}
 
-	public Party(PartyRequestDto partyRequestDto, String hostName) {
+	public Party(PartyRequestDto partyRequestDto, String hostName, String hostUniqueId) {
 			this.title = partyRequestDto.getTitle();
 			this.content = partyRequestDto.getContent();
 			this.concept = partyRequestDto.getConcept();
 			this.latitude = partyRequestDto.getLatitude();
 			this.longitude = partyRequestDto.getLongitude();
 			this.hostName = hostName;
+			this.hostUniqueId = hostUniqueId;
 			this.createdAt = LocalDateTime.now();
 			this.modifiedAt = LocalDateTime.now();
 			this.partyDate = partyRequestDto.getPartyDate();
