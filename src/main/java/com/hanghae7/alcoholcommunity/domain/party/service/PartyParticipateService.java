@@ -84,16 +84,15 @@ public class PartyParticipateService {
 				}
 				partyParticipateRepository.save(new PartyParticipate(party, member, partyJoinRequestDto));
 				// 파티 참가신청 알림
-
 				try{
 					//SseEmitter emitter = getEmitter(party.getHostUniqueId());
 					SseEmitter emitter = getEmitter("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
 					Optional<Member> host = memberRepository.findByMemberUniqueId("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
 					if(emitter!=null){
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
-						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberUniqueId());
+						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),true, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberUniqueId());
+								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberId(), true);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
@@ -106,7 +105,7 @@ public class PartyParticipateService {
 					}
 					else{
 						// DB에 멤버별로 부재중 알림 저장
-						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberUniqueId());
+						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),true, false, host.get(), member.getMemberId());
 						noticeRepository.save(notice);
 						host.get().getMemberNotice().add(notice);
 					}
@@ -121,11 +120,70 @@ public class PartyParticipateService {
 				return new ResponseEntity<>(new ResponseDto(200, "거절 된 모임입니다."), HttpStatus.OK);
 			} else if (participate.get().isAwaiting()) {
 				partyParticipateRepository.softDeletePartyParticipate(participate.get().getId());
-
+				// 파티 참가신청취소 알림 ->
+				try{
+					//SseEmitter emitter = getEmitter(party.getHostUniqueId());
+					SseEmitter emitter = getEmitter("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					Optional<Member> host = memberRepository.findByMemberUniqueId("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					if(emitter!=null){
+						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
+						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
+						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
+								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
+						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
+						try{
+							sseSend.sseSend(emitter, jsonData);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+						noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
+						host.get().getMemberNotice().add(notice);
+					}
+					else{
+						// DB에 멤버별로 부재중 알림 저장
+						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
+						noticeRepository.save(notice);
+						host.get().getMemberNotice().add(notice);
+					}
+				} catch (IOException e) {
+					return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+				}
+				// -> 파티 참가신청취소 알림
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 			} else {
 				partyParticipateRepository.softDeletePartyParticipate(participate.get().getId());
 				party.subCurrentCount();
+				// 파티 참가신청취소 알림 ->
+				try{
+					//SseEmitter emitter = getEmitter(party.getHostUniqueId());
+					SseEmitter emitter = getEmitter("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					Optional<Member> host = memberRepository.findByMemberUniqueId("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					if(emitter!=null){
+						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
+						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
+						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
+								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
+						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
+						try{
+							sseSend.sseSend(emitter, jsonData);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+						noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
+						host.get().getMemberNotice().add(notice);
+					}
+					else{
+						// DB에 멤버별로 부재중 알림 저장
+						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
+						noticeRepository.save(notice);
+						host.get().getMemberNotice().add(notice);
+					}
+				} catch (IOException e) {
+					return new ResponseEntity<>(new ResponseDto(400, e.getMessage()), HttpStatus.OK);
+				}
+				// -> 파티 참가신청취소 알림
 				return new ResponseEntity<>(new ResponseDto(200, "모임 신청이 성공적으로 취소되었습니다."), HttpStatus.OK);
 			}
 		}
@@ -185,7 +243,7 @@ public class PartyParticipateService {
 				SseEmitter emitter = getEmitter(participantId);
 				if(emitter!=null){
 					// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
-					Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), "Null");
+					Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), 0L);
 					NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice);
 					String jsonData = objectMapper.writeValueAsString(noticeResponseDto);
 					try{
@@ -199,7 +257,7 @@ public class PartyParticipateService {
 				}
 				else{
 					// DB에 멤버별로 부재중 알림 저장
-					Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), "Null");
+					Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), 0L);
 					noticeRepository.save(notice);
 					participate.getMember().getMemberNotice().add(notice);
 				}
@@ -249,7 +307,7 @@ public class PartyParticipateService {
 			SseEmitter emitter = getEmitter(participantId);
 			if(emitter!=null){
 				// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
-				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), "Null");
+				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), 0L);
 				NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice);
 				String jsonData = objectMapper.writeValueAsString(noticeResponseDto);
 				try{
@@ -263,7 +321,7 @@ public class PartyParticipateService {
 			}
 			else{
 				// DB에 멤버별로 부재중 알림 저장
-				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), "Null");
+				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), 0L);
 				noticeRepository.save(notice);
 				participate.getMember().getMemberNotice().add(notice);
 			}

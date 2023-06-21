@@ -32,6 +32,8 @@ public class Notice {
 
 	@Column(nullable = false)
 	private Boolean accepted;
+	// noticeCode = 1 -> 승인/거절 여부
+	// noticeCode = 2 -> 참가신청/신청취소 여부
 
 	@Column(nullable = false)
 	private Boolean isRead;
@@ -42,16 +44,16 @@ public class Notice {
 	private Member member;
 
 	@Column
-	private String participantsUniqueId;
+	private Long participantsId;
 
-	public Notice(Integer noticeCode, Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member, String participantsUniqueId) {
+	public Notice(Integer noticeCode, Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member, Long participantsId) {
 		this.noticeCode = noticeCode;
 		this.partyId = partyId;
 		this.partyTitle = partyTitle;
 		this.accepted = accepted;
 		this.isRead = isRead;
 		this.member = member;
-		this.participantsUniqueId = participantsUniqueId;
+		this.participantsId = participantsId;
 	}
 
 	public void updateRead(Boolean isRead){

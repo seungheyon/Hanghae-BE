@@ -28,7 +28,7 @@ public class NoticeService {
 		List<NoticeResponseDto> noticeResponseDtoList = new ArrayList<>();
 
 		for(Notice notice : noticeList){
-			noticeResponseDtoList.add(new NoticeResponseDto(notice.getPartyId(), notice.getPartyTitle(), notice.getAccepted()));
+			noticeResponseDtoList.add(new NoticeResponseDto(notice));
 			notice.updateRead(true);
 		}
 
