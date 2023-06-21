@@ -160,11 +160,11 @@ public class PartyService {
 		List<Party> parties;
 		Pageable pageable = PageRequest.of(page, 20);
 		if(recruitmentStatus == 0){
-			parties = partyRepository.findAllByisDeletedFalseOrderByPartyDate(pageable);
+			parties = partyRepository.findAllByisDeletedFalseOrderByCreatedAtDesc(pageable);
 		}else if(recruitmentStatus == 1){
-			parties = partyRepository.findAllByisDeletedFalseAndRecruitmentStatusOrderByPartyDate(true, pageable);
+			parties = partyRepository.findAllByisDeletedFalseAndRecruitmentStatusOrderByCreatedAtDesc(true, pageable);
 		} else {
-			parties = partyRepository.findAllByisDeletedFalseAndRecruitmentStatusOrderByPartyDate(false, pageable);
+			parties = partyRepository.findAllByisDeletedFalseAndRecruitmentStatusOrderByCreatedAtDesc(false, pageable);
 		}
 
 		List<PartyListResponse> partyList = new ArrayList<>();
