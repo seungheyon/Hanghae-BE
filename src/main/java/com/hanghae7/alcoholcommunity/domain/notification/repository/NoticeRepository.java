@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 	List<com.hanghae7.alcoholcommunity.domain.notification.entity.Notice>findAllByMemberAndIsRead(Member member, Boolean isRead);
+	Notice findByNoticeId(Long Id);
 }

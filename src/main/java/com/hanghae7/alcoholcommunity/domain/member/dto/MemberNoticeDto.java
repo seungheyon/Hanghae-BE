@@ -8,8 +8,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class MemberNoticeDto {
-	// 클라이언트에서 파싱해서 사용하도록 partyId 전송
-	private Long partyId;
-	private String title;
-	private Boolean accepted;
+    // 클라이언트에서 파싱해서 사용하도록 partyId 전송
+    private Long partyId;
+    private String title;
+    private Boolean accepted;
+    private Boolean isRead;
 }

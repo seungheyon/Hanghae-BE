@@ -8,8 +8,10 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name="Notice")
@@ -19,6 +21,9 @@ public class Notice {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long noticeId;
 
+	@Column
+	private Integer noticeCode;
+
 	@Column(nullable = false)
 	private Long partyId;
 
@@ -27,20 +32,28 @@ public class Notice {
 
 	@Column(nullable = false)
 	private Boolean accepted;
+	// noticeCode = 1 -> 승인/거절 여부
+	// noticeCode = 2 -> 참가신청/신청취소 여부
 
 	@Column(nullable = false)
 	private Boolean isRead;
 
+	// 알림이 전송되는 target
 	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Member member;
 
-	public Notice(Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member){
+	@Column
+	private Long participantsId;
+
+	public Notice(Integer noticeCode, Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member, Long participantsId) {
+		this.noticeCode = noticeCode;
 		this.partyId = partyId;
 		this.partyTitle = partyTitle;
 		this.accepted = accepted;
 		this.isRead = isRead;
 		this.member = member;
+		this.participantsId = participantsId;
 	}
 
 	public void updateRead(Boolean isRead){

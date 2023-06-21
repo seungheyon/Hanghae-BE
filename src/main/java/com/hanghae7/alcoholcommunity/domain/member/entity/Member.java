@@ -2,6 +2,7 @@ package com.hanghae7.alcoholcommunity.domain.member.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -60,7 +61,6 @@ public class Member extends Timestamped {
 	@JsonManagedReference
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Notice> memberNotice;
-
 
 	private Member(String memberEmailId, String memberUniqueId, int age, String gender, String memberName, String profileImage, String social, LocalDateTime createdAt) {
 		this.memberEmailId = memberEmailId;
