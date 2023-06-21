@@ -25,10 +25,10 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
 
 	Optional<Party> findByPartyIdOrderByCreatedAtDesc(Long partyId);
-	List<Party> findAllByisDeletedFalseOrderByPartyDate(Pageable pageable);
-	List<Party> findAllByisDeletedFalseAndRecruitmentStatusOrderByPartyDate(boolean status, Pageable pageable);
+	List<Party> findAllByisDeletedFalseOrderByCreatedAtDesc(Pageable pageable);
+	List<Party> findAllByisDeletedFalseAndRecruitmentStatusOrderByCreatedAtDesc(boolean status, Pageable pageable);
 	List<Party> findAllByPartyDateBefore(LocalDateTime dateTime);
-	@Query("select p from Party p where p.isDeleted=false and (p.placeName like %:keyword% or p.stationName like %:keyword% or p.placeAddress like %:keyword%) ORDER BY p.createdAt desc")
+	@Query("select p from Party p where (p.isDeleted=false) and (p.placeName like %:keyword% or p.stationName like %:keyword% or p.placeAddress like %:keyword%) ORDER BY p.createdAt desc")
 	List<Party> findAllPartyByKeyword(Pageable pageable, @Param("keyword")String keyword);
 
 	@Query("select p from Party p where p.recruitmentStatus = :status and p.isDeleted = false and (p.placeName like %:keyword% or p.stationName like %:keyword% or p.placeAddress like %:keyword%) ORDER BY p.createdAt desc")
