@@ -86,8 +86,8 @@ public class PartyParticipateService {
 				// 파티 참가신청 알림
 				try{
 					//SseEmitter emitter = getEmitter(party.getHostUniqueId());
-					SseEmitter emitter = getEmitter("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
-					Optional<Member> host = memberRepository.findByMemberUniqueId("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					SseEmitter emitter = getEmitter(party.getHostUniqueId());
+					Optional<Member> host = memberRepository.findByMemberUniqueId(party.getHostUniqueId());
 					if(emitter!=null){
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),true, false, host.get(), member.getMemberId());
@@ -123,8 +123,8 @@ public class PartyParticipateService {
 				// 파티 참가신청취소 알림 ->
 				try{
 					//SseEmitter emitter = getEmitter(party.getHostUniqueId());
-					SseEmitter emitter = getEmitter("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
-					Optional<Member> host = memberRepository.findByMemberUniqueId("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					SseEmitter emitter = getEmitter(party.getHostUniqueId());
+					Optional<Member> host = memberRepository.findByMemberUniqueId(party.getHostUniqueId());
 					if(emitter!=null){
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
@@ -157,8 +157,8 @@ public class PartyParticipateService {
 				// 파티 참가신청취소 알림 ->
 				try{
 					//SseEmitter emitter = getEmitter(party.getHostUniqueId());
-					SseEmitter emitter = getEmitter("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
-					Optional<Member> host = memberRepository.findByMemberUniqueId("74d4bfdc-1f5c-4078-af99-7f4b674c541e");
+					SseEmitter emitter = getEmitter(party.getHostUniqueId());
+					Optional<Member> host = memberRepository.findByMemberUniqueId(party.getHostUniqueId());
 					if(emitter!=null){
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
