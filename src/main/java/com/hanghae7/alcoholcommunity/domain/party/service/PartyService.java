@@ -358,7 +358,7 @@ public class PartyService {
 	@Scheduled(fixedRate  = 600000)
 	@Transactional
 	public void deleteTimeoverParty(){
-		LocalDateTime timenow = LocalDateTime.now();
+		LocalDateTime timenow = LocalDateTime.now().minusHours(8);
 		LocalDateTime result = timenow.minusHours(4);
 		List<Party> partyList = partyRepository.findAllByPartyDateBefore(result);
 		for (Party party : partyList) {
