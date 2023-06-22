@@ -92,7 +92,7 @@ public class PartyParticipateService {
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),true, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberId(), true);
+								notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), member.getProfileImage(), member.getMemberName(), member.getMemberId(), true);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
@@ -129,7 +129,7 @@ public class PartyParticipateService {
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
+								notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
@@ -163,7 +163,7 @@ public class PartyParticipateService {
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								party.getPartyId(), party.getTitle(),member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
+								notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
@@ -307,7 +307,7 @@ public class PartyParticipateService {
 			SseEmitter emitter = getEmitter(participantId);
 			if(emitter!=null){
 				// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
-				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), 0L);
+				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),false, false, participate.getMember(), 0L);
 				NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice);
 				String jsonData = objectMapper.writeValueAsString(noticeResponseDto);
 				try{
@@ -321,7 +321,7 @@ public class PartyParticipateService {
 			}
 			else{
 				// DB에 멤버별로 부재중 알림 저장
-				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),true, false, participate.getMember(), 0L);
+				Notice notice = new Notice(2, party.getPartyId(), party.getTitle(),false, false, participate.getMember(), 0L);
 				noticeRepository.save(notice);
 				participate.getMember().getMemberNotice().add(notice);
 			}

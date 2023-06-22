@@ -61,6 +61,7 @@ public class SseService {
                     NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
                             notice.getPartyId(),
                             notice.getPartyTitle(),
+                            notice.getNoticeCode(),
                             participant.get().getProfileImage(),
                             participant.get().getMemberName(),
                             notice.getParticipantsId(),
