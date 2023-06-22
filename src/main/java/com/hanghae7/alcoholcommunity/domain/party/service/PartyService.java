@@ -355,7 +355,7 @@ public class PartyService {
 		}
 	}
 
-	@Scheduled(fixedRate  = 6000000)
+	@Scheduled(fixedRate  = 600000)
 	@Transactional
 	public void deleteTimeoverParty(){
 		LocalDateTime timenow = LocalDateTime.now().minusHours(8);
