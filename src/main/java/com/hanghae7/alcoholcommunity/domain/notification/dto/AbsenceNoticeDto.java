@@ -8,4 +8,5 @@ import lombok.Getter;
 public abstract class AbsenceNoticeDto {
     private Long partyId;
     private String partyTitle;
+    private Integer noticeCode;
 }
