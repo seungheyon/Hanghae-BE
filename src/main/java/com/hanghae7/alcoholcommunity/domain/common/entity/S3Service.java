@@ -38,7 +38,7 @@ public class S3Service {
 		amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
 			.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
 
-		return amazonS3.getUrl(bucketName, newFileName).toString();
+		return amazonS3.getUrl(bucketName, imageName).toString();
 	}
 
 
