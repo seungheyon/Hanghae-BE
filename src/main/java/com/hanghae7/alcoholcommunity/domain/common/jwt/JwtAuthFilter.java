@@ -36,10 +36,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 		if(access_token != null) {
 			if(jwtUtil.validateToken(access_token)) {
-				if (redisDao.getValues(request.getHeader("Access_key").substring(7))!= null) {
-					jwtExceptionHandler(response, "410 : This token already Logged Out ", 410);
-					return;
-				}
+//				if (redisDao.getValues(request.getHeader("Access_key").substring(7))!= null) {
+//					jwtExceptionHandler(response, "410 : This token already Logged Out ", 410);
+//					return;
+//				}
 				setAuthentication(jwtUtil.getMemberInfoFromToken(access_token));
 			// 	String memberUniqueId = jwtUtil.getMemberInfoFromToken(refresh_token);
 			// 	Member member = memberRepository.findByMemberUniqueId(memberUniqueId).get();
