@@ -24,8 +24,10 @@ public class S3Service {
 	private final AmazonS3 amazonS3;
 
 	public String upload(MultipartFile image) throws IOException {
-		String newFileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-		String imageName = S3_BUCKET_PREFIX + newFileName;
+		String newFileName = UUID.randomUUID().toString();
+		String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
+		String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+
 
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(image.getContentType());
@@ -35,7 +37,6 @@ public class S3Service {
 
 		amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
 			.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
-		String imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
 
 		return amazonS3.getUrl(bucketName, newFileName).toString();
 	}
