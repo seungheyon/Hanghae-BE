@@ -24,9 +24,8 @@ public class S3Service {
 	private final AmazonS3 amazonS3;
 
 	public String upload(MultipartFile image) throws IOException {
-		String newFileName = UUID.randomUUID().toString();
-		String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
-		String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+		String newFileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+		String imageName = S3_BUCKET_PREFIX + newFileName;
 
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(image.getContentType());
