@@ -1,22 +1,20 @@
 package com.hanghae7.alcoholcommunity.domain.party.service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.hanghae7.alcoholcommunity.domain.common.entity.S3Service;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,10 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatMessage;
 import com.hanghae7.alcoholcommunity.domain.chat.entity.ChatRoom;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
@@ -42,14 +36,8 @@ import com.hanghae7.alcoholcommunity.domain.party.dto.request.PartyRequestDto;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponse;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyListResponseDto;
 
-import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
-import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
-
-import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatRoomRepository;
-import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
-import com.hanghae7.alcoholcommunity.domain.party.repository.PartyRepository;
 
 
 import lombok.RequiredArgsConstructor;
@@ -73,10 +61,9 @@ public class PartyService {
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatMessageRepository chatMessageRepository;
 	private final JwtUtil jwtUtil;
-	private static final String S3_BUCKET_PREFIX = "S3";
-	@Value("${cloud.aws.s3.bucket}")
-	private String bucketName;
-	private final AmazonS3 amazonS3;
+
+	private final S3Service s3Service;
+
 	/**
 	 * 모임 게시글 등록
 	 * @param partyRequestDto 유저 입력값
@@ -84,7 +71,6 @@ public class PartyService {
 	 * @return 모임 생성 유무
 	 */
 	@Transactional
-
 	public ResponseEntity<ResponseDto> createParty(PartyRequestDto partyRequestDto, Member member, MultipartFile image) throws
 		IOException {
 		if(member.getAuthority().equals("BLOCK")){
@@ -97,21 +83,7 @@ public class PartyService {
 			if(!imageTypeChecker(image)){
 				return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
 			}
-			String newFileName = UUID.randomUUID().toString();
-			String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
-			String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
-
-
-			ObjectMetadata objectMetadata = new ObjectMetadata();
-			objectMetadata.setContentType(image.getContentType());
-			objectMetadata.setContentLength(image.getSize());
-
-			InputStream inputStream = image.getInputStream();
-
-			amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
-				.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
-			String imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
-			party.setImageUrl(imageUrl);
+			party.setImageUrl(s3Service.upload(image));
 		}
 
 		//모임만들때 채팅룸 생성
@@ -125,16 +97,6 @@ public class PartyService {
 		partyRepository.save(party);
 		partyParticipateRepository.save(partyParticipate);
 		return new ResponseEntity<>(new ResponseDto(200, "모임 생성에 성공했습니다."), HttpStatus.OK);
-	}
-
-	private boolean imageTypeChecker(MultipartFile image) {
-		String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
-		for(String type : imageType){
-			if(image.getContentType().contains(type)){
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -254,7 +216,6 @@ public class PartyService {
 		}
 		Member hostMember = new Member();
 		try {
-
 			PartyParticipate participate1 = partyParticipateRepository.findMemberByisDeletedFalseAndHostTrueAndPartyPartyId(partyId).orElseThrow(
 				() -> new IllegalArgumentException("호스트를 찾을 수 없습니다."));
 			hostMember = participate1.getMember();
@@ -271,21 +232,7 @@ public class PartyService {
 				if(!imageTypeChecker(image)){
 					return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
 				}
-				String newFileName = UUID.randomUUID().toString();
-				String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
-				String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
-
-
-				ObjectMetadata objectMetadata = new ObjectMetadata();
-				objectMetadata.setContentType(image.getContentType());
-				objectMetadata.setContentLength(image.getSize());
-
-				InputStream inputStream = image.getInputStream();
-
-				amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
-					.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
-				String imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
-				party.setImageUrl(imageUrl);
+				party.setImageUrl(s3Service.upload(image));
 			}
 
 			party.updateParty(partyRequestDto);
@@ -461,6 +408,16 @@ public class PartyService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<Void> forTest(){
 		return ResponseEntity.ok().build();
+	}
+
+	private boolean imageTypeChecker(MultipartFile image) {
+		String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
+		for(String type : imageType){
+			if(image.getContentType().contains(type)){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
