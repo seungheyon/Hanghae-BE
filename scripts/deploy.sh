@@ -7,6 +7,7 @@ JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
 # JAR 파일에 실행 권한 설정
 sudo chmod +x "$JAR_PATH"
+sudo chmod +x ./deploy.sh
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -14,15 +15,14 @@ if [ -z $CURRENT_PID ]
 then
   echo "> 종료할것 없음."
 else
-  echo "> kill -9 $CURRENT_PID"
+  echo "> kill -15 $CURRENT_PID"
   kill -15 $CURRENT_PID
   sleep 5
 fi
 
 
-
 echo "> $JAR_PATH 배포"
-nohup java -jar $REPOSITORY/build/libs/$JAR_NAME 2>&1 &
+nohup java -jar $REPOSITORY/build/libs/$JAR_NAME > $REPOSITORY/build/libs/nohup.out 2>&1 &
 
 
 
