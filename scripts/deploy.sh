@@ -1,13 +1,9 @@
-REPOSITORY=/home/ubuntu/soolo-serv
+REPOSITORY=/home/ubuntu/soolo-serv/build/libs
 cd $REPOSITORY
 
 APP_NAME=soolo-serv
-JAR_NAME=$(ls $REPOSITORY/build/libs | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
-# JAR 파일에 실행 권한 설정
-sudo chmod +x "$JAR_PATH"
-sudo chmod +x ./deploy.sh
+#sudo chmod +x ./deploy.sh
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -20,9 +16,14 @@ else
   sleep 5
 fi
 
+JAR_NAME=$(ls $REPOSITORY | grep 'SNAPSHOT.jar' | tail -n 1)
+JAR_PATH=$REPOSITORY/$JAR_NAME
+
+# JAR 파일에 실행 권한 설정
+sudo chmod +x "$JAR_PATH"
 
 echo "> $JAR_PATH 배포"
-nohup java -jar $REPOSITORY/build/libs/$JAR_NAME > $REPOSITORY/build/libs/nohup.out 2>&1 &
+nohup java -jar $JAR_NAME 2>&1 &
 
 
 
