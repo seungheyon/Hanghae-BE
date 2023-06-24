@@ -12,8 +12,16 @@ public class NoticeParticipantResponseDto extends AbsenceNoticeDto{
     private Long participantId;
     private Boolean participateIs;
 
-    public NoticeParticipantResponseDto(Long partyId, String partyTitle, Integer noticeCode, String imgUrl, String participantName, Long participantId, Boolean participateIs) {
-        super(partyId, partyTitle, noticeCode);
+    public NoticeParticipantResponseDto(Notice notice, String imgUrl, String participantName, Long participantId, Boolean participateIs){
+        super(notice.getNoticeId(),notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), notice.getIsRead());
+        this.imgUrl = imgUrl;
+        this.participantName = participantName;
+        this.participantId = participantId;
+        this.participateIs = participateIs;
+    }
+
+    public NoticeParticipantResponseDto(Long noticeId, Long partyId, String partyTitle, Integer noticeCode, Boolean isRead, String imgUrl, String participantName, Long participantId, Boolean participateIs) {
+        super(noticeId, partyId, partyTitle, noticeCode, isRead);
         this.imgUrl = imgUrl;
         this.participantName = participantName;
         this.participantId = participantId;

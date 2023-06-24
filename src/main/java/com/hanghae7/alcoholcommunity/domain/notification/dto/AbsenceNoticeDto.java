@@ -6,7 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public abstract class AbsenceNoticeDto {
+    private Long noticeId;
     private Long partyId;
     private String partyTitle;
     private Integer noticeCode;
+    private Boolean isRead;
 }

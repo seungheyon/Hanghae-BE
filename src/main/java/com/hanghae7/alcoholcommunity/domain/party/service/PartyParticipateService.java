@@ -92,14 +92,14 @@ public class PartyParticipateService {
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),true, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), member.getProfileImage(), member.getMemberName(), member.getMemberId(), true);
+								notice, member.getProfileImage(), member.getMemberName(), member.getMemberId(), true);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+						//notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
 						noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
 						host.get().getMemberNotice().add(notice);
 					}
@@ -129,14 +129,14 @@ public class PartyParticipateService {
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
+								notice, member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+						//notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
 						noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
 						host.get().getMemberNotice().add(notice);
 					}
@@ -163,14 +163,14 @@ public class PartyParticipateService {
 						// 연결되어 있는 사용자의 sseStream으로 알림데이터 전송
 						Notice notice = new Notice(1,party.getPartyId(), party.getTitle(),false, false, host.get(), member.getMemberId());
 						NoticeParticipantResponseDto noticeParticipantResponseDto = new NoticeParticipantResponseDto(
-								notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
+								notice, member.getProfileImage(), member.getMemberName(), member.getMemberId(), false);
 						String jsonData = objectMapper.writeValueAsString(noticeParticipantResponseDto);
 						try{
 							sseSend.sseSend(emitter, jsonData);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+						//notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
 						noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
 						host.get().getMemberNotice().add(notice);
 					}
@@ -251,7 +251,7 @@ public class PartyParticipateService {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+					//notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
 					noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
 					participate.getMember().getMemberNotice().add(notice);
 				}
@@ -315,7 +315,7 @@ public class PartyParticipateService {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
+				//notice.updateRead(true);	// sse 전송 후 메세지의 읽음 상태를 변경
 				noticeRepository.save(notice);	// 메세지를 리포지토리에 저장
 				participate.getMember().getMemberNotice().add(notice);
 			}

@@ -28,6 +28,7 @@ public class S3Service {
 		String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.')+1);
 		String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
 
+
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(image.getContentType());
 		objectMetadata.setContentLength(image.getSize());
@@ -36,9 +37,8 @@ public class S3Service {
 
 		amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
 			.withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
-		String imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
 
-		return amazonS3.getUrl(bucketName, newFileName).toString();
+		return amazonS3.getUrl(bucketName, imageName).toString();
 	}
 
 
