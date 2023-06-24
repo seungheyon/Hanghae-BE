@@ -32,8 +32,9 @@ public class SseService {
     private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
 
+
     @Transactional
-    public ResponseEntity<ResponseDto> getAbsenceNotice(Member member){
+    public ResponseEntity<ResponseDto> getAllNotice(Member member){
         List<Notice> noticeList = member.getMemberNotice();
         List<AbsenceNoticeDto> absenceNoticeDtoList = new ArrayList<>();
 
@@ -67,9 +68,18 @@ public class SseService {
     }
 
 
+    @Transactional
     public ResponseEntity<ResponseDto> updateReadState(Long noticeId){
         Notice notice = noticeRepository.findByNoticeId(noticeId);
         notice.updateRead(true);
         return new ResponseEntity<>(new ResponseDto(200, "알림 읽음 처리 완료"), HttpStatus.OK);
     }
+
+
+    public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
+        noticeRepository.deleteById(noticeId);
+        return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
+    }
+
+
 }

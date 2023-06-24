@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import com.hanghae7.alcoholcommunity.domain.common.entity.S3Service;
+import com.hanghae7.alcoholcommunity.domain.notification.repository.NoticeRepository;
 import com.hanghae7.alcoholcommunity.domain.party.dto.response.PartyResponseDto;
 import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
 import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
@@ -60,6 +61,7 @@ public class PartyService {
 	private final MemberRepository memberRepository;
 	private final ChatRoomRepository chatRoomRepository;
 	private final ChatMessageRepository chatMessageRepository;
+	private final NoticeRepository noticeRepository;
 	private final JwtUtil jwtUtil;
 
 	private final S3Service s3Service;
@@ -277,6 +279,7 @@ public class PartyService {
 			chatMessageRepository.softDeleteByChatRoomUniqueId(partyParticipate.getChatRoom().getChatRoomUniqueId());
 			chatRoomRepository.softDeleteChatRoom(partyParticipate.getChatRoom().getChatRoomId());
 			partyParticipateRepository.softDeletepartyId(party.getPartyId());
+			noticeRepository.deleteAllByPartyId(partyId);	// 모임 삭제 시 연결된 모든 알림 삭제
 		}
 		return new ResponseEntity<>(new ResponseDto(200, "모임을 삭제하였습니다."), HttpStatus.OK);
 	}
@@ -302,7 +305,7 @@ public class PartyService {
 		}
 	}
 
-	@Scheduled(fixedRate  = 600000)
+	@Scheduled(fixedRate  = 60*1000*10)
 	@Transactional
 	public void deleteTimeoverParty(){
 		LocalDateTime timenow = LocalDateTime.now().plusHours(9);
