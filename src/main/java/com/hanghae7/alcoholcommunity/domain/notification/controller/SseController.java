@@ -94,7 +94,7 @@
       * @param noticeId
       * @return
       */
-     @DeleteMapping("/notice")
+     @DeleteMapping("/notice/{noticeId}")
      public ResponseEntity<ResponseDto> deleteNotice(@PathVariable Long noticeId){
          return sseService.deleteNotice(noticeId);
      }

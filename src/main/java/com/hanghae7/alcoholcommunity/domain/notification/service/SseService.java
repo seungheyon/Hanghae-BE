@@ -12,20 +12,26 @@ import com.hanghae7.alcoholcommunity.domain.notification.dto.NoticeParticipantRe
 import com.hanghae7.alcoholcommunity.domain.notification.dto.NoticeResponseDto;
 import com.hanghae7.alcoholcommunity.domain.notification.entity.Notice;
 import com.hanghae7.alcoholcommunity.domain.notification.repository.NoticeRepository;
+import com.hanghae7.alcoholcommunity.domain.party.entity.Party;
+import com.hanghae7.alcoholcommunity.domain.party.entity.PartyParticipate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@EnableScheduling
 @Service
 public class SseService {
     //private final ObjectMapper objectMapper;
@@ -39,6 +45,7 @@ public class SseService {
         List<AbsenceNoticeDto> absenceNoticeDtoList = new ArrayList<>();
 
         for (Notice notice : noticeList) {
+            // if noticeCode == 1 (호스트 알림(누가 신청했는지))
            if(notice.getNoticeCode()==1){
                Optional<Member> participant = memberRepository.findById(notice.getParticipantsId());
                Boolean participatedIs;
@@ -76,9 +83,22 @@ public class SseService {
     }
 
 
+    @Transactional
     public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
         noticeRepository.deleteById(noticeId);
         return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
+    }
+
+
+    @Scheduled(fixedRate  = 60*1000*60*24)
+    @Transactional
+    public void deleteOldNotice(){
+        LocalDateTime timenow = LocalDateTime.now().plusHours(9);
+        LocalDateTime result = timenow.minusMonths(1);
+        List<Notice> noticeList = noticeRepository.findAllByCreatedAtBefore(result);
+        for(Notice notice:noticeList){
+            noticeRepository.deleteById(notice.getNoticeId());
+        }
     }
 
 
