@@ -11,7 +11,7 @@ public class NoticeResponseDto extends AbsenceNoticeDto{
 	private Boolean accepted;
 
 	public NoticeResponseDto(Notice notice) {
-		super(notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode());
+		super(notice.getNoticeId(), notice.getPartyId(), notice.getPartyTitle(), notice.getNoticeCode(), notice.getIsRead());
 		this.accepted = notice.getAccepted();
 	}
 }
