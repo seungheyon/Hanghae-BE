@@ -69,20 +69,15 @@ dependencies {
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// nginx Jar파일 자동 버전 변경
-	version '1.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
-
-
-
+//	// nginx Jar파일 자동 버전 변경
+//	version '1.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
 
 }
-
 
 //-plain.jar 가 만들어 지지 않도록 하는 설정 (ci/cd)
 jar {
 	enabled = false
 }
-
 
 //tasks.named('test') {
 //	useJUnitPlatform()
