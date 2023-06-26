@@ -37,6 +37,7 @@ public class WebSecurityConfig {
 				.antMatchers("/swagger-ui/**").permitAll()
 				.antMatchers("/v3/api-docs/**").permitAll()
 				.antMatchers("/**").permitAll()
+				.antMatchers("/test").permitAll()
 				.anyRequest()
 				.authenticated());// 그외의 요청들은 모두 인가 받아야 한다.
 			// JWT 인증/인가를 사용하기 위한 설정
