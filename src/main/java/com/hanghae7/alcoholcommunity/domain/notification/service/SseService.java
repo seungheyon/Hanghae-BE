@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.webjars.NotFoundException;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
@@ -83,16 +84,39 @@ public class SseService {
     }
 
 
-    @Transactional
+//    @Transactional
+//    public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
+//        try{
+//            //noticeRepository.deleteById(noticeId);
+//            noticeRepository.deleteNoticeByNoticeId(noticeId);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
+//    }
+
+    //@Transactional
     public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
-        try{
-            //noticeRepository.deleteById(noticeId);
-            noticeRepository.deleteNoticeByNoticeId(noticeId);
+        try {
+            // Notice 엔티티 조회
+            Notice notice = noticeRepository.findById(noticeId)
+                    .orElseThrow(() -> new NotFoundException("알림을 찾을 수 없습니다."));
+
+            // Notice 엔티티 삭제
+            noticeRepository.deleteById(noticeId);
+
+
+            return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            // 알림을 찾을 수 없는 경우
+            return new ResponseEntity<>(new ResponseDto(404, "알림을 찾을 수 없습니다."), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            e.printStackTrace();
+            // 예외 발생 시
+            return new ResponseEntity<>(new ResponseDto(500, "서버 오류"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
     }
+
+
 
 
     @Scheduled(fixedRate  = 60*1000*60*24)
