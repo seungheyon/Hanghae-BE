@@ -53,6 +53,7 @@ public class Notice extends Timestamped {
 	@JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss",timezone = "Asia/Seoul")
 	private LocalDateTime createdAt;
 
+
 	public Notice(Integer noticeCode, Long partyId, String partyTitle, Boolean accepted, Boolean isRead, Member member, Long participantsId) {
 		this.noticeCode = noticeCode;
 		this.partyId = partyId;
@@ -61,6 +62,7 @@ public class Notice extends Timestamped {
 		this.isRead = isRead;
 		this.member = member;
 		this.participantsId = participantsId;
+		this.createdAt = LocalDateTime.now();
 	}
 
 	public void updateRead(Boolean isRead){
