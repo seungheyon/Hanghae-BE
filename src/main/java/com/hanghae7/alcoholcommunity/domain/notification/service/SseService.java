@@ -26,10 +26,7 @@ import org.webjars.NotFoundException;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @EnableScheduling
@@ -70,8 +67,8 @@ public class SseService {
                NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice);
                absenceNoticeDtoList.add(noticeResponseDto);
            }
-
         }
+        Collections.reverse(absenceNoticeDtoList);
         return new ResponseEntity<>(new ResponseDto(200, "부재 중 알림 메세지 응답에 성공하였습니다.", new AbsenceNoticeListDto(absenceNoticeDtoList)), HttpStatus.OK);
     }
 
