@@ -95,7 +95,7 @@ public class SseService {
 //        return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
 //    }
 
-    //@Transactional
+    @Transactional
     public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
         try {
             // Notice 엔티티 조회
@@ -103,17 +103,16 @@ public class SseService {
                     .orElseThrow(() -> new NotFoundException("알림을 찾을 수 없습니다."));
 
             // Notice 엔티티 삭제
-            noticeRepository.deleteById(noticeId);
-
+            noticeRepository.deleteByNoticeId(noticeId);
 
             return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
         } catch (NotFoundException e) {
             // 알림을 찾을 수 없는 경우
             return new ResponseEntity<>(new ResponseDto(404, "알림을 찾을 수 없습니다."), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
+        } /*catch (Exception e) {
             // 예외 발생 시
             return new ResponseEntity<>(new ResponseDto(500, "서버 오류"), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        }*/
     }
 
 
