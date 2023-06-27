@@ -84,7 +84,7 @@
       * @return
       */
      @PostMapping("/read/{noticeId}")
-     public ResponseEntity<ResponseDto> updateReadState( @PathVariable Long noticeId){
+     public ResponseEntity<ResponseDto> updateReadState( @PathVariable Long noticeId, @AuthenticationPrincipal UserDetailsImplement userDetails){
          return sseService.updateReadState(noticeId);
      }
 
@@ -95,7 +95,7 @@
       * @return
       */
      @DeleteMapping("/notice/{noticeId}")
-     public ResponseEntity<ResponseDto> deleteNotice(@PathVariable Long noticeId){
+     public ResponseEntity<ResponseDto> deleteNotice(@PathVariable Long noticeId, @AuthenticationPrincipal UserDetailsImplement userDetails){
          return sseService.deleteNotice(noticeId);
      }
 

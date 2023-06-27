@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 	List<Notice>findAllByMemberAndIsRead(Member member, Boolean isRead);
 	Notice findByNoticeId(Long Id);
+	void deleteNoticeByNoticeId(Long Id);
 	void deleteAllByPartyId(Long partyId);
 
 	List<Notice> findAllByCreatedAtBefore(LocalDateTime dateTime);

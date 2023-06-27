@@ -85,7 +85,12 @@ public class SseService {
 
     @Transactional
     public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
-        noticeRepository.deleteById(noticeId);
+        try{
+            //noticeRepository.deleteById(noticeId);
+            noticeRepository.deleteNoticeByNoticeId(noticeId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
     }
 
