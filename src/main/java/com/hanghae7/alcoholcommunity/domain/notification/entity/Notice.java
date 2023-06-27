@@ -44,7 +44,7 @@ public class Notice extends Timestamped {
 
 	// 알림이 전송되는 target
 	@JsonBackReference
-	@ManyToOne//(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Member member;
 
 	@Column
