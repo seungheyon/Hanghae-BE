@@ -71,10 +71,10 @@
       * @return
       */
      @GetMapping("/notice")
-     public ResponseEntity<ResponseDto> getAbsenceNotice(
+     public ResponseEntity<ResponseDto> getAllNotice(
              @AuthenticationPrincipal UserDetailsImplement userDetails
      ){
-         return sseService.getAbsenceNotice(userDetails.getMember());
+         return sseService.getAllNotice(userDetails.getMember());
      }
 
 
@@ -84,8 +84,19 @@
       * @return
       */
      @PostMapping("/read/{noticeId}")
-     public ResponseEntity<ResponseDto> updateReadState( @PathVariable Long noticeId){
+     public ResponseEntity<ResponseDto> updateReadState( @PathVariable Long noticeId, @AuthenticationPrincipal UserDetailsImplement userDetails){
          return sseService.updateReadState(noticeId);
+     }
+
+
+     /**
+      *  Delete Notice
+      * @param noticeId
+      * @return
+      */
+     @DeleteMapping("/notice/{noticeId}")
+     public ResponseEntity<ResponseDto> deleteNotice(@PathVariable Long noticeId, @AuthenticationPrincipal UserDetailsImplement userDetails){
+         return sseService.deleteNotice(noticeId);
      }
 
 
