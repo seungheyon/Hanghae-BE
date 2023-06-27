@@ -95,7 +95,7 @@ public class SseService {
 //        return new ResponseEntity<>(new ResponseDto(200, "알림 삭제 완료"), HttpStatus.OK);
 //    }
 
-    //@Transactional
+    @Transactional
     public ResponseEntity<ResponseDto> deleteNotice(Long noticeId){
         try {
             // Notice 엔티티 조회
