@@ -49,7 +49,7 @@
 <summary>미리보기</summary>
 <div markdown="1">
  
-<img src = "https://github.com/HH14RS7/SOOLO-FE/assets/128359222/2a92de94-0c62-45cd-bac7-f3f0f809a495" width = "360" height = "640" />
+<img src = "https://github.com/HH14RS7/SOOLO-FE/assets/128359222/2a92de94-0c62-45cd-bac7-f3f0f809a495"/>
 
  <br>
 </div>
@@ -121,7 +121,8 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-<img src="https://github.com/HH14RS7/SOOLO-FE/assets/128359222/7e58b786-6961-4822-9602-c6244e537937" width = "360" height = "640"/>
+
+<img src="https://github.com/HH14RS7/SOOLO-BE/assets/122235186/7844c3b6-bb48-413a-b3ef-f9e998f7c6fc" width = "360" height = "640"/>
 
  <br>
 </div>
