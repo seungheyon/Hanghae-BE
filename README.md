@@ -168,6 +168,12 @@
 
 #### 모임 검색 기능 리렌더링 [WIKI보기](https://github.com/HH14RS7/SOOLO-FE/wiki/%5BTrouble-Shooting%5D-%EB%AA%A8%EC%9E%84-%EC%A0%95%EB%B3%B4-%EA%B2%80%EC%83%89-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84)
 
+#### Refresh Token [WIKI보기](https://github.com/HH14RS7/SOOLO-BE/wiki/Refresh-Token)
+
+#### 알림 [WIKI보기](https://github.com/HH14RS7/SOOLO-BE/wiki/%EC%95%8C%EB%A6%BC)
+
+#### 채팅서버 연결 [WIKI보기](https://github.com/HH14RS7/SOOLO-BE/wiki/%EC%B1%84%ED%8C%85%EC%84%9C%EB%B2%84-%EC%97%B0%EA%B2%B0)
+
 <br><br>
 
 ## 📐 Architecture
