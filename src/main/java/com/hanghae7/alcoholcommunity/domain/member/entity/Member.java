@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -21,6 +22,7 @@ import com.hanghae7.alcoholcommunity.domain.notification.entity.Notice;
 @Getter
 @NoArgsConstructor
 @Entity(name="Member")
+@Setter
 public class Member extends Timestamped {
 
 	@Id
