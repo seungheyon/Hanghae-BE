@@ -94,7 +94,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/reissue")
+    @PostMapping("/reissue")
     public ResponseEntity<ResponseDto> reissue(HttpServletRequest request, HttpServletResponse response){
 
 

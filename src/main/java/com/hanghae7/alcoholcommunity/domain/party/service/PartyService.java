@@ -122,7 +122,7 @@ public class PartyService {
 			}
 		}
 		List<Party> parties;
-		Pageable pageable = PageRequest.of(page, 20);
+		Pageable pageable = PageRequest.of(page, 10);
 		if(recruitmentStatus == 0){
 			parties = partyRepository.findAllByisDeletedFalseOrderByCreatedAtDesc(pageable);
 		}else if(recruitmentStatus == 1){
