@@ -41,7 +41,6 @@
 
 ### 🛡 소셜로그인 (kakao, naver)
 
-> * FeignClient를 이용하여 OAuth2.0 프로토콜을 활용한 소셜로그인 기능
 > * Kakao와 Naver계정을 통한 간편 로그인
 > * Access token 만료시 Refresh token을 활용하여 Access token을 재발급
 
@@ -49,7 +48,9 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-<img src = "https://github.com/HH14RS7/SOOLO-FE/assets/128359222/2a92de94-0c62-45cd-bac7-f3f0f809a495"/>
+|                                                             로그인                                                             |
+|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/128359222/2a92de94-0c62-45cd-bac7-f3f0f809a495"/> |
 
  <br>
 </div>
@@ -68,8 +69,12 @@
 <details>
 <summary>미리보기</summary>
 <div markdown="1">
-<img src ="https://github.com/HH14RS7/SOOLO-BE/assets/122235186/570b6fc4-5781-4bab-8132-a7402687e98f" width = "360" height = "640">  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src ="https://github.com/HH14RS7/SOOLO-BE/assets/122235186/fa4db1a7-f50a-4a1f-948b-c50cb63786dd" width = "360" height = "640"/>
 
+|                                                             모임 생성                                                             |                                                            모임 상세보기                                                             |                                                                        모임 신청                                                             |
+|:------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/755cef08-65b1-499d-a1b3-754721e8fa6d"/> | <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/ffcf26e0-eb0c-4566-bd15-33c591ec24e3"/> |   <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/39a1ae38-18ad-4ae5-935a-3456755c1d3e"/> |  
+|                                                           위치 키워드 검색                                                           |                                                           현재 위치로 찾기                                                           |같은 장소 마커 클릭
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/fcf97c07-5dd7-4ecf-a347-c7bcf074fff0"/> | <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/d877205d-565b-4739-b312-6bea3def8964"/> |  <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/98ddbca0-963f-4023-9f20-dc8c16d5bdaa"/> |  
 
  <br>
 </div>
@@ -78,7 +83,7 @@
 <br>
 
 ### 🧑🏻‍💻👩🏻‍💻 마이페이지 기능
-
+ 
 > * 내가 신청한 모임, 개설한 모임, 계정정보 조회
 > * 들어온 승인 요청에서 요청 정보 확인 후 승인 / 거절
 > * 자기소개 및 프로필 이미지 수정
@@ -87,7 +92,11 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-![마이페이지](이미지 스냅샷 찍어서 주소 넣을 자리)
+|                                                             내가 신청한 모임                                                             |                                                            내가 개설한 모임                                                             |                                                                        계정 정보                                                             |
+|:------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/f71880d0-8d4b-4140-8d6f-80cf706fb52b"/> | <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/6290d293-55a7-44f0-95cf-22cbaa3a4838"/> |   <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/ca8c1a4a-6cbf-4f5c-9cff-979d66d64339"/> |  
+|                                                           들어온 승인 요청                                                           |                                                           마이페이지 수정                                                           |상대 프로필 조회
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/8d92c751-99b4-4859-bfad-170608be7270"/> | <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/b89d64e8-6a6b-4735-8b53-833b8e04beae"/> |  <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/40594fad-2f5a-4a90-8c29-5acd96a95a1b"/> |  
 
  <br>
 </div>
@@ -96,7 +105,7 @@
 <br>
 
 ### 🚨 악성 사용자 신고 기능
-
+ 
 > * 다양한 신고유형을 선택 후 간편한 신고 기능
 > * 신고된 내용을 바탕으로 운영자가 판단하여 사용자를 제재
 
@@ -104,7 +113,9 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-<img src ="https://github.com/HH14RS7/SOOLO-BE/assets/122235186/fe50c815-fdaf-43e1-890b-728a6d3c1770" width = "360" height = "640"/>
+|                                                             신고 기능                                                            |
+|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/a0616030-9811-482e-93b3-87a33d39c56e"/> |
 
  <br>
 </div>
@@ -121,8 +132,9 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-
-<img src="https://github.com/HH14RS7/SOOLO-BE/assets/122235186/7844c3b6-bb48-413a-b3ef-f9e998f7c6fc" width = "360" height = "640"/>
+|                                                             채팅                                                            |
+|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/128359222/7e58b786-6961-4822-9602-c6244e537937"/> |
 
  <br>
 </div>
@@ -139,7 +151,15 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-<img src="https://github.com/HH14RS7/SOOLO-BE/assets/122235186/d0647bf2-e225-4543-b181-0330574a1c3e" width = "360" height = "640"/>
+|                                                             알림                                                            |
+|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/f964c82c-9b29-4a62-80be-4445aca2d71f"/> |
+
+
+![실시간알림](https://github.com/HH14RS7/SOOLO-FE/assets/38846447/c631ec01-edb9-4fc3-ab40-e8342a848d57)
+![(주최자)승인요청알림](https://github.com/HH14RS7/SOOLO-FE/assets/38846447/bf0d72b6-e9a9-4949-aae9-6fa3bb692502)
+![(신청자)승인거절알림확인](https://github.com/HH14RS7/SOOLO-FE/assets/38846447/7c6e79f5-99e8-4393-9341-bc2b8e8c7d16)
+
 
  <br>
 </div>
@@ -155,14 +175,15 @@
 <summary>미리보기</summary>
 <div markdown="1">
 
-![무한스크롤](이미지 스냅샷 찍어서 주소 넣을 자리)
+|                                                             무한스크롤                                                            |
+|:------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="180" src="https://github.com/HH14RS7/SOOLO-FE/assets/38846447/a05aab6f-5cbc-4dcb-818c-e7f8c6bd0eb8"/> |
 
  <br>
 </div>
 </details>
 
 <br>
-
 ## 🛠️ Trouble Shooting
 
 #### 실시간 채팅 리렌더링 [WIKI보기](https://github.com/HH14RS7/SOOLO-FE/wiki/%5BTrouble-Shooting%5D-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84)
