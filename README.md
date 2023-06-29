@@ -30,7 +30,7 @@
 
 |최하나|김종범|이승현|조우필|최세준|김수진|정선우|이효림|
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|[@chana](https://github.com/chana73)|[@JayB202](https://github.com/JayB202)|[@SHyun](https://github.com/seungheyon)|[@feeljoy](https://github.com/Cho-woo-pil)|[@SejunS](https://github.com/Sejun0910)|[@jjin](https://github.com/devjjin)|[@sunwoo](https://github.com/Jeongsunwoo)|[@chloe_lee](https://github.com/HH14RS7)|
+|[@chana](https://github.com/chana73)|[@JayB202](https://github.com/JayB202)|[@SHyun](https://github.com/seungheyon)|[@feeljoy](https://github.com/Cho-woo-pil)|[@SejunS](https://github.com/Sejun0910)|[@jjin](https://github.com/devjjin)|[@sunwoo](https://github.com/Jeongsunwoo)|[@chloe_lee](https://glacier-lark-1e3.notion.site/79e5c03b671d4e19889b3d98f1def652?pvs=4)|
 |TL / BE|BE|BE|BE|VL / FE|FE|FE|DE|
 
 
