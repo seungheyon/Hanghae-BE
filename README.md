@@ -178,6 +178,7 @@
 </details>
 
 <br>
+
 ## 🛠️ Trouble Shooting
 
 #### 실시간 채팅 리렌더링 [WIKI보기](https://github.com/HH14RS7/SOOLO-FE/wiki/%5BTrouble-Shooting%5D-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84)
@@ -246,7 +247,7 @@
 
 
 
-<h3>communication</h3>
+<h3>Communication</h3>
 <div>
  <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/>
  <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"/>
