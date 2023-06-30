@@ -50,7 +50,7 @@
          @AuthenticationPrincipal UserDetailsImplement userDetails
      ) throws IOException {
          String memberUniqueId = userDetails.getMember().getMemberUniqueId();
-         Long sseTimeout = 5*60*1000L;
+         Long sseTimeout = 30*60*1000L;
          SseEmitter sseEmitter = new SseEmitter(sseTimeout);
 
          sseEmitter.onCompletion(() -> emitters.remove(memberUniqueId));

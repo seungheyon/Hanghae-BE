@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.hanghae7.alcoholcommunity.domain.chat.repository.ChatMessageRepository;
 import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
+import com.hanghae7.alcoholcommunity.domain.common.entity.S3Service;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
@@ -54,7 +55,7 @@ public class MemberService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
-    private final AmazonS3 amazonS3;
+    private final S3Service s3Service;
 
     /**
      * 마이페이지 조회
@@ -113,22 +114,24 @@ public class MemberService {
             if(!imageTypeChecker(image)){
                 return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
             }
-            String imageUrl;
-            // 새로 부여한 이미지명
-            String newFileName = UUID.randomUUID().toString();
-            String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.') + 1);
-            String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+            String imageUrl = s3Service.upload((image));
+            member.setProfileImage(imageUrl);
+            // String imageUrl;
+            // // 새로 부여한 이미지명
+            // String newFileName = UUID.randomUUID().toString();
+            // String fileExtension = '.' + image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf('.') + 1);
+            // String imageName = S3_BUCKET_PREFIX + newFileName + fileExtension;
+            //
+            // // 메타데이터 설정
+            // ObjectMetadata objectMetadata = new ObjectMetadata();
+            // objectMetadata.setContentType(image.getContentType());
+            // objectMetadata.setContentLength(image.getSize());
+            //
+            // InputStream inputStream = image.getInputStream();
+            //
+            // amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
+            //         .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
 
-            // 메타데이터 설정
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentType(image.getContentType());
-            objectMetadata.setContentLength(image.getSize());
-
-            InputStream inputStream = image.getInputStream();
-
-            amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
-            imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
             updateMember.get().update1(newMemberName, imageUrl);
             chatMessageRepository.updateChatMessageProfileAndMemberInfo(member.getMemberId(), imageUrl, newMemberName);
 
@@ -142,7 +145,7 @@ public class MemberService {
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
     }
 
-    private boolean imageTypeChecker(MultipartFile image) {
+    boolean imageTypeChecker(MultipartFile image) {
         String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
         for(String type : imageType){
             if(image.getContentType().contains(type)){
