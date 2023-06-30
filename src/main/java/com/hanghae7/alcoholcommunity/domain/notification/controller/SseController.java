@@ -55,7 +55,8 @@
 
          sseEmitter.onCompletion(() -> emitters.remove(memberUniqueId));
          sseEmitter.onTimeout(() -> emitters.remove(memberUniqueId));
-         sseEmitter.send(SseEmitter.event()
+         sseEmitter.send(SseEmitter
+                   .event()
                    .data("connection is open for "+sseTimeout/1000L+"sec")
                    .build()
          );
