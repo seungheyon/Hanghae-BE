@@ -143,6 +143,12 @@
 
 <br>
 
+## 🔑 ERD
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/477840c8-c8db-47f7-ac73-165c744a5882/Untitled.png)
+
+<br>
+
 ## 🎮 Tools
 <h3>Design</h3>
 <div>
