@@ -145,7 +145,7 @@
 
 ## 🔑 ERD
 
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/477840c8-c8db-47f7-ac73-165c744a5882/Untitled.png)
+![image](https://github.com/HH14RS7/SOOLO-BE/assets/127104678/570cca57-16fe-4895-92ef-47b5da50a156)
 
 <br>
 
