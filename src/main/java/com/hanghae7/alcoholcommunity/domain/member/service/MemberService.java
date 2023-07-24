@@ -216,7 +216,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void signup(SignupDto signupdto) {
+    public void signup4(SignupDto signupdto) {
         Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(signupdto.getMemberEmailId(), "KAKAO");
         if (member.isEmpty()) {
             MemberSignupRequest signupRequest = MemberSignupRequest.builder()
@@ -236,7 +236,7 @@ public class MemberService {
         }
     }
 
-    public void login(LoginDto loginDto, HttpServletResponse response) {
+    public void login4(LoginDto loginDto, HttpServletResponse response) {
         Optional<Login> login = loginRepository.findByMemberEmailId(loginDto.getMemberEmailId());
         if (login.isPresent()) {
             if (login.get().getPassword().equals(loginDto.getPassword())) {
