@@ -160,7 +160,7 @@ public class MemberService {
     }
 
 
-    boolean imageTypeChecker(MultipartFile image) {
+    private boolean imageTypeChecker(MultipartFile image) {
         String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
         for(String type : imageType){
             if(image.getContentType().contains(type)){
