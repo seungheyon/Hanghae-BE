@@ -20,7 +20,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
@@ -70,24 +72,66 @@ class PartyServiceTest {
 		assertEquals("모임 생성에 성공했습니다.", response.getBody().getMsg());
 	}
 
-	// @DisplayName("사용이 정지된 회원은 모임 게시물을 생성할 수 없다.")
-	// @Test
-	// void createParty_block_exception() throws IOException {
-	// 	// given
-	// 	PartyRequestDto requestDto = new PartyRequestDto();
-	// 	Member member = Mockito.mock(Member.class);
-	// 	MockMultipartFile image = new MockMultipartFile("image.jpg", "image.jpg", "image/jpeg", new byte[0]);
-	//
-	// 	Party party = new Party(requestDto, member.getMemberName(), member.getMemberUniqueId());
-	// 	party.setImageUrl(s3Service.upload(image));
-	// 	when(member.getAuthority()).thenReturn("BLOCK");
-	//
-	// 	// when
-	// 	// then
-	// 	assertThatThrownBy(() -> partyService.createParty(requestDto, member, image))
-	// 		.isInstanceOf(IllegalStateException.class)
-	// 		.hasMessageContaining("정지된 회원입니다.");
+	@DisplayName("사용이 정지된 회원은 모임 게시물을 생성할 수 없다.")
+	@Test
+	void createParty_block_exception() throws IOException {
+		// given
+		PartyRequestDto requestDto = new PartyRequestDto();
+		Member member = Mockito.mock(Member.class);
+		MockMultipartFile image = new MockMultipartFile("image.jpg", "image.jpg", "image/jpeg", new byte[0]);
+
+		Party party = new Party(requestDto, member.getMemberName(), member.getMemberUniqueId());
+		party.setImageUrl(s3Service.upload(image));
+		when(member.getAuthority()).thenReturn("BLOCK");
+
+		// when
+		ResponseEntity<ResponseDto> response = partyService.createParty(requestDto, member, image);
+		// then
+		assertEquals("정지된 아이디 입니다.", response.getBody().getMsg());
+		// assertThatThrownBy(() -> partyService.createParty(requestDto, member, image))
+		// 	.isInstanceOf(IllegalStateException.class)
+		// 	.hasMessageContaining("정지된 회원입니다.");
+	}
+
+	@DisplayName("전체목록조회")
+	@WithMockUser(roles = "USER")
+	@Test
+	public void testFindAll() throws Exception {
+		// Mocking input parameters
+		double radius = 10.0;
+		double longitude = 0.0;
+		double latitude = 0.0;
+		int page = 0;
+		int recruitmentStatus = 0;
+
+		// Mocking request
+		MockHttpServletRequest request = new MockHttpServletRequest();
+
+		// Mocking member repository
+		Member member = Mockito.mock(Member.class);
+
+		when(member.getAuthority()).thenReturn("USER");
+
+
+		ResponseEntity<ResponseDto> response = partyService.findAll(radius, longitude, latitude, page, recruitmentStatus, request);
+
+		// Verify that the repository methods were called
+		assertEquals("모임 조회에 성공했습니다.", response.getBody().getMsg());
+	}
+
+	// private PartyRequestDto createPartyRequestDto(String title, String content, LocalDateTime partyDate, String concept, Double latitude, Double longitude, int totalCount, String placeName, String placeAddress, String placeUrl, double distance, String stationName, String regionName, String categoryName) {
+	// 	return PartyRequestDto.builder()
+	// 		.title(title)
+	//		.content(content)
+	//		.partyDate(partyDate)
+	//		.concept(concept)
+	//		.latitud(latitud)
+	//		.longitude(longitude)
+	//		.totalcount(totalcount)
+	//		.placeName(placeName)
+	//		.placeAddress(placeAddress)
 	// }
+
 
 
 }
