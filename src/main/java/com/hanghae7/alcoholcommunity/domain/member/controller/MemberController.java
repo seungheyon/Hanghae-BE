@@ -37,15 +37,15 @@ public class MemberController {
     private final RedisDao redisDao;
 
     @PostMapping("/member/signup")
-    public ResponseEntity<ResponseDto> signup(@RequestBody SignupDto signupDto) {
+    public ResponseEntity<ResponseDto> signup3(@RequestBody SignupDto signupDto) {
         System.out.println("여긴 왔어?");
-        memberService.signup(signupDto);
+        memberService.signup4(signupDto);
         return new ResponseEntity<>(new ResponseDto(200, "회원가입에 성공했습니다."), HttpStatus.OK);
     }
 
     @PostMapping("/member/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody LoginDto loginDto, final HttpServletResponse response) {
-        memberService.login(loginDto, response);
+    public ResponseEntity<ResponseDto> login3(@RequestBody LoginDto loginDto, final HttpServletResponse response) {
+        memberService.login4(loginDto, response);
         //여기서 케이스를 나눠서
         if(response.getStatus() == 411) {
             return new ResponseEntity<>(new ResponseDto(411, "패스워드 틀림"), HttpStatus.OK);
