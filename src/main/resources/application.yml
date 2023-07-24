@@ -27,6 +27,8 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html
     min-response-size: 2048
+  port: 5500
+
 
 logging:
   level:
@@ -34,3 +36,4 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+

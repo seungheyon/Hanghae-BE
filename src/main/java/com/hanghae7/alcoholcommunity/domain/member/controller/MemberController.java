@@ -5,9 +5,9 @@ import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
+import com.hanghae7.alcoholcommunity.domain.member.dto.LoginDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
-import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
-import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
+import com.hanghae7.alcoholcommunity.domain.member.dto.SignupDto;
 import com.hanghae7.alcoholcommunity.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +35,24 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
     private final RedisDao redisDao;
+
+    @PostMapping("/signup")
+    public ResponseEntity<ResponseDto> signup(@RequestBody SignupDto signupDto) {
+        memberService.signup(signupDto);
+        return new ResponseEntity<>(new ResponseDto(200, "회원가입에 성공했습니다."), HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginDto loginDto, final HttpServletResponse response) {
+        memberService.login(loginDto, response);
+        //여기서 케이스를 나눠서
+        if(response.getStatus() == 411) {
+            return new ResponseEntity<>(new ResponseDto(411, "패스워드 틀림"), HttpStatus.OK);
+        }else if(response.getStatus() == 412){
+            return new ResponseEntity<>(new ResponseDto(412, "회원 가입이 안됨"), HttpStatus.OK);
+        }
+      return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공했습니다."), HttpStatus.OK);
+    }
 
     /**
      * 마이페이지 조회 (로그인 된 사람의 마이페이지)
