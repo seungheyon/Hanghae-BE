@@ -47,4 +47,16 @@ public class MemberSignupRequest extends Timestamped {
 		this.social = social;
 		this.createdAt = createdAt;
 	}
+
+	@Builder
+	public MemberSignupRequest(String memberEmailId, String memberUniqueId, int age ,String gender, String memberName, LocalDateTime createdAt, String social) {
+		this.memberEmailId = memberEmailId;
+		this.memberUniqueId = memberUniqueId;
+		this.age = age;
+		this.gender = gender;
+		this.memberName = memberName;
+		this.social = social;
+		this.createdAt = createdAt;
+	}
+
 }
