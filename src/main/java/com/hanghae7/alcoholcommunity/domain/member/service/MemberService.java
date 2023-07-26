@@ -219,6 +219,7 @@ public class MemberService {
     public void signup4(SignupDto signupdto) {
         Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(signupdto.getMemberEmailId(), "KAKAO");
         if (member.isEmpty()) {
+            System.out.println("여기 지나써?1");
             MemberSignupRequest signupRequest = MemberSignupRequest.builder()
                 .memberEmailId(signupdto.getMemberEmailId())
                 .memberUniqueId(UUID.randomUUID().toString())
@@ -230,7 +231,7 @@ public class MemberService {
                 .build();
             Member newMember = Member.create(signupRequest);
             memberRepository.save(newMember);
-
+            System.out.println("여기 지나써?2");
             Login login = Login.create(signupdto.getMemberEmailId(),signupdto.getPassword());
             loginRepository.save(login);
         }
