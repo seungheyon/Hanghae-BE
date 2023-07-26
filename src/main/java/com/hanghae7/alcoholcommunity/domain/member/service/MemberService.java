@@ -9,11 +9,17 @@ import com.hanghae7.alcoholcommunity.domain.common.ResponseDto;
 import com.hanghae7.alcoholcommunity.domain.common.entity.S3Service;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.JwtUtil;
 import com.hanghae7.alcoholcommunity.domain.common.jwt.RedisDao;
+import com.hanghae7.alcoholcommunity.domain.common.jwt.TokenDto;
 import com.hanghae7.alcoholcommunity.domain.common.security.UserDetailsImplement;
 import com.hanghae7.alcoholcommunity.domain.member.dto.IndividualPageResponseDto;
+import com.hanghae7.alcoholcommunity.domain.member.dto.LoginDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberPageUpdateRequestDto;
 import com.hanghae7.alcoholcommunity.domain.member.dto.MemberResponseDto;
+import com.hanghae7.alcoholcommunity.domain.member.dto.MemberSignupRequest;
+import com.hanghae7.alcoholcommunity.domain.member.dto.SignupDto;
+import com.hanghae7.alcoholcommunity.domain.member.entity.Login;
 import com.hanghae7.alcoholcommunity.domain.member.entity.Member;
+import com.hanghae7.alcoholcommunity.domain.member.repository.LoginRepository;
 import com.hanghae7.alcoholcommunity.domain.member.repository.MemberRepository;
 import com.hanghae7.alcoholcommunity.domain.party.repository.PartyParticipateRepository;
 
@@ -29,10 +35,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Please explain the class!!
@@ -50,6 +59,7 @@ public class MemberService {
     private final RedisDao redisDao;
     private final JwtUtil jwtUtil;
     private final ChatMessageRepository chatMessageRepository;
+    private final LoginRepository loginRepository;
     // image part
     private static final String S3_BUCKET_PREFIX = "S3";
 
@@ -63,13 +73,12 @@ public class MemberService {
      * @return the response entity
      */
     @Transactional
-    public ResponseEntity<ResponseDto> memberPage(String memberUniqueId){
+    public ResponseEntity<ResponseDto> memberPage(String memberUniqueId) {
         Member member = new Member();
         try {
             member = memberRepository.findByMemberUniqueId(memberUniqueId).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
-        }
-        catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
         }
 
@@ -79,17 +88,17 @@ public class MemberService {
         String gender = member.getGender();
         String profileImage = member.getProfileImage();
         String introduce = member.getIntroduce();
-        String social =  member.getSocial();
+        String social = member.getSocial();
 
         MemberResponseDto memberResponseDto = MemberResponseDto.builder()
-                .memberEmailId(memberEmailId)
-                .memberName(memberName)
-                .profileImage(profileImage)
-                .age(age)
-                .gender(gender)
-                .introduce(introduce)
-                .social(social)
-                .build();
+            .memberEmailId(memberEmailId)
+            .memberName(memberName)
+            .profileImage(profileImage)
+            .age(age)
+            .gender(gender)
+            .introduce(introduce)
+            .social(social)
+            .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "로그인에 성공하셨습니다.", memberResponseDto), HttpStatus.OK);
     }
@@ -104,16 +113,20 @@ public class MemberService {
      * @throws IOException the io exception
      */
     @Transactional
-    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto, Member member, MultipartFile image) throws IOException {
+    public ResponseEntity<ResponseDto> memberPageUpdate(MemberPageUpdateRequestDto memberPageUpdateRequestDto,
+        Member member, MultipartFile image) throws IOException {
         String newMemberName = memberPageUpdateRequestDto.getMemberName();
         String newIntroduce = memberPageUpdateRequestDto.getIntroduce();
         Optional<Member> updateMember = memberRepository.findByMemberUniqueId(member.getMemberUniqueId());
         // image가 null 일 경우  -> 처리해야 함
         // image 수정 =========================================================
         if (image != null) {
-            if(!imageTypeChecker(image)){
-                return new ResponseEntity<>(new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"), HttpStatus.BAD_REQUEST);
+            if (!imageTypeChecker(image)) {
+                return new ResponseEntity<>(
+                    new ResponseDto(400, "허용되지 않는 이미지 확장자입니다. 허용되는 확장자 : JPG, JPEG, PNG, GIF, BMP, WEBP, SVG"),
+                    HttpStatus.BAD_REQUEST);
             }
+
             String imageUrl = s3Service.upload((image));
             member.setProfileImage(imageUrl);
             // String imageUrl;
@@ -132,12 +145,13 @@ public class MemberService {
             // amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
             //         .withCannedAcl(CannedAccessControlList.PublicRead)); // 이미지에 대한 접근 권한 '공개' 로 설정
 
+
             updateMember.get().update1(newMemberName, imageUrl);
             chatMessageRepository.updateChatMessageProfileAndMemberInfo(member.getMemberId(), imageUrl, newMemberName);
 
         }
         // image 수정 =========================================================
-        else{
+        else {
             updateMember.get().update(newMemberName, newIntroduce);
             chatMessageRepository.updateChatMessageMemberInfo(member.getMemberId(), newMemberName);
         }
@@ -145,10 +159,12 @@ public class MemberService {
         return new ResponseEntity<>(new ResponseDto(200, "마이페이지 수정에 성공하셨습니다."), HttpStatus.OK);
     }
 
-    boolean imageTypeChecker(MultipartFile image) {
+
+    private boolean imageTypeChecker(MultipartFile image) {
         String imageType [] = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
         for(String type : imageType){
             if(image.getContentType().contains(type)){
+
                 return true;
             }
         }
@@ -162,14 +178,13 @@ public class MemberService {
      * @return the response entity
      */
     @Transactional
-    public ResponseEntity<ResponseDto> individualPage(Long memberId){
+    public ResponseEntity<ResponseDto> individualPage(Long memberId) {
 
         Member member = new Member();
         try {
             member = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다."));
-        }
-        catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ResponseDto(200, "등록된 사용자가 없습니다."), HttpStatus.OK);
         }
         String emailId = member.getMemberEmailId();
@@ -179,15 +194,14 @@ public class MemberService {
         String profileImage = member.getProfileImage();
         String introduce = member.getIntroduce();
 
-
         IndividualPageResponseDto individualPageResponseDto = IndividualPageResponseDto.builder()
-                .memberEmailId(emailId)
-                .memberName(name)
-                .age(age)
-                .gender(gender)
-                .profileImage(profileImage)
-                .introduce(introduce)
-                .build();
+            .memberEmailId(emailId)
+            .memberName(name)
+            .age(age)
+            .gender(gender)
+            .profileImage(profileImage)
+            .introduce(introduce)
+            .build();
 
         return new ResponseEntity<>(new ResponseDto(200, "상대방 프로필 조회 성공.", individualPageResponseDto), HttpStatus.OK);
     }
@@ -195,9 +209,55 @@ public class MemberService {
     public ResponseEntity<ResponseDto> memberLogout(HttpServletRequest request) {
 
         String accessKey = request.getHeader("Access_Key").substring(7);
-        redisDao.setValues(accessKey,"blackList", Duration.ofMillis(5400000L));
+        redisDao.setValues(accessKey, "blackList", Duration.ofMillis(5400000L));
         String memberUniqueId = jwtUtil.getMemberInfoFromToken(accessKey);
         redisDao.deleteValues(memberUniqueId);
         return new ResponseEntity<>(new ResponseDto(200, "Log OUT!!!!"), HttpStatus.OK);
+    }
+
+    @Transactional
+    public void signup4(SignupDto signupdto) {
+        Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(signupdto.getMemberEmailId(), "KAKAO");
+        if (member.isEmpty()) {
+            System.out.println("여기 지나써?1");
+            MemberSignupRequest signupRequest = MemberSignupRequest.builder()
+                .memberEmailId(signupdto.getMemberEmailId())
+                .memberUniqueId(UUID.randomUUID().toString())
+                .age(Integer.parseInt(String.valueOf(signupdto.getAge())))
+                .gender(signupdto.getGender())
+                .memberName(signupdto.getMemberName())
+                .social("KAKAO")
+                .createdAt(LocalDateTime.now())
+                .build();
+            Member newMember = Member.create(signupRequest);
+            memberRepository.save(newMember);
+            System.out.println("여기 지나써?2");
+            Login login = Login.create(signupdto.getMemberEmailId(),signupdto.getPassword());
+            loginRepository.save(login);
+        }
+    }
+
+    public void login4(LoginDto loginDto, HttpServletResponse response) {
+        Optional<Login> login = loginRepository.findByMemberEmailId(loginDto.getMemberEmailId());
+        if (login.isPresent()) {
+            if (login.get().getPassword().equals(loginDto.getPassword())) {
+                // 토큰줘라
+                Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(loginDto.getMemberEmailId(), "KAKAO");
+                TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
+                response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
+                response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
+                redisDao.setValues(member.get().getMemberUniqueId(), tokenDto.getRefreshToken());
+                response.setStatus(200, "잘됨");
+            }
+            else {
+                response.setStatus(411, "패스워드 잘못 됨");
+
+            }
+        }else{
+            response.setStatus(412, "회원 가입 안됨");
+
+        }
+
+
     }
 }

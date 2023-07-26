@@ -79,11 +79,14 @@ public class KakaoService {
 
         //code를 이용해서 Kakao Api용 Accesstoekn과 Refresh토큰을 받아옴
         final KakaoToken token = getKakaoToken(code);
+        System.out.println("1나오느냐");
         try {
             //해당 토큰을 이용해서 유저정보를 요청하는 API요청을 보낸다
             KakaoAccount kakaoAccount = client.getKakaoInfo(new URI(kakaoUserApiUrl), token.getTokenType() + " " + token.getAccessToken()).getKakaoAccount();
-           // 가져온 유저정보로 Email과 소셜로그인 정보로 이미 회원가입이 된 유저인지 확인
+            System.out.println("2나오느냐");
+            // 가져온 유저정보로 Email과 소셜로그인 정보로 이미 회원가입이 된 유저인지 확인
             Optional<Member> member = memberRepository.findByMemberEmailIdAndSocial(kakaoAccount.getEmail(), "KAKAO");
+            System.out.println("3나오느냐");
             //로그인했는데 첫 로그인일시 회원가입
             if(member.isEmpty()){
                 //회원가입이 안된유저라면 성인인지 여부를 판단하고 회원가입 진행
@@ -112,6 +115,7 @@ public class KakaoService {
             //UniqueId로 Soolo 서비스이용가능한 Token 발급
             TokenDto tokenDto = jwtUtil.createAllToken(member.get().getMemberUniqueId());
             response.addHeader(JwtUtil.ACCESS_KEY, tokenDto.getAccessToken());
+            System.out.println("4나오느냐");
             response.addHeader(JwtUtil.REFRESH_KEY, tokenDto.getRefreshToken());
             redisDao.setValues(member.get().getMemberUniqueId(),tokenDto.getRefreshToken(),Duration.ofMillis(14243600000L));
             // .setValues(.get().getMemberUniqueId(), tokenDto.getRefreshToken(), Duration.ofMillis(14 * 24 * 60 * 60 * 1000L));

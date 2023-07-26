@@ -28,7 +28,10 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		// CSRF 설정
+		http.csrf().ignoringAntMatchers("/h2-console/**").and().headers().frameOptions().sameOrigin();
 		http.csrf().ignoringAntMatchers("/ws-stomp/**").disable(); // 웹소켓 경로에 대한 CSRF 비활성화
+		http.csrf().ignoringAntMatchers("/member/signup").disable();
+		http.csrf().ignoringAntMatchers("/member/login").disable();
 		http.cors();
 		// 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -37,6 +40,7 @@ public class WebSecurityConfig {
 				.antMatchers("/swagger-ui/**").permitAll()
 				.antMatchers("/v3/api-docs/**").permitAll()
 				.antMatchers("/**").permitAll()
+				.antMatchers("/h2-console/**").permitAll()
 				.antMatchers("/nginx/test").permitAll()
 				.anyRequest()
 				.authenticated());// 그외의 요청들은 모두 인가 받아야 한다.
@@ -52,6 +56,8 @@ public class WebSecurityConfig {
 
 		config.addAllowedOrigin("http://localhost:3000");
 		config.addAllowedOrigin("http://localhost:8080");
+		config.addAllowedOrigin("http://localhost:5500");
+		config.addAllowedOrigin("http://58.120.95.104:5500");
 		config.addAllowedOrigin("http://52.79.171.11:8080");
 		config.addAllowedOrigin("http://im-soolo.shop");
 		config.addAllowedOrigin("https://im-soolo.shop");
